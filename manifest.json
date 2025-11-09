@@ -9,12 +9,12 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
-        "version": "0.0.2.0",
-        "checksum": "DECF57C25A6E1E81B063BBB711D1DE18",
-        "changelog": "Updated plugin structure to match Jellyfin plugin template standards. Fixed code structure issues and improved plugin initialization.",
+        "version": "0.0.3.0",
+        "checksum": "6ECBFD886EE2C9DF8B930B4F9EE18224",
+        "changelog": "Fixed File Transformation plugin registration to match Jellyfin-Enhanced pattern. Updated to use proper method signatures and JObject payloads. Alpha development version.",
         "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.2.0/Jellyfin.Plugin.AssignThemeSong_0.0.2.0.zip",
-        "timestamp": "2025-11-09T14:25:00Z"
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.3.0/Jellyfin.Plugin.AssignThemeSong_0.0.3.0.zip",
+        "timestamp": "2025-11-09T14:39:00Z"
       }
     ]
   }

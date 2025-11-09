@@ -12,41 +12,31 @@ namespace Jellyfin.Plugin.AssignThemeSong.Helpers
         /// Patches index.html to inject our script.
         /// This is called by File Transformation plugin via reflection.
         /// </summary>
-        /// <param name="payload">JObject with "contents" field containing the HTML.</param>
-        /// <returns>JObject with modified "contents" field.</returns>
-        public static object PatchIndexHtml(object payload)
+        /// <param name="content">The PatchRequestPayload containing the HTML content.</param>
+        /// <returns>The modified HTML content as string.</returns>
+        public static string IndexHtml(PatchRequestPayload content)
         {
-            // Extract contents from the payload JObject
-            var payloadJson = payload as Newtonsoft.Json.Linq.JObject;
-            if (payloadJson == null)
+            if (string.IsNullOrEmpty(content.Contents))
             {
-                return payload;
-            }
-
-            var contents = payloadJson["contents"]?.ToString();
-            if (string.IsNullOrEmpty(contents))
-            {
-                return payload;
+                return content.Contents ?? string.Empty;
             }
 
             var pluginName = "Assign Theme Song";
             var pluginVersion = Plugin.Instance?.Version.ToString() ?? "unknown";
-            var scriptUrl = "/AssignThemeSong/script";
+            var scriptUrl = "../AssignThemeSong/script";
             var scriptTag = $"<script plugin=\"{pluginName}\" version=\"{pluginVersion}\" src=\"{scriptUrl}\" defer></script>";
 
             // Remove any existing script tag
             var regex = new Regex($"<script[^>]*plugin=[\"']{Regex.Escape(pluginName)}[\"'][^>]*>\\s*</script>\\n?");
-            var updatedContent = regex.Replace(contents, string.Empty);
+            var updatedContent = regex.Replace(content.Contents, string.Empty);
 
             // Inject the new script tag before </body>
             if (updatedContent.Contains("</body>"))
             {
-                updatedContent = updatedContent.Replace("</body>", $"{scriptTag}\n</body>");
+                return updatedContent.Replace("</body>", $"{scriptTag}\n</body>");
             }
 
-            // Return the modified payload
-            payloadJson["contents"] = updatedContent;
-            return payloadJson;
+            return updatedContent;
         }
     }
 }

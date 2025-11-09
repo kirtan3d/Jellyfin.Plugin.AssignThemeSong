@@ -73,8 +73,6 @@ namespace Jellyfin.Plugin.AssignThemeSong.Services
 
         private void RegisterWithFileTransformation()
         {
-            _logger.LogInformation("[AssignThemeSong] RegisterWithFileTransformation called");
-            Console.WriteLine("[AssignThemeSong] RegisterWithFileTransformation called");
             _logger.LogInformation("Assign Theme Song: Starting script injection registration");
 
             // Get the File Transformation plugin assembly
@@ -103,23 +101,22 @@ namespace Jellyfin.Plugin.AssignThemeSong.Services
                 // Use the plugin GUID directly since Plugin.Instance might be null
                 var pluginId = "6a7b8c9d-0e1f-2345-6789-abcdef012345";
                 
-                var payloadJson = $@"{{
-                    ""id"": ""{pluginId}"",
-                    ""fileNamePattern"": ""index.html"",
-                    ""callbackAssembly"": ""{thisAssembly.FullName}"",
-                    ""callbackClass"": ""{typeof(TransformationPatches).FullName}"",
-                    ""callbackMethod"": ""PatchIndexHtml""
-                }}";
+                // Create payload using JObject directly (matching Jellyfin-Enhanced pattern)
+                var payload = new JObject
+                {
+                    { "id", pluginId },
+                    { "fileNamePattern", "index.html" },
+                    { "callbackAssembly", thisAssembly.FullName },
+                    { "callbackClass", typeof(TransformationPatches).FullName },
+                    { "callbackMethod", nameof(TransformationPatches.IndexHtml) }
+                };
 
-                _logger.LogInformation($"Registering transformation with payload: {payloadJson}");
-
-                // Parse it into JObject
-                var payload = JObject.Parse(payloadJson);
+                _logger.LogInformation($"Registering transformation with payload: {payload}");
 
                 // Register the transformation
                 pluginInterfaceType.GetMethod("RegisterTransformation")?.Invoke(null, new object?[] { payload });
                 
-                _logger.LogInformation("Assign Theme Song: Successfully registered script injection");
+                _logger.LogInformation("Assign Theme Song: Successfully registered script injection with File Transformation Plugin");
             }
             catch (Exception ex)
             {

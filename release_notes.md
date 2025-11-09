@@ -1,27 +1,27 @@
-# Release v0.0.2.0 - Jellyfin Assign Theme Song Plugin
+# Release v0.0.3.0 - Jellyfin Assign Theme Song Plugin (Alpha)
 
 ## What's New
 
-This release focuses on improving the plugin structure and build process based on studying established Jellyfin plugin patterns.
+This alpha release focuses on improving File Transformation plugin integration based on studying the Jellyfin-Enhanced plugin's implementation pattern.
 
-## Changes
+## Key Changes
+
+### File Transformation Plugin Integration
+- **Method Signature Update**: Changed `TransformationPatches.PatchIndexHtml` to `IndexHtml` with proper parameter types
+- **JObject Payload**: Updated to use direct JObject construction instead of JSON string parsing
+- **Script URL**: Fixed script URL path from `/AssignThemeSong/script` to `../AssignThemeSong/script`
+- **Return Type**: Now returns string directly instead of JObject wrapper
 
 ### Code Structure Improvements
-- Updated plugin class structure to match Jellyfin plugin template standards
-- Fixed code structure issues identified from comparing with reference plugins
-- Improved plugin initialization and registration patterns
-- Enhanced build configuration and cleanup process
+- Cleaned up logging and console output in StartupTask
+- Improved method signatures to match Jellyfin-Enhanced plugin patterns
+- Enhanced error handling and logging
 
-### Build and Packaging
-- Updated version to 0.0.2.0
-- Added proper MD5 checksum verification for the plugin assembly
-- Cleaned up unnecessary files and build artifacts
-- Improved project configuration for better compatibility
-
-### Reference Plugins Studied
-- **Jellyfin Plugin Template**: https://github.com/jellyfin/jellyfin-plugin-template
-- **File Transformation Plugin**: https://github.com/IAmParadox27/jellyfin-plugin-file-transformation  
+### Reference Plugin Studied
 - **Jellyfin Enhanced**: https://github.com/n00bcodr/Jellyfin-Enhanced
+  - File Transformation registration pattern
+  - Method signatures and parameter types
+  - JObject payload construction
 
 ## Installation
 
@@ -50,9 +50,14 @@ This release focuses on improving the plugin structure and build process based o
 
 ## Technical Details
 - **Target ABI**: 10.10.0.0
-- **Assembly Checksum**: DECF57C25A6E1E81B063BBB711D1DE18
+- **Zip Archive Checksum**: 6ECBFD886EE2C9DF8B930B4F9EE18224
 - **Build Platform**: .NET 8.0
 - **Dependencies**: YoutubeExplode, Newtonsoft.Json
+
+## Known Issues (Alpha)
+- This is an alpha development version
+- Some nullable reference warnings present
+- Missing XML documentation for some public members
 
 ## Next Steps
 - Continue testing and bug fixes
@@ -64,4 +69,4 @@ This release focuses on improving the plugin structure and build process based o
 For issues and questions, please visit the [GitHub repository](https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong) or the [Jellyfin Forum](https://forum.jellyfin.org/).
 
 ---
-*Built with reference to established Jellyfin plugin patterns for better compatibility and maintainability.*
+*Alpha development version - File Transformation integration improved based on Jellyfin-Enhanced plugin patterns.*
