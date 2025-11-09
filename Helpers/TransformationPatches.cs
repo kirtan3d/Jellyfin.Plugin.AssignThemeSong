@@ -23,7 +23,7 @@ namespace Jellyfin.Plugin.AssignThemeSong.Helpers
 
             var pluginName = "Assign Theme Song";
             var pluginVersion = Plugin.Instance?.Version.ToString() ?? "unknown";
-            var scriptUrl = "../AssignThemeSong/script";
+            var scriptUrl = "../AssignThemeSong/plugin";
             var scriptTag = $"<script plugin=\"{pluginName}\" version=\"{pluginVersion}\" src=\"{scriptUrl}\" defer></script>";
 
             // Remove any existing script tag
