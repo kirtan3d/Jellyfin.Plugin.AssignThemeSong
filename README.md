@@ -132,7 +132,7 @@ dotnet publish -c Release -o publish
 
 ## 📝 Development Status
 
-**Current Version**: v1.0.21
+**Current Version**: v0.0.2.0
 
 This plugin is now stable and fully functional! Features:
 - ✅ Plugin loads successfully in Jellyfin
@@ -145,6 +145,11 @@ This plugin is now stable and fully functional! Features:
 - ✅ Scheduled task for batch processing
 - ✅ Configuration page
 - ✅ Extensive logging for debugging plugin initialization
+
+### Recent Changes (v0.0.2.0)
+- Updated plugin structure to match Jellyfin plugin template standards
+- Fixed code structure issues and improved plugin initialization
+- Cleaned up build process and removed unnecessary files
 
 ## 🤝 Contributing
 
