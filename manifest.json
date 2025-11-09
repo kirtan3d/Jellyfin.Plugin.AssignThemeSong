@@ -1,0 +1,21 @@
+[
+  {
+    "name": "Assign Theme Song",
+    "guid": "6a7b8c9d-0e1f-2345-6789-abcdef012345",
+    "overview": "Download theme songs from YouTube or upload custom MP3s for your media library",
+    "description": "A plugin that automatically downloads theme songs from YouTube by user provided video ID/URL or allows uploading custom MP3 files. Theme songs are saved as theme.mp3 in media folders along with metadata in theme.json files. Supports both movies and TV shows. Features a complete Web UI with drag-and-drop upload.",
+    "owner": "Kirtan Patel",
+    "category": "General",
+    "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
+    "versions": [
+      {
+        "version": "0.0.1.0",
+        "checksum": "d8823820a78a69d62f8ca7613372a9bc",
+        "changelog": "DEBUG: Simplified Plugin.cs to exactly match Jellyfin plugin template. Assembly loads but plugin not instantiating - debugging continues.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.1.0/Jellyfin.Plugin.AssignThemeSong_0.0.1.0.zip",
+        "timestamp": "2025-11-09T08:35:00Z"
+      }
+    ]
+  }
+]

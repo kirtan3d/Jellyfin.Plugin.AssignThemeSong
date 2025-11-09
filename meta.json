@@ -1,0 +1,12 @@
+{
+  "name": "Assign Theme Song",
+  "guid": "6a7b8c9d-0e1f-2345-6789-abcdef012345",
+  "version": "0.0.1.0",
+  "targetAbi": "10.10.0.0",
+  "overview": "Download theme songs from YouTube or upload custom MP3s for your media library",
+  "description": "A plugin that automatically downloads theme songs from YouTube by user provided video ID/URL or allows uploading custom MP3 files. Features complete Web UI with button on media pages, drag-and-drop upload, and audio player.",
+  "owner": "Kirtan Patel",
+  "category": "General",
+  "imageUrl": "icon.png",
+  "changelog": "DEBUG: Added extensive logging to track plugin instantiation. Simplified plugin class to match template structure."
+}

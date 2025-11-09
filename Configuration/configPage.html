@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Assign Theme Song</title>
+</head>
+<body>
+    <div id="AssignThemeSongConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-checkbox,emby-select">
+        <div data-role="content">
+            <div class="content-primary">
+                <form id="AssignThemeSongConfigForm">
+                    <div class="verticalSection verticalSection-extrabottompadding">
+                        <div class="sectionTitleContainer flex align-items-center">
+                            <h2 class="sectionTitle">Assign Theme Song Settings</h2>
+                        </div>
+
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
+                                <input id="OverwriteExistingFiles" name="OverwriteExistingFiles" type="checkbox" is="emby-checkbox" />
+                                <span>Overwrite Existing Files</span>
+                            </label>
+                            <div class="fieldDescription checkboxFieldDescription">
+                                Enable this to overwrite existing theme.mp3 files when running the scheduled task
+                            </div>
+                        </div>
+
+                        <div class="inputContainer">
+                            <label class="inputLabel inputLabelUnfocused" for="AudioBitrate">Audio Bitrate (kbps)</label>
+                            <input id="AudioBitrate" name="AudioBitrate" type="number" is="emby-input" min="64" max="320" step="32" />
+                            <div class="fieldDescription">
+                                Audio bitrate for downloaded theme songs (default: 192)
+                            </div>
+                        </div>
+
+                        <br />
+                        <div>
+                            <button is="emby-button" type="submit" class="raised button-submit block">
+                                <span>Save</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            var AssignThemeSongConfig = {
+                pluginUniqueId: '6a7b8c9d-0e1f-2345-6789-abcdef012345'
+            };
+
+            document.querySelector('#AssignThemeSongConfigPage')
+                .addEventListener('pageshow', function() {
+                    Dashboard.showLoadingMsg();
+                    ApiClient.getPluginConfiguration(AssignThemeSongConfig.pluginUniqueId).then(function(config) {
+                        document.querySelector('#OverwriteExistingFiles').checked = config.OverwriteExistingFiles || false;
+                        document.querySelector('#AudioBitrate').value = config.AudioBitrate || 192;
+                        Dashboard.hideLoadingMsg();
+                    });
+                });
+
+            document.querySelector('#AssignThemeSongConfigForm')
+                .addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    Dashboard.showLoadingMsg();
+
+                    ApiClient.getPluginConfiguration(AssignThemeSongConfig.pluginUniqueId).then(function(config) {
+                        config.OverwriteExistingFiles = document.querySelector('#OverwriteExistingFiles').checked;
+                        config.AudioBitrate = parseInt(document.querySelector('#AudioBitrate').value) || 192;
+
+                        ApiClient.updatePluginConfiguration(AssignThemeSongConfig.pluginUniqueId, config).then(function(result) {
+                            Dashboard.processPluginConfigurationUpdateResult(result);
+                        });
+                    });
+
+                    return false;
+                });
+        </script>
+    </div>
+</body>
+</html>

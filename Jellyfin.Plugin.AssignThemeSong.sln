@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jellyfin.Plugin.AssignThemeSong", "Jellyfin.Plugin.AssignThemeSong.csproj", "{D435E9C8-1895-B971-62B6-3EFCB7EE4728}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D435E9C8-1895-B971-62B6-3EFCB7EE4728}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D435E9C8-1895-B971-62B6-3EFCB7EE4728}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D435E9C8-1895-B971-62B6-3EFCB7EE4728}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D435E9C8-1895-B971-62B6-3EFCB7EE4728}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EF74965D-0C4B-4752-9A1B-2B805B9DB5AE}
+	EndGlobalSection
+EndGlobal
