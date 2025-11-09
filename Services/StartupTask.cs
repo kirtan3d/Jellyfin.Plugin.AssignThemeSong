@@ -71,59 +71,64 @@ namespace Jellyfin.Plugin.AssignThemeSong.Services
             }
         }
 
-        private void RegisterWithFileTransformation()
+    private void RegisterWithFileTransformation()
+    {
+        _logger.LogInformation("Assign Theme Song: Starting script injection registration");
+
+        // Get the File Transformation plugin assembly
+        Assembly? fileTransformationAssembly = AssemblyLoadContext.All
+            .SelectMany(x => x.Assemblies)
+            .FirstOrDefault(x => x.FullName?.Contains(".FileTransformation") ?? false);
+
+        if (fileTransformationAssembly == null)
         {
-            _logger.LogInformation("Assign Theme Song: Starting script injection registration");
+            _logger.LogWarning("File Transformation plugin not found. Please install it from: https://github.com/IAmParadox27/jellyfin-plugin-file-transformation");
+            return;
+        }
 
-            // Get the File Transformation plugin assembly
-            Assembly? fileTransformationAssembly = AssemblyLoadContext.All
-                .SelectMany(x => x.Assemblies)
-                .FirstOrDefault(x => x.FullName?.Contains(".FileTransformation") ?? false);
+        // Get the PluginInterface type
+        Type? pluginInterfaceType = fileTransformationAssembly.GetType("Jellyfin.Plugin.FileTransformation.PluginInterface");
+        if (pluginInterfaceType == null)
+        {
+            _logger.LogWarning("Could not find PluginInterface in FileTransformation assembly");
+            return;
+        }
 
-            if (fileTransformationAssembly == null)
+        try
+        {
+            var thisAssembly = GetType().Assembly;
+            var pluginId = "6a7b8c9d-0e1f-2345-6789-abcdef012345";
+            
+            // Create payload using JObject with correct property names
+            var payload = new JObject
             {
-                _logger.LogWarning("File Transformation plugin not found. Please install it from: https://github.com/IAmParadox27/jellyfin-plugin-file-transformation");
-                return;
-            }
+                ["id"] = Guid.NewGuid().ToString(), // Use a unique ID for this transformation
+                ["fileNamePattern"] = "index.html",
+                ["callbackAssembly"] = thisAssembly.FullName,
+                ["callbackClass"] = typeof(TransformationPatches).FullName,
+                ["callbackMethod"] = "IndexHtml"
+            };
 
-            // Get the PluginInterface type
-            Type? pluginInterfaceType = fileTransformationAssembly.GetType("Jellyfin.Plugin.FileTransformation.PluginInterface");
-            if (pluginInterfaceType == null)
+            _logger.LogInformation($"Registering transformation with payload: {payload}");
+
+            // Register the transformation
+            var registerMethod = pluginInterfaceType.GetMethod("RegisterTransformation");
+            if (registerMethod != null)
             {
-                _logger.LogWarning("Could not find PluginInterface in FileTransformation assembly");
-                return;
-            }
-
-            try
-            {
-                var thisAssembly = GetType().Assembly;
-                
-                // Use the plugin GUID directly since Plugin.Instance might be null
-                var pluginId = "6a7b8c9d-0e1f-2345-6789-abcdef012345";
-                
-                // Create payload using JObject directly (matching Jellyfin-Enhanced pattern)
-                var payload = new JObject
-                {
-                    { "id", pluginId },
-                    { "fileNamePattern", "index.html" },
-                    { "callbackAssembly", thisAssembly.FullName },
-                    { "callbackClass", typeof(TransformationPatches).FullName },
-                    { "callbackMethod", nameof(TransformationPatches.IndexHtml) }
-                };
-
-                _logger.LogInformation($"Registering transformation with payload: {payload}");
-
-                // Register the transformation
-                pluginInterfaceType.GetMethod("RegisterTransformation")?.Invoke(null, new object?[] { payload });
-                
+                registerMethod.Invoke(null, new object?[] { payload });
                 _logger.LogInformation("Assign Theme Song: Successfully registered script injection with File Transformation Plugin");
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(ex, "Error registering transformation with File Transformation plugin");
-                throw;
+                _logger.LogWarning("Could not find RegisterTransformation method");
             }
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error registering transformation with File Transformation plugin");
+            throw;
+        }
+    }
 
         /// <inheritdoc />
         public IEnumerable<TaskTriggerInfo> GetDefaultTriggers()
