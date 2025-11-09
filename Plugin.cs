@@ -24,10 +24,33 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     /// </summary>
     /// <param name="applicationPaths">Instance of the <see cref="IApplicationPaths"/> interface.</param>
     /// <param name="xmlSerializer">Instance of the <see cref="IXmlSerializer"/> interface.</param>
-    public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer)
+    /// <param name="logger">Instance of the <see cref="ILogger"/> interface.</param>
+    /// <param name="configurationManager">Instance of the <see cref="IServerConfigurationManager"/> interface.</param>
+    public Plugin(
+        IApplicationPaths applicationPaths,
+        IXmlSerializer xmlSerializer,
+        ILogger<Plugin> logger,
+        IServerConfigurationManager configurationManager)
         : base(applicationPaths, xmlSerializer)
     {
         Instance = this;
+
+        try
+        {
+            // Try to register with File Transformation plugin
+            if (!TryRegisterFileTransformation(configurationManager, logger))
+            {
+                logger.LogWarning("File Transformation plugin not available, UI features may not work");
+            }
+            else
+            {
+                logger.LogInformation("Successfully registered with File Transformation plugin");
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error during plugin initialization: {Message}", ex.Message);
+        }
     }
 
     /// <inheritdoc />
@@ -40,6 +63,74 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     /// Gets the plugin instance.
     /// </summary>
     public static Plugin? Instance { get; private set; }
+
+    /// <summary>
+    /// Attempts to register transformation with File Transformation plugin using reflection.
+    /// </summary>
+    /// <param name="configurationManager">Configuration manager for network settings.</param>
+    /// <param name="logger">Logger instance for debug output.</param>
+    /// <returns>True if registration succeeded, false otherwise.</returns>
+    private bool TryRegisterFileTransformation(IServerConfigurationManager configurationManager, ILogger<Plugin> logger)
+    {
+        try
+        {
+            logger.LogDebug("Attempting to register transformation with File Transformation plugin...");
+
+            // Find the FileTransformation assembly using reflection
+            Assembly? fileTransformationAssembly =
+                AssemblyLoadContext.All
+                    .SelectMany(x => x.Assemblies)
+                    .FirstOrDefault(x => x.FullName?.Contains("FileTransformation", StringComparison.OrdinalIgnoreCase) ?? false);
+
+            if (fileTransformationAssembly == null)
+            {
+                logger.LogWarning("File Transformation plugin assembly not found in loaded assemblies");
+                return false;
+            }
+
+            logger.LogDebug("Found File Transformation assembly: {AssemblyName}", fileTransformationAssembly.FullName);
+
+            // Get the PluginInterface type
+            Type? pluginInterfaceType = fileTransformationAssembly.GetType("Jellyfin.Plugin.FileTransformation.PluginInterface");
+            if (pluginInterfaceType == null)
+            {
+                logger.LogWarning("Could not find PluginInterface type in File Transformation assembly");
+                return false;
+            }
+
+            // Get the RegisterTransformation method
+            MethodInfo? registerMethod = pluginInterfaceType.GetMethod("RegisterTransformation");
+            if (registerMethod == null)
+            {
+                logger.LogWarning("Could not find RegisterTransformation method in File Transformation plugin");
+                return false;
+            }
+
+            // Create transformation payload as JObject (File Transformation expects Newtonsoft.Json.Linq.JObject)
+            var transformationPayload = new JObject
+            {
+                ["id"] = Id.ToString(), // Use plugin GUID as string
+                ["fileNamePattern"] = "index.html", // Plain filename, not regex
+                ["callbackAssembly"] = GetType().Assembly.FullName,
+                ["callbackClass"] = typeof(Helpers.TransformationPatches).FullName,
+                ["callbackMethod"] = "IndexHtml"
+            };
+
+            logger.LogDebug("Registering transformation with payload: {Payload}", transformationPayload.ToString());
+
+            // Invoke the registration method
+            registerMethod.Invoke(null, new object[] { transformationPayload });
+
+            logger.LogInformation("Successfully registered transformation with File Transformation plugin");
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Failed to register with File Transformation plugin: {Message}", ex.Message);
+            return false;
+        }
+    }
 
     /// <inheritdoc />
     public override string Description => "Download theme songs from YouTube or upload custom MP3s for your media library";
