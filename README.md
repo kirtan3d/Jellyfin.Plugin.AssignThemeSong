@@ -132,7 +132,7 @@ dotnet publish -c Release -o publish
 
 ## 📝 Development Status
 
-**Current Version**: v0.0.2.0
+**Current Version**: v0.0.9.1
 
 This plugin is now stable and fully functional! Features:
 - ✅ Plugin loads successfully in Jellyfin
@@ -145,11 +145,16 @@ This plugin is now stable and fully functional! Features:
 - ✅ Scheduled task for batch processing
 - ✅ Configuration page
 - ✅ Extensive logging for debugging plugin initialization
+- ✅ **File Transformation Plugin Integration** - Reliable script injection
+- ✅ **Fallback Mechanism** - Direct file injection if File Transformation not available
+- ✅ **Base Path Handling** - Proper URL generation for script injection
 
-### Recent Changes (v0.0.2.0)
-- Updated plugin structure to match Jellyfin plugin template standards
-- Fixed code structure issues and improved plugin initialization
-- Cleaned up build process and removed unnecessary files
+### Recent Changes (v0.0.9.1)
+- Fixed assembly version mismatch (0.0.8.0 → 0.0.9.0)
+- Enhanced retry mechanism with 6 attempts × 3-second delays
+- Improved File Transformation plugin integration patterns
+- Updated callback method signatures to match File Transformation expectations
+- Added proper base path retrieval from network configuration
 
 ## 🤝 Contributing
 

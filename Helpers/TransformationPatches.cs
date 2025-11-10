@@ -1,3 +1,4 @@
+using System;
 using System.Text.RegularExpressions;
 using Jellyfin.Plugin.AssignThemeSong.Models;
 
@@ -8,35 +9,71 @@ namespace Jellyfin.Plugin.AssignThemeSong.Helpers
     /// </summary>
     public static class TransformationPatches
     {
+        private static string _basePath = string.Empty;
+        private static string _version = "Unknown";
+
+        /// <summary>
+        /// Sets the base path and version for script injection.
+        /// </summary>
+        /// <param name="basePath">The base path for script URLs.</param>
+        /// <param name="version">The plugin version.</param>
+        public static void SetBasePathAndVersion(string basePath, string version)
+        {
+            _basePath = basePath;
+            _version = version;
+        }
+
         /// <summary>
         /// Patches index.html to inject our script.
         /// This is called by File Transformation plugin via reflection.
         /// </summary>
-        /// <param name="content">The PatchRequestPayload containing the HTML content.</param>
+        /// <param name="payload">The PatchRequestPayload containing the HTML content.</param>
         /// <returns>The modified HTML content as string.</returns>
-        public static string IndexHtml(PatchRequestPayload content)
+        public static string IndexHtml(PatchRequestPayload payload)
         {
-            if (string.IsNullOrEmpty(content.Contents))
+            try
             {
-                return content.Contents ?? string.Empty;
+                var content = payload?.Contents ?? string.Empty;
+
+                if (string.IsNullOrEmpty(content))
+                {
+                    return content;
+                }
+
+                // Transform the content
+                string scriptReplace = "<script plugin=\"AssignThemeSong\".*?></script>";
+                string scriptElement = string.Format(
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    "<script plugin=\"AssignThemeSong\" version=\"{1}\" src=\"{0}/AssignThemeSong/plugin\" defer></script>",
+                    _basePath,
+                    _version);
+
+                // Check if script is already injected
+                if (content.Contains(scriptElement, StringComparison.Ordinal))
+                {
+                    return content;
+                }
+
+                // Remove old AssignThemeSong scripts
+                content = Regex.Replace(content, scriptReplace, string.Empty);
+
+                // Find closing body tag
+                int bodyClosing = content.LastIndexOf("</body>", StringComparison.Ordinal);
+                if (bodyClosing == -1)
+                {
+                    return content;
+                }
+
+                // Insert script before closing body tag
+                content = content.Insert(bodyClosing, scriptElement);
+
+                return content;
             }
-
-            var pluginName = "Assign Theme Song";
-            var pluginVersion = Plugin.Instance?.Version.ToString() ?? "unknown";
-            var scriptUrl = "../AssignThemeSong/plugin";
-            var scriptTag = $"<script plugin=\"{pluginName}\" version=\"{pluginVersion}\" src=\"{scriptUrl}\" defer></script>";
-
-            // Remove any existing script tag
-            var regex = new Regex($"<script[^>]*plugin=[\"']{Regex.Escape(pluginName)}[\"'][^>]*>\\s*</script>\\n?");
-            var updatedContent = regex.Replace(content.Contents, string.Empty);
-
-            // Inject the new script tag before </body>
-            if (updatedContent.Contains("</body>"))
+            catch
             {
-                return updatedContent.Replace("</body>", $"{scriptTag}\n</body>");
+                // If transformation fails, return original content
+                return payload?.Contents ?? string.Empty;
             }
-
-            return updatedContent;
         }
     }
 }

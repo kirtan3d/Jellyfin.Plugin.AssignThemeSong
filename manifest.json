@@ -10,8 +10,8 @@
     "versions": [
       {
         "version": "0.0.9.1",
-        "checksum": "7A503E81783371BB04A6C42839F97E21",
-        "changelog": "Fixed assembly version mismatch - Corrected DLL version from 0.0.8.0 to 0.0.9.0. Enhanced retry mechanism with 6 attempts × 3-second delays for better plugin loading order handling.",
+        "checksum": "0ECCDF8DAA7AD74E0F269E91263320B2",
+        "changelog": "Fixed assembly version mismatch - Corrected DLL version from 0.0.8.0 to 0.0.9.0. Enhanced retry mechanism with 6 attempts × 3-second delays for better plugin loading order handling. Improved File Transformation plugin integration patterns.",
         "targetAbi": "10.10.0.0",
         "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.9.1/AssignThemeSong_0.0.9.1.zip",
         "timestamp": "2025-11-10T20:47:00Z"
