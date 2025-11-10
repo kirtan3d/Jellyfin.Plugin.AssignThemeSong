@@ -9,12 +9,12 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
-        "version": "0.0.7.0",
-        "checksum": "CCDA42EEF2DB0D6D3002B4DF5DC0E519",
-        "changelog": "Fixed File Transformation registration timing - Moved registration from Plugin constructor to StartupTask to avoid NullReferenceException. Now registers after File Transformation plugin is fully initialized.",
+        "version": "0.0.8.0",
+        "checksum": "22006D0DD108DAA07A3E70D37C44E63C",
+        "changelog": "Fixed plugin loading order issue - Added retry mechanism to handle alphabetical loading order where Assign Theme Song loads before File Transformation plugin. Now retries registration up to 5 times with 2-second delays.",
         "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.7.0/AssignThemeSong_0.0.7.0.zip",
-        "timestamp": "2025-11-10T20:30:00Z"
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.8.0/AssignThemeSong_0.0.8.0.zip",
+        "timestamp": "2025-11-10T20:47:00Z"
       }
     ]
   }

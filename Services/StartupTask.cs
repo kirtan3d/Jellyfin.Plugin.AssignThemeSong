@@ -75,58 +75,99 @@ namespace Jellyfin.Plugin.AssignThemeSong.Services
     {
         _logger.LogInformation("Assign Theme Song: Starting script injection registration");
 
-        // Get the File Transformation plugin assembly
-        Assembly? fileTransformationAssembly = AssemblyLoadContext.All
-            .SelectMany(x => x.Assemblies)
-            .FirstOrDefault(x => x.FullName?.Contains(".FileTransformation") ?? false);
+        // Wait and retry mechanism to handle plugin loading order
+        int maxRetries = 6;
+        int retryDelayMs = 3000; // 3 seconds between retries
 
-        if (fileTransformationAssembly == null)
+        for (int attempt = 1; attempt <= maxRetries; attempt++)
         {
-            _logger.LogWarning("File Transformation plugin not found. Please install it from: https://github.com/IAmParadox27/jellyfin-plugin-file-transformation");
-            return;
-        }
-
-        // Get the PluginInterface type
-        Type? pluginInterfaceType = fileTransformationAssembly.GetType("Jellyfin.Plugin.FileTransformation.PluginInterface");
-        if (pluginInterfaceType == null)
-        {
-            _logger.LogWarning("Could not find PluginInterface in FileTransformation assembly");
-            return;
-        }
-
-        try
-        {
-            var thisAssembly = GetType().Assembly;
-            var pluginId = "6a7b8c9d-0e1f-2345-6789-abcdef012345";
-            
-            // Create payload using JObject with correct property names
-            var payload = new JObject
+            try
             {
-                ["id"] = Guid.NewGuid().ToString(), // Use a unique ID for this transformation
-                ["fileNamePattern"] = "index.html",
-                ["callbackAssembly"] = thisAssembly.FullName,
-                ["callbackClass"] = typeof(TransformationPatches).FullName,
-                ["callbackMethod"] = "IndexHtml"
-            };
+                _logger.LogInformation($"Attempt {attempt}/{maxRetries} to register with File Transformation plugin");
 
-            _logger.LogInformation($"Registering transformation with payload: {payload}");
+                // Get the File Transformation plugin assembly
+                Assembly? fileTransformationAssembly = AssemblyLoadContext.All
+                    .SelectMany(x => x.Assemblies)
+                    .FirstOrDefault(x => x.FullName?.Contains(".FileTransformation") ?? false);
 
-            // Register the transformation
-            var registerMethod = pluginInterfaceType.GetMethod("RegisterTransformation");
-            if (registerMethod != null)
-            {
-                registerMethod.Invoke(null, new object?[] { payload });
-                _logger.LogInformation("Assign Theme Song: Successfully registered script injection with File Transformation Plugin");
+                if (fileTransformationAssembly == null)
+                {
+                    _logger.LogWarning($"File Transformation plugin not found on attempt {attempt}. Will retry in {retryDelayMs}ms");
+                    if (attempt < maxRetries)
+                    {
+                        Thread.Sleep(retryDelayMs);
+                        continue;
+                    }
+                    else
+                    {
+                        _logger.LogWarning("File Transformation plugin not found after all retries. Please install it from: https://github.com/IAmParadox27/jellyfin-plugin-file-transformation");
+                        return;
+                    }
+                }
+
+                // Get the PluginInterface type
+                Type? pluginInterfaceType = fileTransformationAssembly.GetType("Jellyfin.Plugin.FileTransformation.PluginInterface");
+                if (pluginInterfaceType == null)
+                {
+                    _logger.LogWarning($"Could not find PluginInterface in FileTransformation assembly on attempt {attempt}");
+                    if (attempt < maxRetries)
+                    {
+                        Thread.Sleep(retryDelayMs);
+                        continue;
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Could not find PluginInterface after all retries");
+                        return;
+                    }
+                }
+
+                var thisAssembly = GetType().Assembly;
+                
+                // Create payload using JObject with correct property names
+                var payload = new JObject
+                {
+                    ["id"] = "6a7b8c9d-0e1f-2345-6789-abcdef012345", // Use our plugin GUID as ID
+                    ["fileNamePattern"] = "index.html",
+                    ["callbackAssembly"] = thisAssembly.FullName,
+                    ["callbackClass"] = typeof(TransformationPatches).FullName,
+                    ["callbackMethod"] = "IndexHtml"
+                };
+
+                _logger.LogInformation($"Registering transformation with payload: {payload}");
+
+                // Register the transformation
+                var registerMethod = pluginInterfaceType.GetMethod("RegisterTransformation");
+                if (registerMethod != null)
+                {
+                    registerMethod.Invoke(null, new object?[] { payload });
+                    _logger.LogInformation("Assign Theme Song: Successfully registered script injection with File Transformation Plugin");
+                    return; // Success, exit the retry loop
+                }
+                else
+                {
+                    _logger.LogWarning("Could not find RegisterTransformation method");
+                    if (attempt < maxRetries)
+                    {
+                        Thread.Sleep(retryDelayMs);
+                        continue;
+                    }
+                }
             }
-            else
+            catch (Exception ex)
             {
-                _logger.LogWarning("Could not find RegisterTransformation method");
+                _logger.LogWarning(ex, $"Error registering transformation on attempt {attempt}");
+                if (attempt < maxRetries)
+                {
+                    Thread.Sleep(retryDelayMs);
+                    continue;
+                }
+                else
+                {
+                    _logger.LogError(ex, "Error registering transformation with File Transformation plugin after all retries");
+                    throw;
+                }
             }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error registering transformation with File Transformation plugin");
-            throw;
         }
     }
 
