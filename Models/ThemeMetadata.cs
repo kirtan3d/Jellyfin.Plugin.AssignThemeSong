@@ -1,7 +1,7 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace Jellyfin.Plugin.AssignThemeSong.Models
+namespace Jellyfin.Plugin.xThemeSong.Models
 {
     public class ThemeMetadata
     {

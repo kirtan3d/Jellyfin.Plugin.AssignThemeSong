@@ -11,10 +11,10 @@ using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Model.Tasks;
 using Microsoft.Extensions.Logging;
-using Jellyfin.Plugin.AssignThemeSong.Models;
-using Jellyfin.Plugin.AssignThemeSong.Services;
+using Jellyfin.Plugin.xThemeSong.Models;
+using Jellyfin.Plugin.xThemeSong.Services;
 
-namespace Jellyfin.Plugin.AssignThemeSong
+namespace Jellyfin.Plugin.xThemeSong
 {
     public class AssignThemeSongTask : IScheduledTask
     {

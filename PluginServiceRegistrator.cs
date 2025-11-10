@@ -1,8 +1,9 @@
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Plugins;
 using Microsoft.Extensions.DependencyInjection;
+using Jellyfin.Plugin.xThemeSong.Services;
 
-namespace Jellyfin.Plugin.AssignThemeSong
+namespace Jellyfin.Plugin.xThemeSong
 {
     /// <summary>
     /// Register Assign Theme Song services.
@@ -12,8 +13,8 @@ namespace Jellyfin.Plugin.AssignThemeSong
         /// <inheritdoc />
         public void RegisterServices(IServiceCollection serviceCollection, IServerApplicationHost applicationHost)
         {
-            serviceCollection.AddSingleton<Services.ThemeDownloadService>();
-            serviceCollection.AddSingleton<Services.StartupTask>();
+            serviceCollection.AddSingleton<ThemeDownloadService>();
+            serviceCollection.AddSingleton<StartupTask>();
         }
     }
 }

@@ -9,12 +9,12 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
-        "version": "0.0.9.3",
-        "checksum": "D5A4D3C6DC1DA0D52F9BE6551C8DFA3D",
-        "changelog": "Renamed plugin to 'xThemeSong' to fix alphabetical loading order issue with File Transformation plugin. Updated GUID to 97db7543-d64d-45e1-b2e7-62729b56371f. Maintained hybrid registration approach for maximum reliability.",
+        "version": "0.0.10.0",
+        "checksum": "BFA3DE1F35DCC29CBFC19EE3EEC904D0",
+        "changelog": "Fixed File Transformation plugin registration by implementing proper service pattern. Updated to use HTTP client for registration with retry logic. Improved reliability and compatibility with File Transformation plugin 2.4.2.0.",
         "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.9.3/xThemeSong_0.0.9.3.zip",
-        "timestamp": "2025-11-10T22:30:00Z"
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.0/xThemeSong_0.0.10.0.zip",
+        "timestamp": "2025-11-10T22:47:00Z"
       }
     ]
   }

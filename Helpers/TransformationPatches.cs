@@ -1,8 +1,8 @@
 using System;
 using System.Text.RegularExpressions;
-using Jellyfin.Plugin.AssignThemeSong.Models;
+using Jellyfin.Plugin.xThemeSong.Models;
 
-namespace Jellyfin.Plugin.AssignThemeSong.Helpers
+namespace Jellyfin.Plugin.xThemeSong.Helpers
 {
     /// <summary>
     /// Transformation patches for File Transformation Plugin.

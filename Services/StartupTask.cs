@@ -5,12 +5,12 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.AssignThemeSong.Helpers;
+using Jellyfin.Plugin.xThemeSong.Helpers;
 using MediaBrowser.Model.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
-namespace Jellyfin.Plugin.AssignThemeSong.Services
+namespace Jellyfin.Plugin.xThemeSong.Services
 {
     /// <summary>
     /// Startup task for Assign Theme Song plugin.

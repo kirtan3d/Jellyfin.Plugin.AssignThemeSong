@@ -1,4 +1,4 @@
-namespace Jellyfin.Plugin.AssignThemeSong.Models
+namespace Jellyfin.Plugin.xThemeSong.Models
 {
     /// <summary>
     /// Payload for File Transformation Plugin patches.

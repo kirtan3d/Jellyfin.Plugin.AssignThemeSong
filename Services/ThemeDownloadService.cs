@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using YoutubeExplode;
 using YoutubeExplode.Videos.Streams;
-using Jellyfin.Plugin.AssignThemeSong.Models;
+using Jellyfin.Plugin.xThemeSong.Models;
 using System.Text.Json;
 
-namespace Jellyfin.Plugin.AssignThemeSong.Services
+namespace Jellyfin.Plugin.xThemeSong.Services
 {
     public class ThemeDownloadService
     {

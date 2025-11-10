@@ -2,15 +2,15 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.AssignThemeSong.Models;
-using Jellyfin.Plugin.AssignThemeSong.Services;
+using Jellyfin.Plugin.xThemeSong.Models;
+using Jellyfin.Plugin.xThemeSong.Services;
 using MediaBrowser.Common;
 using MediaBrowser.Controller.Library;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.AssignThemeSong.Api
+namespace Jellyfin.Plugin.xThemeSong.Api
 {
     [ApiController]
     [Route("Items/{itemId}/ThemeSong")]
