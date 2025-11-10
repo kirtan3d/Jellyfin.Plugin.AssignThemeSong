@@ -9,12 +9,12 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
-        "version": "0.0.6.0",
-        "checksum": "0005F4B0C6BAD6883F89188571A0FCCD",
-        "changelog": "Fixed plugin constructor registration - Added proper File Transformation registration directly in Plugin.cs constructor following HoverTrailer pattern. Now correctly injects Assign Theme Song button on media pages.",
+        "version": "0.0.7.0",
+        "checksum": "CCDA42EEF2DB0D6D3002B4DF5DC0E519",
+        "changelog": "Fixed File Transformation registration timing - Moved registration from Plugin constructor to StartupTask to avoid NullReferenceException. Now registers after File Transformation plugin is fully initialized.",
         "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.6.0/Jellyfin.Plugin.AssignThemeSong_0.0.6.0.zip",
-        "timestamp": "2025-11-09T15:53:00Z"
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.7.0/AssignThemeSong_0.0.7.0.zip",
+        "timestamp": "2025-11-10T20:30:00Z"
       }
     ]
   }
