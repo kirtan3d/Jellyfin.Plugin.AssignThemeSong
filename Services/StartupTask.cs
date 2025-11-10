@@ -13,171 +13,85 @@ using Newtonsoft.Json.Linq;
 namespace Jellyfin.Plugin.xThemeSong.Services
 {
     /// <summary>
-    /// Startup task for Assign Theme Song plugin.
+    /// Startup service for xThemeSong plugin.
     /// </summary>
-    public class StartupTask : IScheduledTask
+    public class StartupService : IScheduledTask
     {
-        private readonly ILogger<StartupTask> _logger;
+        private readonly ILogger<StartupService> _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StartupTask"/> class.
+        /// Initializes a new instance of the <see cref="StartupService"/> class.
         /// </summary>
         /// <param name="logger">Logger instance.</param>
-        public StartupTask(ILogger<StartupTask> logger)
+        public StartupService(ILogger<StartupService> logger)
         {
             _logger = logger;
-            _logger.LogInformation("[AssignThemeSong] StartupTask constructor called");
         }
 
         /// <inheritdoc />
-        public string Name => "Assign Theme Song Startup";
+        public string Name => "xThemeSong Startup";
 
         /// <inheritdoc />
-        public string Description => "Registers script injection with File Transformation plugin (fallback)";
+        public string Key => "Jellyfin.Plugin.xThemeSong.Startup";
 
         /// <inheritdoc />
-        public string Category => "Assign Theme Song";
+        public string Description => "Startup Service for xThemeSong";
 
         /// <inheritdoc />
-        public string Key => "AssignThemeSongStartup";
+        public string Category => "Startup Services";
 
         /// <inheritdoc />
-        public bool IsHidden => false;
-
-        /// <inheritdoc />
-        public bool IsEnabled => true;
-
-        /// <inheritdoc />
-        public bool IsLogged => true;
-
-        /// <inheritdoc />
-        public async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
+        public Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[AssignThemeSong] StartupTask ExecuteAsync called");
-            
-            // Check if registration was already successful in Plugin constructor
-            if (Plugin.RegistrationSuccessful)
+            _logger.LogInformation("xThemeSong Startup Service running");
+
+            // Get the File Transformation plugin assembly
+            Assembly? fileTransformationAssembly = 
+                AssemblyLoadContext.All.SelectMany(x => x.Assemblies).FirstOrDefault(x => 
+                    x.FullName?.Contains(".FileTransformation") ?? false);
+
+            if (fileTransformationAssembly == null)
             {
-                _logger.LogInformation("[AssignThemeSong] Registration already successful in Plugin constructor, skipping StartupTask registration");
+                _logger.LogInformation("File Transformation plugin not found. Web UI features will not work. Please install File Transformation plugin: https://github.com/IAmParadox27/jellyfin-plugin-file-transformation");
                 progress?.Report(100);
-                return;
+                return Task.CompletedTask;
             }
 
-            _logger.LogInformation("[AssignThemeSong] Registration not successful in constructor, attempting fallback registration in StartupTask");
-
-            try
+            // Get the PluginInterface type
+            Type? pluginInterfaceType = fileTransformationAssembly.GetType("Jellyfin.Plugin.FileTransformation.PluginInterface");
+            if (pluginInterfaceType == null)
             {
-                await Task.Run(async () => await RegisterWithFileTransformationAsync(cancellationToken), cancellationToken);
+                _logger.LogInformation("Could not find PluginInterface in FileTransformation assembly. Web UI features will not work.");
                 progress?.Report(100);
+                return Task.CompletedTask;
             }
-            catch (Exception ex)
+
+            // Create payload using JObject with correct property names
+            var payload = new JObject
             {
-                _logger.LogWarning(ex, "[AssignThemeSong] Could not register with File Transformation plugin in StartupTask. Web UI features may not work. Please install File Transformation plugin: https://github.com/IAmParadox27/jellyfin-plugin-file-transformation");
-                progress?.Report(100);
-            }
-        }
+                ["id"] = "97db7543-d64d-45e1-b2e7-62729b56371f", // Use our plugin GUID as ID
+                ["fileNamePattern"] = "index.html",
+                ["callbackAssembly"] = GetType().Assembly.FullName,
+                ["callbackClass"] = typeof(TransformationPatches).FullName,
+                ["callbackMethod"] = nameof(TransformationPatches.IndexHtml)
+            };
 
-        private async Task RegisterWithFileTransformationAsync(CancellationToken cancellationToken)
-        {
-            _logger.LogInformation("[AssignThemeSong] Starting fallback script injection registration in StartupTask");
+            _logger.LogInformation("Registering xThemeSong transformation with File Transformation plugin");
 
-            // More aggressive retry mechanism for fallback
-            int maxRetries = 15;
-            int baseRetryDelayMs = 2000; // 2 seconds base delay
-
-            for (int attempt = 1; attempt <= maxRetries; attempt++)
+            // Register the transformation
+            var registerMethod = pluginInterfaceType.GetMethod("RegisterTransformation");
+            if (registerMethod != null)
             {
-                if (cancellationToken.IsCancellationRequested)
-                    break;
-
-                try
-                {
-                    _logger.LogInformation($"[AssignThemeSong] Fallback attempt {attempt}/{maxRetries} to register with File Transformation plugin");
-
-                    // Get the File Transformation plugin assembly
-                    Assembly? fileTransformationAssembly = AssemblyLoadContext.All
-                        .SelectMany(x => x.Assemblies)
-                        .FirstOrDefault(x => x.FullName?.Contains(".FileTransformation") ?? false);
-
-                    if (fileTransformationAssembly == null)
-                    {
-                        _logger.LogWarning($"[AssignThemeSong] File Transformation plugin not found on fallback attempt {attempt}. Will retry in {baseRetryDelayMs * attempt}ms");
-                        if (attempt < maxRetries)
-                        {
-                            await Task.Delay(baseRetryDelayMs * attempt, cancellationToken);
-                            continue;
-                        }
-                        else
-                        {
-                            _logger.LogWarning("[AssignThemeSong] File Transformation plugin not found after all fallback retries. Please install it from: https://github.com/IAmParadox27/jellyfin-plugin-file-transformation");
-                            return;
-                        }
-                    }
-
-                    // Get the PluginInterface type
-                    Type? pluginInterfaceType = fileTransformationAssembly.GetType("Jellyfin.Plugin.FileTransformation.PluginInterface");
-                    if (pluginInterfaceType == null)
-                    {
-                        _logger.LogWarning($"[AssignThemeSong] Could not find PluginInterface in FileTransformation assembly on fallback attempt {attempt}");
-                        if (attempt < maxRetries)
-                        {
-                            await Task.Delay(baseRetryDelayMs * attempt, cancellationToken);
-                            continue;
-                        }
-                        else
-                        {
-                            _logger.LogWarning("[AssignThemeSong] Could not find PluginInterface after all fallback retries");
-                            return;
-                        }
-                    }
-
-                    var thisAssembly = GetType().Assembly;
-                    
-                    // Create payload using JObject with correct property names
-                    var payload = new JObject
-                    {
-                        ["id"] = "6a7b8c9d-0e1f-2345-6789-abcdef012345", // Use our plugin GUID as ID
-                        ["fileNamePattern"] = "index.html",
-                        ["callbackAssembly"] = thisAssembly.FullName,
-                        ["callbackClass"] = typeof(TransformationPatches).FullName,
-                        ["callbackMethod"] = "IndexHtml"
-                    };
-
-                    _logger.LogInformation($"[AssignThemeSong] Registering transformation with payload: {payload}");
-
-                    // Register the transformation
-                    var registerMethod = pluginInterfaceType.GetMethod("RegisterTransformation");
-                    if (registerMethod != null)
-                    {
-                        registerMethod.Invoke(null, new object?[] { payload });
-                        _logger.LogInformation("[AssignThemeSong] SUCCESS: Successfully registered script injection with File Transformation Plugin in StartupTask fallback");
-                        return; // Success, exit the retry loop
-                    }
-                    else
-                    {
-                        _logger.LogWarning("[AssignThemeSong] Could not find RegisterTransformation method in fallback");
-                        if (attempt < maxRetries)
-                        {
-                            await Task.Delay(baseRetryDelayMs * attempt, cancellationToken);
-                            continue;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, $"[AssignThemeSong] Error registering transformation on fallback attempt {attempt}");
-                    if (attempt < maxRetries)
-                    {
-                        await Task.Delay(baseRetryDelayMs * attempt, cancellationToken);
-                        continue;
-                    }
-                    else
-                    {
-                        _logger.LogError(ex, "[AssignThemeSong] Error registering transformation with File Transformation plugin after all fallback retries");
-                        throw;
-                    }
-                }
+                registerMethod.Invoke(null, new object?[] { payload });
+                _logger.LogInformation("Successfully registered xThemeSong transformation with File Transformation Plugin");
             }
+            else
+            {
+                _logger.LogInformation("Could not find RegisterTransformation method in File Transformation plugin");
+            }
+
+            progress?.Report(100);
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc />

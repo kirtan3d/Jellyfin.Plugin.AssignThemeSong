@@ -14,7 +14,7 @@ namespace Jellyfin.Plugin.xThemeSong
         public void RegisterServices(IServiceCollection serviceCollection, IServerApplicationHost applicationHost)
         {
             serviceCollection.AddSingleton<ThemeDownloadService>();
-            serviceCollection.AddSingleton<StartupTask>();
+            serviceCollection.AddSingleton<StartupService>();
         }
     }
 }
