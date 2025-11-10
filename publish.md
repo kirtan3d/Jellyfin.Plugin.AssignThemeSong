@@ -8,7 +8,7 @@ This release addresses the critical issue where the "Assign Theme Song" plugin w
 
 ### Core Fix: Retry Mechanism for Plugin Registration
 - **File**: `Services/StartupTask.cs`
-- **Solution**: Implemented a retry mechanism that attempts registration up to 5 times with 2-second delays between attempts
+- **Solution**: Implemented a retry mechanism that attempts registration up to 6 times with 3-second delays between attempts
 - **Benefit**: Ensures our plugin waits for File Transformation to be fully loaded before attempting registration
 
 ### Key Improvements
@@ -21,7 +21,7 @@ This release addresses the critical issue where the "Assign Theme Song" plugin w
 The issue was identified by analyzing Jellyfin logs showing:
 - Plugins load alphabetically: Artwork → Assign Theme Song → Chapter Creator → ... → File Transformation
 - Our plugin was trying to register with File Transformation before it was available
-- Now uses retry mechanism: 5 attempts × 2-second delays = 10 seconds total wait time
+- Now uses retry mechanism: 6 attempts × 3-second delays = 18 seconds total wait time
 
 ## Version Information
 - **Version**: 0.0.8.0
