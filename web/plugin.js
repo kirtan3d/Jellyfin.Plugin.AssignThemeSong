@@ -1,17 +1,17 @@
 (function() {
     'use strict';
     
-    console.log('Assign Theme Song: Plugin script loaded');
+    console.log('xThemeSong: Plugin script loaded');
     
-    // Load assignThemeSong module
+    // Load xThemeSong module
     const script = document.createElement('script');
-    script.src = '/AssignThemeSong/assignThemeSong';
+    script.src = '/xThemeSong/assignThemeSong';
     script.onload = function() {
-        console.log('Assign Theme Song: Module loaded, initializing...');
+        console.log('xThemeSong: Module loaded, initializing...');
         initializePlugin();
     };
     script.onerror = function() {
-        console.error('Assign Theme Song: Failed to load assignThemeSong module');
+        console.error('xThemeSong: Failed to load assignThemeSong module');
     };
     document.head.appendChild(script);
     
@@ -26,7 +26,7 @@
         }
         
         waitForJellyfin(function() {
-            console.log('Assign Theme Song: Jellyfin API ready');
+            console.log('xThemeSong: Jellyfin API ready');
             setupPageObserver();
         });
     }
@@ -76,12 +76,12 @@
                 addThemeSongButton(detailButtons, itemId);
             }
         }).catch(function(error) {
-            console.error('Assign Theme Song: Error getting item', error);
+            console.error('xThemeSong: Error getting item', error);
         });
     }
     
     function addThemeSongButton(container, itemId) {
-        console.log('Assign Theme Song: Adding button for item', itemId);
+        console.log('xThemeSong: Adding button for item', itemId);
         
         // Create the button
         const button = document.createElement('button');
@@ -104,7 +104,7 @@
             if (window.AssignThemeSongDialog && window.AssignThemeSongDialog.show) {
                 window.AssignThemeSongDialog.show(itemId);
             } else {
-                console.error('Assign Theme Song: Dialog not available');
+                console.error('xThemeSong: Dialog not available');
             }
         });
         
@@ -116,6 +116,6 @@
             container.appendChild(button);
         }
         
-        console.log('Assign Theme Song: Button added successfully');
+        console.log('xThemeSong: Button added successfully');
     }
 })();

@@ -2,11 +2,11 @@ define([], function () {
     'use strict';
 
     return {
-        name: 'Assign Theme Song',
+        name: 'xThemeSong',
         type: 'menuitem',
-        id: 'assignThemeSong',
+        id: 'xThemeSong',
         icon: 'music_note',
-        displayName: 'Assign Theme Song',
-        pluginId: '6A7B8C9D-0E1F-2345-6789-ABCDEF012345'
+        displayName: 'xThemeSong',
+        pluginId: '97DB7543-D64D-45E1-B2E7-62729B56371F'
     };
 });

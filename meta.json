@@ -1,6 +1,6 @@
 {
-  "name": "Assign Theme Song",
-  "guid": "6a7b8c9d-0e1f-2345-6789-abcdef012345",
+  "name": "xThemeSong",
+  "guid": "97db7543-d64d-45e1-b2e7-62729b56371f",
   "version": "0.0.1.0",
   "targetAbi": "10.10.0.0",
   "overview": "Download theme songs from YouTube or upload custom MP3s for your media library",
