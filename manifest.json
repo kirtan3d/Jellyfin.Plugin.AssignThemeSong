@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.0.10.10",
+        "checksum": "5E5A190ED288ABF7CAFB3598D85AA7E5",
+        "changelog": "Fixed infinite retry loop - changed from window.itemHelper to MutationObserver pattern. Now properly detects action sheet menus (.actionSheet) and dynamically injects 'Assign Theme Song' menu item when three-dot menu opens for movies and TV shows.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.10/xThemeSong_0.0.10.10.zip",
+        "timestamp": "2025-11-15T16:24:00Z"
+      },
+      {
         "version": "0.0.10.9",
         "checksum": "4C65FE17243090A199DCF5C52DB93E01",
         "changelog": "Fixed infinite retry loop - changed from window.itemHelper to MutationObserver pattern. Now properly detects action sheet menus (.actionSheet) and dynamically injects 'Assign Theme Song' menu item when three-dot menu opens for movies and TV shows.",
