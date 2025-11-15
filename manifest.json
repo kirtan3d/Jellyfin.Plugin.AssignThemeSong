@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.0.10.2",
+        "checksum": "9AFB67A2A8212BD4B08200C4882BEE36",
+        "changelog": "CRITICAL FIX: Register File Transformation in Plugin constructor (like HoverTrailer) instead of non-executing StartupService. Plugin now successfully loads and registers on startup. This fixes Web UI integration that was broken in v0.0.10.1.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.2/xThemeSong_0.0.10.2.zip",
+        "timestamp": "2025-11-15T11:49:00Z"
+      },
+      {
         "version": "0.0.10.1",
         "checksum": "96C7166F16C76B5543986F512B86F01B",
         "changelog": "Simplified Plugin.cs following best practices from reference plugins. Removed complex HTTP registration logic in favor of clean reflection-based approach in StartupService. Updated plugin display name to xThemeSong.",
