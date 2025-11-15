@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.0.10.7",
+        "checksum": "AB6C2BCFCC246ED11FC5E44D3E3B4ADB",
+        "changelog": "CRITICAL FIX: Fixed script URL in transformation callback - changed from /xThemeSong/plugin to /xThemeSong/script to match ScriptController route. This should enable Web UI functionality.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.7/xThemeSong_0.0.10.7.zip",
+        "timestamp": "2025-11-15T13:01:00Z"
+      },
+      {
         "version": "0.0.10.6",
         "checksum": "6D653B6D68518E492BCA4B01667726D3",
         "changelog": "CRITICAL FIX: Plugin constructor now includes IServerConfigurationManager parameter matching HoverTrailer pattern. Plugin should now load successfully with proper dependency injection. Added comprehensive logging for debugging plugin initialization.",
