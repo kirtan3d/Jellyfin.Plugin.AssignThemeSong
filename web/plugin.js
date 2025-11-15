@@ -18,11 +18,19 @@
     function initializePlugin() {
         console.log('xThemeSong: Initializing menu observer...');
         
-        // Observe for action sheet menus appearing
+        // Check for existing action sheets first
+        const existingActionSheets = document.querySelectorAll('.actionSheet');
+        console.log('xThemeSong: Found ' + existingActionSheets.length + ' existing action sheets');
+        existingActionSheets.forEach(function(actionSheet) {
+            onActionSheetOpened(actionSheet);
+        });
+        
+        // Observe for new action sheet menus appearing
         const observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 mutation.addedNodes.forEach(function(node) {
                     if (node.nodeType === 1 && node.classList && node.classList.contains('actionSheet')) {
+                        console.log('xThemeSong: New action sheet detected via MutationObserver');
                         onActionSheetOpened(node);
                     }
                 });

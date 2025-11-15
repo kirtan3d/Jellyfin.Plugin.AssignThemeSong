@@ -9,52 +9,20 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.0.10.16",
+        "checksum": "7D8620115228F3833BEB81EAC767FFA9",
+        "changelog": "Enhanced action sheet detection - now checks for existing action sheets on page load AND monitors for new ones. Fixed script route mismatch. Includes web folder for file system fallback. All naming consistent using xThemeSong.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.16/xThemeSong_0.0.10.16.zip",
+        "timestamp": "2025-11-15T18:06:00Z"
+      },
+      {
         "version": "0.0.10.15",
         "checksum": "A1E6CEBF9011B0D0E8D88D6D3657AE53",
         "changelog": "Fixed critical route mismatch: Plugin.cs now correctly injects script from /xThemeSong/plugin. Includes web folder for file system fallback. All naming is now consistent using xThemeSong.",
         "targetAbi": "10.10.0.0",
         "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.15/xThemeSong_0.0.10.15.zip",
         "timestamp": "2025-11-15T17:52:00Z"
-      },
-      {
-        "version": "0.0.10.13",
-        "checksum": "DDC24CF02F92669034F5DAFC804106FD",
-        "changelog": "Fixed missing web folder in published zip - web assets are now properly included for file system fallback. Plugin should now work correctly with both embedded resources and file system access.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.13/xThemeSong_0.0.10.13.zip",
-        "timestamp": "2025-11-15T17:48:00Z"
-      },
-      {
-        "version": "0.0.10.12",
-        "checksum": "05FEF1BB068FD459B93101B992731338",
-        "changelog": "Fixed script endpoint 406 Not Acceptable error - web assets are now properly embedded as resources. Scripts should now load correctly without MIME type errors.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.12/xThemeSong_0.0.10.12.zip",
-        "timestamp": "2025-11-15T17:44:00Z"
-      },
-      {
-        "version": "0.0.10.11",
-        "checksum": "5607F50EF484A046895066D0F0FF73C9",
-        "changelog": "Fixed installation issues - now includes all required dependencies (YoutubeExplode.dll, etc.) for proper plugin functionality. Previously missing dependencies caused installation failures.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.11/xThemeSong_0.0.10.11.zip",
-        "timestamp": "2025-11-15T17:05:00Z"
-      },
-      {
-        "version": "0.0.10.10",
-        "checksum": "5E5A190ED288ABF7CAFB3598D85AA7E5",
-        "changelog": "Fixed infinite retry loop - changed from window.itemHelper to MutationObserver pattern. Now properly detects action sheet menus (.actionSheet) and dynamically injects 'Assign Theme Song' menu item when three-dot menu opens for movies and TV shows.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.10/xThemeSong_0.0.10.10.zip",
-        "timestamp": "2025-11-15T16:24:00Z"
-      },
-      {
-        "version": "0.0.10.9",
-        "checksum": "4C65FE17243090A199DCF5C52DB93E01",
-        "changelog": "Fixed infinite retry loop - changed from window.itemHelper to MutationObserver pattern. Now properly detects action sheet menus (.actionSheet) and dynamically injects 'Assign Theme Song' menu item when three-dot menu opens for movies and TV shows.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.9/xThemeSong_0.0.10.9.zip",
-        "timestamp": "2025-11-15T14:56:00Z"
       }
     ]
   }
