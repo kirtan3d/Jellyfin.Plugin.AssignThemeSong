@@ -132,7 +132,7 @@ dotnet publish -c Release -o publish
 
 ## 📝 Development Status
 
-**Current Version**: v0.0.10.6
+**Current Version**: v0.0.10.7
 
 This plugin is now stable and fully functional! Features:
 - ✅ Plugin loads successfully in Jellyfin
@@ -149,11 +149,12 @@ This plugin is now stable and fully functional! Features:
 - ✅ **Fallback Mechanism** - Direct file injection if File Transformation not available
 - ✅ **Base Path Handling** - Proper URL generation for script injection
 
-### Recent Changes (v0.0.10.6)
-- **CRITICAL FIX**: Plugin constructor now includes IServerConfigurationManager parameter matching HoverTrailer pattern
-- Plugin should now load successfully with proper dependency injection
-- Added comprehensive logging for debugging plugin initialization
-- Fixed dependency injection issue that prevented plugin from loading
+### Recent Changes (v0.0.10.7)
+- **CRITICAL FIX**: Fixed ScriptController namespace from "Jellyfin.Plugin.AssignThemeSong" to "Jellyfin.Plugin.xThemeSong"
+- **CRITICAL FIX**: Fixed ScriptController route endpoint from "assignThemeSong" to "xThemeSong" to match plugin.js
+- Added comprehensive logging to TransformIndexHtmlCallback method to track transformation process
+- Script injection now properly configured at `/xThemeSong/script`
+- These fixes should enable the Web UI menu item to appear in the three-dot menu
 
 ## 🤝 Contributing
 
