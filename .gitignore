@@ -8,6 +8,7 @@
 *.sln.docstates
 *.psd
 plan.md
+.clinerules/
 
 # Build results
 [Dd]ebug/
