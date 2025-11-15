@@ -163,7 +163,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
             string scriptReplace = "<script plugin=\"xThemeSong\".*?></script>";
             string scriptElement = string.Format(
                 CultureInfo.InvariantCulture,
-                "<script plugin=\"xThemeSong\" version=\"{1}\" src=\"{0}/xThemeSong/script\" defer></script>",
+                "<script plugin=\"xThemeSong\" version=\"{1}\" src=\"{0}/xThemeSong/plugin\" defer></script>",
                 _transformBasePath,
                 _transformVersion);
 
