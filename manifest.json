@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.0.10.8",
+        "checksum": "7367F89E920A1F2159CE252F27D4CBCB",
+        "changelog": "CRITICAL FIX: Changed UI integration from adding button to mainDetailButtons to properly hooking into Jellyfin's three-dot menu system. Menu item 'Assign Theme Song' now appears in the three-dot menu for movies and TV shows as per requirements.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.8/xThemeSong_0.0.10.8.zip",
+        "timestamp": "2025-11-15T14:26:00Z"
+      },
+      {
         "version": "0.0.10.7",
         "checksum": "49005EFD714AC619DF7813DDF2061CFC",
         "changelog": "CRITICAL FIX: Fixed ScriptController namespace and route from 'AssignThemeSong' to 'xThemeSong' to match plugin name. Added comprehensive logging to transformation callback. These fixes resolve script injection issues that prevented the Web UI menu item from appearing.",
