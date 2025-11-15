@@ -34,8 +34,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     public Plugin(
         IApplicationPaths applicationPaths,
         IXmlSerializer xmlSerializer,
-        ILogger<Plugin> logger,
-        IServerConfigurationManager configurationManager)
+        ILogger<Plugin> logger)
         : base(applicationPaths, xmlSerializer)
     {
         Instance = this;
@@ -43,20 +42,13 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
 
         try
         {
-            _logger.LogInformation("xThemeSong: Plugin constructor started");
-            _logger.LogInformation($"xThemeSong v{Version} initializing...");
-
-            // Register with File Transformation plugin
-            TryRegisterFileTransformation(configurationManager);
-
-            _logger.LogInformation("xThemeSong: Plugin constructor completed successfully");
+            _logger.LogInformation("xThemeSong: Plugin constructor started - MINIMAL VERSION");
+            _logger.LogInformation($"xThemeSong v{Version} initialized - NO File Transformation registration yet");
         }
         catch (Exception ex)
         {
-            // Log error but DON'T re-throw - allow plugin to load so config page is accessible
-            _logger.LogError(ex, "x ThemeSong: Error during plugin initialization: {Message}", ex.Message);
-            _logger.LogDebug("xThemeSong: Initialization error details: {Exception}", ex.ToString());
-            // Don't re-throw - allow plugin to load even if initialization fails
+            // Log error but DON'T re-throw
+            _logger?.LogError(ex, "xThemeSong: Error in constructor: {Message}", ex.Message);
         }
     }
 

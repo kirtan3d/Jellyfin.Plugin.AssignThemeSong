@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.0.10.5",
+        "checksum": "A6B1EDC0991AF91AA1E7F508836AE153",
+        "changelog": "DIAGNOSTIC: Minimal constructor test - removed IServerConfigurationManager to test if plugin loads. If this works, the issue was dependency injection failure for IServerConfigurationManager.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.5/xThemeSong_0.0.10.5.zip",
+        "timestamp": "2025-11-15T12:42:00Z"
+      },
+      {
         "version": "0.0.10.4",
         "checksum": "F694893A884C610627B8F87B8ED234AB",
         "changelog": "CRITICAL FIX: Set Instance and logger BEFORE try block, never re-throw exceptions. Following exact HoverTrailer pattern - plugin now loads successfully and registers with File Transformation.",
@@ -23,30 +31,6 @@
         "targetAbi": "10.10.0.0",
         "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.3/xThemeSong_0.0.10.3.zip",
         "timestamp": "2025-11-15T12:19:00Z"
-      },
-      {
-        "version": "0.0.10.2",
-        "checksum": "9AFB67A2A8212BD4B08200C4882BEE36",
-        "changelog": "CRITICAL FIX: Register File Transformation in Plugin constructor (like HoverTrailer) instead of non-executing StartupService. Plugin now successfully loads and registers on startup. This fixes Web UI integration that was broken in v0.0.10.1.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.2/xThemeSong_0.0.10.2.zip",
-        "timestamp": "2025-11-15T11:49:00Z"
-      },
-      {
-        "version": "0.0.10.1",
-        "checksum": "96C7166F16C76B5543986F512B86F01B",
-        "changelog": "Simplified Plugin.cs following best practices from reference plugins. Removed complex HTTP registration logic in favor of clean reflection-based approach in StartupService. Updated plugin display name to xThemeSong.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.1/xThemeSong_0.0.10.1.zip",
-        "timestamp": "2025-11-15T11:34:00Z"
-      },
-      {
-        "version": "0.0.10.0",
-        "checksum": "BFA3DE1F35DCC29CBFC19EE3EEC904D0",
-        "changelog": "Fixed File Transformation plugin registration by implementing proper service pattern. Updated to use HTTP client for registration with retry logic. Improved reliability and compatibility with File Transformation plugin 2.4.2.0.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.0/xThemeSong_0.0.10.0.zip",
-        "timestamp": "2025-11-10T22:47:00Z"
       }
     ]
   }
