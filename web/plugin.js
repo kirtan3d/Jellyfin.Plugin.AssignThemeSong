@@ -38,18 +38,43 @@
         // Observe for new action sheet menus appearing
         const observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
+                // Check for added nodes
                 mutation.addedNodes.forEach(function(node) {
-                    if (node.nodeType === 1 && node.classList && node.classList.contains('actionSheet')) {
-                        console.log('xThemeSong: New action sheet detected via MutationObserver');
-                        onActionSheetOpened(node);
+                    if (node.nodeType === 1) {
+                        // Check if this node has actionSheet class
+                        if (node.classList && node.classList.contains('actionSheet')) {
+                            console.log('xThemeSong: New action sheet detected (direct add)');
+                            onActionSheetOpened(node);
+                        }
+                        // Also check children in case it's a parent container
+                        else if (node.querySelectorAll) {
+                            const actionSheets = node.querySelectorAll('.actionSheet');
+                            if (actionSheets.length > 0) {
+                                console.log('xThemeSong: Found ' + actionSheets.length + ' action sheets in added node');
+                                actionSheets.forEach(function(as) {
+                                    onActionSheetOpened(as);
+                                });
+                            }
+                        }
                     }
                 });
+                
+                // Check for class changes
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    const target = mutation.target;
+                    if (target.classList && target.classList.contains('actionSheet')) {
+                        console.log('xThemeSong: Action sheet class added to element');
+                        onActionSheetOpened(target);
+                    }
+                }
             });
         });
         
         observer.observe(document.body, {
             childList: true,
-            subtree: true
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['class']
         });
         
         console.log('xThemeSong: Menu observer installed');
