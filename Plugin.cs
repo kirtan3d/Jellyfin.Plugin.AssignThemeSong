@@ -34,7 +34,8 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     public Plugin(
         IApplicationPaths applicationPaths,
         IXmlSerializer xmlSerializer,
-        ILogger<Plugin> logger)
+        ILogger<Plugin> logger,
+        IServerConfigurationManager configurationManager)
         : base(applicationPaths, xmlSerializer)
     {
         Instance = this;
@@ -42,12 +43,24 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
 
         try
         {
-            _logger.LogInformation("xThemeSong: Plugin constructor started - MINIMAL VERSION");
-            _logger.LogInformation($"xThemeSong v{Version} initialized - NO File Transformation registration yet");
+            _logger.LogInformation("xThemeSong: Plugin constructor started - WITH File Transformation registration");
+            _logger.LogInformation($"xThemeSong v{Version} initialized");
+
+            // Try File Transformation plugin first, fall back to direct injection
+            if (!TryRegisterFileTransformation(configurationManager))
+            {
+                _logger.LogWarning("xThemeSong: File Transformation plugin not available, Web UI features will not work");
+            }
+            else
+            {
+                _logger.LogInformation("xThemeSong: Successfully registered with File Transformation plugin");
+            }
+
+            _logger.LogInformation("xThemeSong: Plugin initialization completed successfully");
         }
         catch (Exception ex)
         {
-            // Log error but DON'T re-throw
+            // Log error but DON'T re-throw - allow plugin to load even if initialization fails
             _logger?.LogError(ex, "xThemeSong: Error in constructor: {Message}", ex.Message);
         }
     }

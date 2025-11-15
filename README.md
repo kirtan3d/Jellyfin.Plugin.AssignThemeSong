@@ -132,7 +132,7 @@ dotnet publish -c Release -o publish
 
 ## 📝 Development Status
 
-**Current Version**: v0.0.10.0
+**Current Version**: v0.0.10.6
 
 This plugin is now stable and fully functional! Features:
 - ✅ Plugin loads successfully in Jellyfin
@@ -149,8 +149,11 @@ This plugin is now stable and fully functional! Features:
 - ✅ **Fallback Mechanism** - Direct file injection if File Transformation not available
 - ✅ **Base Path Handling** - Proper URL generation for script injection
 
-### Recent Changes (v0.0.10.0)
-- Fixed File Transformation plugin registration by implementing proper service pattern. Updated to use HTTP client for registration with retry logic. Improved reliability and compatibility with File Transformation plugin 2.4.2.0.
+### Recent Changes (v0.0.10.6)
+- **CRITICAL FIX**: Plugin constructor now includes IServerConfigurationManager parameter matching HoverTrailer pattern
+- Plugin should now load successfully with proper dependency injection
+- Added comprehensive logging for debugging plugin initialization
+- Fixed dependency injection issue that prevented plugin from loading
 
 ## 🤝 Contributing
 

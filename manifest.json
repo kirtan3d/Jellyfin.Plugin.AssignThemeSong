@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.0.10.6",
+        "checksum": "6D653B6D68518E492BCA4B01667726D3",
+        "changelog": "CRITICAL FIX: Plugin constructor now includes IServerConfigurationManager parameter matching HoverTrailer pattern. Plugin should now load successfully with proper dependency injection. Added comprehensive logging for debugging plugin initialization.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.6/xThemeSong_0.0.10.6.zip",
+        "timestamp": "2025-11-15T12:59:00Z"
+      },
+      {
         "version": "0.0.10.5",
         "checksum": "A6B1EDC0991AF91AA1E7F508836AE153",
         "changelog": "DIAGNOSTIC: Minimal constructor test - removed IServerConfigurationManager to test if plugin loads. If this works, the issue was dependency injection failure for IServerConfigurationManager.",
@@ -23,14 +31,6 @@
         "targetAbi": "10.10.0.0",
         "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.4/xThemeSong_0.0.10.4.zip",
         "timestamp": "2025-11-15T12:30:00Z"
-      },
-      {
-        "version": "0.0.10.3",
-        "checksum": "195FBEA8953123BF47BD4A05A15DE15B",
-        "changelog": "Fixed constructor crash with comprehensive error handling and logging. Fixed wrong GUID in configuration page. Plugin now loads successfully with detailed logging for debugging.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.3/xThemeSong_0.0.10.3.zip",
-        "timestamp": "2025-11-15T12:19:00Z"
       }
     ]
   }
