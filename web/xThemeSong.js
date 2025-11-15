@@ -1,7 +1,7 @@
 (function() {
     'use strict';
     
-    console.log('Assign Theme Song: Dialog module loaded');
+    console.log('xThemeSong: Dialog module loaded');
     
     function showThemeSongDialog(itemId) {
         require(['globalize', 'loading', 'dialogHelper', 'formDialogStyle', 'emby-input', 'emby-button'], function(globalize, loading, dialogHelper) {
@@ -19,7 +19,7 @@
             html += '<button is="paper-icon-button-light" class="btnCancel autoSize" tabindex="-1">';
             html += '<i class="md-icon">arrow_back</i>';
             html += '</button>';
-            html += '<h3 class="formDialogHeaderTitle">Assign Theme Song</h3>';
+            html += '<h3 class="formDialogHeaderTitle">xTheme Song</h3>';
             html += '</div>';
 
             html += '<div class="formDialogContent smoothScrollY">';
@@ -167,7 +167,7 @@
                 }
 
                 // Use the correct API endpoint
-                var apiUrl = ApiClient.getUrl('AssignThemeSong/' + itemId);
+                var apiUrl = ApiClient.getUrl('xThemeSong/' + itemId);
 
                 fetch(apiUrl, {
                     method: 'POST',
@@ -244,9 +244,9 @@
     }
     
     // Export to global scope
-    window.AssignThemeSongDialog = {
+    window.xThemeSongDialog = {
         show: showThemeSongDialog
     };
     
-    console.log('Assign Theme Song: Dialog exported to window.AssignThemeSongDialog');
+    console.log('xThemeSong: Dialog exported to window.xThemeSongDialog');
 })();

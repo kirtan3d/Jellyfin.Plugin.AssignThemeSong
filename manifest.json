@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.0.10.1",
+        "checksum": "96C7166F16C76B5543986F512B86F01B",
+        "changelog": "Simplified Plugin.cs following best practices from reference plugins. Removed complex HTTP registration logic in favor of clean reflection-based approach in StartupService. Updated plugin display name to xThemeSong.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.1/xThemeSong_0.0.10.1.zip",
+        "timestamp": "2025-11-15T11:34:00Z"
+      },
+      {
         "version": "0.0.10.0",
         "checksum": "BFA3DE1F35DCC29CBFC19EE3EEC904D0",
         "changelog": "Fixed File Transformation plugin registration by implementing proper service pattern. Updated to use HTTP client for registration with retry logic. Improved reliability and compatibility with File Transformation plugin 2.4.2.0.",

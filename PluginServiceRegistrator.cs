@@ -6,7 +6,7 @@ using Jellyfin.Plugin.xThemeSong.Services;
 namespace Jellyfin.Plugin.xThemeSong
 {
     /// <summary>
-    /// Register Assign Theme Song services.
+    /// Register xThemeSong services.
     /// </summary>
     public class PluginServiceRegistrator : IPluginServiceRegistrator
     {

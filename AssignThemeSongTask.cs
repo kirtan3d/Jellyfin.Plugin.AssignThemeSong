@@ -31,11 +31,11 @@ namespace Jellyfin.Plugin.xThemeSong
             _plugin = Plugin.Instance;
         }
 
-        public string Name => "Assign Theme Songs";
+        public string Name => "xThemeSong Task";
 
         public string Description => "Scans the library and assigns theme songs to media items.";
 
-        public string Category => "Assign Theme Song";
+        public string Category => "xThemeSong";
 
         public string Key => "AssignThemeSongTask";
 
@@ -45,7 +45,7 @@ namespace Jellyfin.Plugin.xThemeSong
 
         public async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Assign Theme Songs task started.");
+            _logger.LogInformation("xThemeSong task started.");
 
             var config = _plugin.Configuration;
             _logger.LogInformation($"Overwrite Existing Files: {config.OverwriteExistingFiles}");
@@ -76,7 +76,7 @@ namespace Jellyfin.Plugin.xThemeSong
                 progress.Report(percentComplete);
             }
 
-            _logger.LogInformation("Assign Theme Songs task finished.");
+            _logger.LogInformation("xThemeSong task finished.");
         }
 
         private async Task ProcessMediaItem(BaseItem item, PluginConfiguration config, CancellationToken cancellationToken)

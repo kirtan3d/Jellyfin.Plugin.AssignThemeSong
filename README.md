@@ -1,4 +1,4 @@
-# Jellyfin Assign Theme Song Plugin
+# xThemeSong
 
 A Jellyfin plugin that allows you to download theme songs from YouTube or upload custom MP3 files for your movies and TV shows.
 
@@ -28,12 +28,12 @@ A Jellyfin plugin that allows you to download theme songs from YouTube or upload
 1. Go to **Dashboard → Plugins → Catalog**
 2. Search for "File Transformation"
 3. Install it and restart Jellyfin
-4. Then proceed with installing Assign Theme Song
+4. Then proceed with installing xThemeSong
 
 ### Method 1: From Jellyfin Plugin Catalog (Recommended)
 
 1. In Jellyfin, go to **Dashboard → Plugins → Catalog**
-2. Search for "Assign Theme Song"
+2. Search for "xThemeSong"
 3. Click **Install**
 4. Restart Jellyfin
 
@@ -42,9 +42,9 @@ A Jellyfin plugin that allows you to download theme songs from YouTube or upload
 1. Download the latest release from [GitHub Releases](https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases)
 2. Extract the zip file
 3. Copy the contents to your Jellyfin plugins directory:
-   - Windows: `%AppData%\Jellyfin\Server\plugins\Assign Theme Song`
-   - Linux: `/var/lib/jellyfin/plugins/Assign Theme Song`
-   - Docker: `/config/plugins/Assign Theme Song`
+   - Windows: `%AppData%\Jellyfin\Server\plugins\xThemeSong`
+   - Linux: `/var/lib/jellyfin/plugins/xThemeSong`
+   - Docker: `/config/plugins/xThemeSong`
 4. Restart Jellyfin
 
 ## 📖 Usage
@@ -53,7 +53,7 @@ A Jellyfin plugin that allows you to download theme songs from YouTube or upload
 
 1. Navigate to a movie or TV show in Jellyfin
 2. Click the **"⋮" (three dots)** menu
-3. Select **"Assign Theme Song"**
+3. Select **"xThemeSong"**
 4. A modal dialog will open showing:
    - Existing theme song audio player (if available)
    - YouTube URL/Video ID input field
@@ -68,7 +68,7 @@ A Jellyfin plugin that allows you to download theme songs from YouTube or upload
 The plugin includes a scheduled task that processes theme songs:
 
 1. Go to **Dashboard → Scheduled Tasks**
-2. Find **"Assign Theme Songs"**
+2. Find **"xTheme Songs"**
 3. Click **▶ Play** to run immediately, or
 4. Configure the schedule (default: daily at 3 AM)
 
@@ -100,7 +100,7 @@ For each media item with a theme song, the plugin creates:
 
 ## ⚙️ Configuration
 
-Access plugin settings in **Dashboard → Plugins → Assign Theme Song**:
+Access plugin settings in **Dashboard → Plugins → xThemeSong**:
 
 - **Overwrite Existing Files**: Whether to overwrite existing theme.mp3 files
 - **Audio Bitrate**: Audio quality for downloaded theme songs (default: 192 kbps)
@@ -132,11 +132,11 @@ dotnet publish -c Release -o publish
 
 ## 📝 Development Status
 
-**Current Version**: v0.0.9.1
+**Current Version**: v0.0.10.0
 
 This plugin is now stable and fully functional! Features:
 - ✅ Plugin loads successfully in Jellyfin
-- ✅ **Web UI integration** - Three-dot menu item "Assign Theme Song"
+- ✅ **Web UI integration** - Three-dot menu item "xThemeSong"
 - ✅ **Modal dialog** with drag-and-drop file upload
 - ✅ **Audio player** for existing theme songs
 - ✅ YouTube download service with YoutubeExplode (dependency included)
@@ -149,12 +149,8 @@ This plugin is now stable and fully functional! Features:
 - ✅ **Fallback Mechanism** - Direct file injection if File Transformation not available
 - ✅ **Base Path Handling** - Proper URL generation for script injection
 
-### Recent Changes (v0.0.9.1)
-- Fixed assembly version mismatch (0.0.8.0 → 0.0.9.0)
-- Enhanced retry mechanism with 6 attempts × 3-second delays
-- Improved File Transformation plugin integration patterns
-- Updated callback method signatures to match File Transformation expectations
-- Added proper base path retrieval from network configuration
+### Recent Changes (v0.0.10.0)
+- Fixed File Transformation plugin registration by implementing proper service pattern. Updated to use HTTP client for registration with retry logic. Improved reliability and compatibility with File Transformation plugin 2.4.2.0.
 
 ## 🤝 Contributing
 

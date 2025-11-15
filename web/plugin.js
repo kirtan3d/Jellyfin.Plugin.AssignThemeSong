@@ -5,13 +5,13 @@
     
     // Load xThemeSong module
     const script = document.createElement('script');
-    script.src = '/xThemeSong/assignThemeSong';
+    script.src = '/xThemeSong/xThemeSong';
     script.onload = function() {
         console.log('xThemeSong: Module loaded, initializing...');
         initializePlugin();
     };
     script.onerror = function() {
-        console.error('xThemeSong: Failed to load assignThemeSong module');
+        console.error('xThemeSong: Failed to load xThemeSong module');
     };
     document.head.appendChild(script);
     
@@ -58,7 +58,7 @@
         }
         
         // Check if button already exists
-        if (detailButtons.querySelector('.btnAssignThemeSong')) {
+        if (detailButtons.querySelector('.btnxThemeSong')) {
             return;
         }
         
@@ -87,8 +87,8 @@
         const button = document.createElement('button');
         button.setAttribute('is', 'emby-button');
         button.setAttribute('type', 'button');
-        button.className = 'button-flat btnAssignThemeSong detailButton emby-button';
-        button.setAttribute('title', 'Assign Theme Song');
+        button.className = 'button-flat btnxThemeSong detailButton emby-button';
+        button.setAttribute('title', 'xTheme Song');
         button.innerHTML = `
             <div class="detailButton-content">
                 <span class="material-icons detailButton-icon music_note" aria-hidden="true"></span>
@@ -101,11 +101,11 @@
             e.preventDefault();
             e.stopPropagation();
             
-            if (window.AssignThemeSongDialog && window.AssignThemeSongDialog.show) {
-                window.AssignThemeSongDialog.show(itemId);
-            } else {
-                console.error('xThemeSong: Dialog not available');
-            }
+        if (window.xThemeSongDialog && window.xThemeSongDialog.show) {
+            window.xThemeSongDialog.show(itemId);
+        } else {
+            console.error('xThemeSong: Dialog not available');
+        }
         });
         
         // Insert button
