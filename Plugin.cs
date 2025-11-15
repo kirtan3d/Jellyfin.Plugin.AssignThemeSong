@@ -146,12 +146,18 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     {
         try
         {
+            Instance?._logger?.LogInformation("xThemeSong: TransformIndexHtmlCallback invoked!");
+            
             var content = payload?.Contents ?? string.Empty;
 
             if (string.IsNullOrEmpty(content))
             {
+                Instance?._logger?.LogWarning("xThemeSong: Callback received empty content");
                 return content;
             }
+
+            Instance?._logger?.LogDebug("xThemeSong: Content length: {Length}, BasePath: '{BasePath}', Version: '{Version}'", 
+                content.Length, _transformBasePath, _transformVersion);
 
             // Transform the content
             string scriptReplace = "<script plugin=\"xThemeSong\".*?></script>";
@@ -161,9 +167,12 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
                 _transformBasePath,
                 _transformVersion);
 
+            Instance?._logger?.LogDebug("xThemeSong: Script element to inject: {Script}", scriptElement);
+
             // Check if script is already injected
             if (content.Contains(scriptElement, StringComparison.Ordinal))
             {
+                Instance?._logger?.LogInformation("xThemeSong: Script already injected, skipping");
                 return content;
             }
 
@@ -174,16 +183,20 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
             int bodyClosing = content.LastIndexOf("</body>", StringComparison.Ordinal);
             if (bodyClosing == -1)
             {
+                Instance?._logger?.LogWarning("xThemeSong: No </body> tag found in content");
                 return content;
             }
 
             // Insert script before closing body tag
             content = content.Insert(bodyClosing, scriptElement);
 
+            Instance?._logger?.LogInformation("xThemeSong: Successfully injected script tag into index.html");
+
             return content;
         }
-        catch
+        catch (Exception ex)
         {
+            Instance?._logger?.LogError(ex, "xThemeSong: Error in TransformIndexHtmlCallback: {Message}", ex.Message);
             // If transformation fails, return original content
             return payload?.Contents ?? string.Empty;
         }

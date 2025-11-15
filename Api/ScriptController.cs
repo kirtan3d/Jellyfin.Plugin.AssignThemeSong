@@ -3,13 +3,13 @@ using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Jellyfin.Plugin.AssignThemeSong.Api
+namespace Jellyfin.Plugin.xThemeSong.Api
 {
     /// <summary>
     /// Controller to serve plugin scripts.
     /// </summary>
     [ApiController]
-    [Route("AssignThemeSong")]
+    [Route("xThemeSong")]
     public class ScriptController : ControllerBase
     {
         /// <summary>
@@ -24,14 +24,14 @@ namespace Jellyfin.Plugin.AssignThemeSong.Api
         }
 
         /// <summary>
-        /// Serves the assignThemeSong module script.
+        /// Serves the xThemeSong module script.
         /// </summary>
-        /// <returns>The assignThemeSong JavaScript module.</returns>
-        [HttpGet("assignThemeSong")]
+        /// <returns>The xThemeSong JavaScript module.</returns>
+        [HttpGet("xThemeSong")]
         [Produces("application/javascript")]
-        public ActionResult GetAssignThemeSongScript()
+        public ActionResult GetXThemeSongScript()
         {
-            return GetScriptFile("assignThemeSong.js", "Jellyfin.Plugin.AssignThemeSong.web.assignThemeSong.js");
+            return GetScriptFile("xThemeSong.js", "Jellyfin.Plugin.AssignThemeSong.web.xThemeSong.js");
         }
 
         private ActionResult GetScriptFile(string fileName, string resourcePath)
