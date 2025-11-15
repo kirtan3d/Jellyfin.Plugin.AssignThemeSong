@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.0.11.00",
+        "checksum": "B6DBA07EC878E4BCD2D4E430B28FEF6A",
+        "changelog": "Major version bump to 0.0.11.00. Fixed RequireJS availability with robust fallback system. Menu integration now works with proper dialog handling. All dependencies properly packaged.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.00/xThemeSong_0.0.11.00.zip",
+        "timestamp": "2025-11-15T19:20:00Z"
+      },
+      {
         "version": "0.0.10.19",
         "checksum": "A33293C8D3BE427DCF030D3AB8B87B09",
         "changelog": "Fixed duplicate menu items with WeakSet tracking. Fixed 'require is not defined' errors by using window.require. Menu now appears once without errors. All naming consistent with xThemeSong.",
@@ -23,30 +31,6 @@
         "targetAbi": "10.10.0.0",
         "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.18/xThemeSong_0.0.10.18.zip",
         "timestamp": "2025-11-15T18:35:00Z"
-      },
-      {
-        "version": "0.0.10.17",
-        "checksum": "2241BCDEA1DADDEF8470AC94C6845440",
-        "changelog": "Fixed initialization timing - waits for DOM to be fully ready before setting up observers. Enhanced action sheet detection with proper logging. All naming consistent using xThemeSong.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.17/xThemeSong_0.0.10.17.zip",
-        "timestamp": "2025-11-15T18:18:00Z"
-      },
-      {
-        "version": "0.0.10.16",
-        "checksum": "7D8620115228F3833BEB81EAC767FFA9",
-        "changelog": "Enhanced action sheet detection - now checks for existing action sheets on page load AND monitors for new ones. Fixed script route mismatch. Includes web folder for file system fallback. All naming consistent using xThemeSong.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.16/xThemeSong_0.0.10.16.zip",
-        "timestamp": "2025-11-15T18:06:00Z"
-      },
-      {
-        "version": "0.0.10.15",
-        "checksum": "A1E6CEBF9011B0D0E8D88D6D3657AE53",
-        "changelog": "Fixed critical route mismatch: Plugin.cs now correctly injects script from /xThemeSong/plugin. Includes web folder for file system fallback. All naming is now consistent using xThemeSong.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.15/xThemeSong_0.0.10.15.zip",
-        "timestamp": "2025-11-15T17:52:00Z"
       }
     ]
   }
