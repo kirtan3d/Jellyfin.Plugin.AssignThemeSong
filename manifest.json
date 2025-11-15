@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.0.10.11",
+        "checksum": "5607F50EF484A046895066D0F0FF73C9",
+        "changelog": "Fixed installation issues - now includes all required dependencies (YoutubeExplode.dll, etc.) for proper plugin functionality. Previously missing dependencies caused installation failures.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.11/xThemeSong_0.0.10.11.zip",
+        "timestamp": "2025-11-15T17:05:00Z"
+      },
+      {
         "version": "0.0.10.10",
         "checksum": "5E5A190ED288ABF7CAFB3598D85AA7E5",
         "changelog": "Fixed infinite retry loop - changed from window.itemHelper to MutationObserver pattern. Now properly detects action sheet menus (.actionSheet) and dynamically injects 'Assign Theme Song' menu item when three-dot menu opens for movies and TV shows.",
@@ -23,30 +31,6 @@
         "targetAbi": "10.10.0.0",
         "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.9/xThemeSong_0.0.10.9.zip",
         "timestamp": "2025-11-15T14:56:00Z"
-      },
-      {
-        "version": "0.0.10.8",
-        "checksum": "7367F89E920A1F2159CE252F27D4CBCB",
-        "changelog": "CRITICAL FIX: Changed UI integration from adding button to mainDetailButtons to properly hooking into Jellyfin's three-dot menu system. Menu item 'Assign Theme Song' now appears in the three-dot menu for movies and TV shows as per requirements.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.8/xThemeSong_0.0.10.8.zip",
-        "timestamp": "2025-11-15T14:26:00Z"
-      },
-      {
-        "version": "0.0.10.7",
-        "checksum": "49005EFD714AC619DF7813DDF2061CFC",
-        "changelog": "CRITICAL FIX: Fixed ScriptController namespace and route from 'AssignThemeSong' to 'xThemeSong' to match plugin name. Added comprehensive logging to transformation callback. These fixes resolve script injection issues that prevented the Web UI menu item from appearing.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.7/xThemeSong_0.0.10.7.zip",
-        "timestamp": "2025-11-15T13:56:00Z"
-      },
-      {
-        "version": "0.0.10.6",
-        "checksum": "6D653B6D68518E492BCA4B01667726D3",
-        "changelog": "CRITICAL FIX: Plugin constructor now includes IServerConfigurationManager parameter matching HoverTrailer pattern. Plugin should now load successfully with proper dependency injection. Added comprehensive logging for debugging plugin initialization.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.6/xThemeSong_0.0.10.6.zip",
-        "timestamp": "2025-11-15T12:59:00Z"
       }
     ]
   }
