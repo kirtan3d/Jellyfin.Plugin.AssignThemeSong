@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.0.10.14",
+        "checksum": "2A413C9FB72AECE41B1CD595737B43BF",
+        "changelog": "Renamed all 'AssignThemeSong' references to 'xThemeSong' throughout the codebase for consistency. Updated namespaces, class names, routes, and script references.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.14/xThemeSong_0.0.10.14.zip",
+        "timestamp": "2025-11-15T17:42:00Z"
+      },
+      {
         "version": "0.0.10.13",
         "checksum": "DDC24CF02F92669034F5DAFC804106FD",
         "changelog": "Fixed missing web folder in published zip - web assets are now properly included for file system fallback. Plugin should now work correctly with both embedded resources and file system access.",

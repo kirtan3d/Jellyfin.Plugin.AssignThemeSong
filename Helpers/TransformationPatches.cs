@@ -41,10 +41,10 @@ namespace Jellyfin.Plugin.xThemeSong.Helpers
                 }
 
                 // Transform the content
-                string scriptReplace = "<script plugin=\"AssignThemeSong\".*?></script>";
+                string scriptReplace = "<script plugin=\"xThemeSong\".*?></script>";
                 string scriptElement = string.Format(
                     System.Globalization.CultureInfo.InvariantCulture,
-                    "<script plugin=\"AssignThemeSong\" version=\"{1}\" src=\"{0}/AssignThemeSong/plugin\" defer></script>",
+                    "<script plugin=\"xThemeSong\" version=\"{1}\" src=\"{0}/xThemeSong/plugin\" defer></script>",
                     _basePath,
                     _version);
 
@@ -54,7 +54,7 @@ namespace Jellyfin.Plugin.xThemeSong.Helpers
                     return content;
                 }
 
-                // Remove old AssignThemeSong scripts
+                // Remove old xThemeSong scripts
                 content = Regex.Replace(content, scriptReplace, string.Empty);
 
                 // Find closing body tag

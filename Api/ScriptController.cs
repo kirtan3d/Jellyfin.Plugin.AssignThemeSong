@@ -16,11 +16,11 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         /// Serves the main plugin script.
         /// </summary>
         /// <returns>The plugin JavaScript.</returns>
-        [HttpGet("script")]
+        [HttpGet("plugin")]
         [Produces("application/javascript")]
         public ActionResult GetScript()
         {
-            return GetScriptFile("plugin.js", "Jellyfin.Plugin.AssignThemeSong.web.plugin.js");
+            return GetScriptFile("plugin.js", "Jellyfin.Plugin.xThemeSong.web.plugin.js");
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         [Produces("application/javascript")]
         public ActionResult GetXThemeSongScript()
         {
-            return GetScriptFile("xThemeSong.js", "Jellyfin.Plugin.AssignThemeSong.web.xThemeSong.js");
+            return GetScriptFile("xThemeSong.js", "Jellyfin.Plugin.xThemeSong.web.xThemeSong.js");
         }
 
         private ActionResult GetScriptFile(string fileName, string resourcePath)

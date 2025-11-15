@@ -5,10 +5,10 @@
     <title>xThemeSong</title>
 </head>
 <body>
-    <div id="AssignThemeSongConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-checkbox,emby-select">
+    <div id="xThemeSongConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-checkbox,emby-select">
         <div data-role="content">
             <div class="content-primary">
-                <form id="AssignThemeSongConfigForm">
+                <form id="xThemeSongConfigForm">
                     <div class="verticalSection verticalSection-extrabottompadding">
                         <div class="sectionTitleContainer flex align-items-center">
                             <h2 class="sectionTitle">xThemeSong Settings</h2>
@@ -44,30 +44,30 @@
         </div>
 
         <script type="text/javascript">
-            var AssignThemeSongConfig = {
+            var xThemeSongConfig = {
                 pluginUniqueId: '97db7543-d64d-45e1-b2e7-62729b56371f'
             };
 
-            document.querySelector('#AssignThemeSongConfigPage')
+            document.querySelector('#xThemeSongConfigPage')
                 .addEventListener('pageshow', function() {
                     Dashboard.showLoadingMsg();
-                    ApiClient.getPluginConfiguration(AssignThemeSongConfig.pluginUniqueId).then(function(config) {
+                    ApiClient.getPluginConfiguration(xThemeSongConfig.pluginUniqueId).then(function(config) {
                         document.querySelector('#OverwriteExistingFiles').checked = config.OverwriteExistingFiles || false;
                         document.querySelector('#AudioBitrate').value = config.AudioBitrate || 192;
                         Dashboard.hideLoadingMsg();
                     });
                 });
 
-            document.querySelector('#AssignThemeSongConfigForm')
+            document.querySelector('#xThemeSongConfigForm')
                 .addEventListener('submit', function(e) {
                     e.preventDefault();
                     Dashboard.showLoadingMsg();
 
-                    ApiClient.getPluginConfiguration(AssignThemeSongConfig.pluginUniqueId).then(function(config) {
+                    ApiClient.getPluginConfiguration(xThemeSongConfig.pluginUniqueId).then(function(config) {
                         config.OverwriteExistingFiles = document.querySelector('#OverwriteExistingFiles').checked;
                         config.AudioBitrate = parseInt(document.querySelector('#AudioBitrate').value) || 192;
 
-                        ApiClient.updatePluginConfiguration(AssignThemeSongConfig.pluginUniqueId, config).then(function(result) {
+                        ApiClient.updatePluginConfiguration(xThemeSongConfig.pluginUniqueId, config).then(function(result) {
                             Dashboard.processPluginConfigurationUpdateResult(result);
                         });
                     });

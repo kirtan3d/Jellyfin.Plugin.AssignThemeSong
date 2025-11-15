@@ -30,7 +30,7 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         }
 
         [HttpPost]
-        public async Task<ActionResult> AssignThemeSong([FromRoute] string itemId, [FromForm] AssignThemeSongRequest request)
+        public async Task<ActionResult> xThemeSong([FromRoute] string itemId, [FromForm] xThemeSongRequest request)
         {
             var item = _libraryManager.GetItemById(itemId);
             if (item == null)
@@ -108,7 +108,7 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         }
     }
 
-    public class AssignThemeSongRequest
+    public class xThemeSongRequest
     {
         public string? YouTubeUrl { get; set; }
         

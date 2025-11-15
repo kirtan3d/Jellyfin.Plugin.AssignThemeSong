@@ -16,14 +16,14 @@ using Jellyfin.Plugin.xThemeSong.Services;
 
 namespace Jellyfin.Plugin.xThemeSong
 {
-    public class AssignThemeSongTask : IScheduledTask
+    public class xThemeSongTask : IScheduledTask
     {
-        private readonly ILogger<AssignThemeSongTask> _logger;
+        private readonly ILogger<xThemeSongTask> _logger;
         private readonly ILibraryManager _libraryManager;
         private readonly Plugin _plugin;
 
-        public AssignThemeSongTask(
-            ILogger<AssignThemeSongTask> logger, 
+        public xThemeSongTask(
+            ILogger<xThemeSongTask> logger,
             ILibraryManager libraryManager)
         {
             _logger = logger;
@@ -37,7 +37,7 @@ namespace Jellyfin.Plugin.xThemeSong
 
         public string Category => "xThemeSong";
 
-        public string Key => "AssignThemeSongTask";
+        public string Key => "xThemeSongTask";
 
         public bool IsHidden => false;
 
