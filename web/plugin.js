@@ -25,6 +25,9 @@
     };
     document.head.appendChild(script);
     
+    // Track processed action sheets to avoid duplicates
+    const processedActionSheets = new WeakSet();
+    
     function initializePlugin() {
         console.log('xThemeSong: Initializing menu observer...');
         
@@ -81,7 +84,16 @@
     }
     
     function onActionSheetOpened(actionSheet) {
+        // Skip if already processed
+        if (processedActionSheets.has(actionSheet)) {
+            console.log('xThemeSong: Action sheet already processed, skipping');
+            return;
+        }
+        
         console.log('xThemeSong: Action sheet detected');
+        
+        // Mark as processed
+        processedActionSheets.add(actionSheet);
         
         // Get the current page URL to extract item ID
         const urlParams = new URLSearchParams(window.location.hash.split('?')[1] || '');

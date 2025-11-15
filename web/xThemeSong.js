@@ -4,7 +4,14 @@
     console.log('xThemeSong: Dialog module loaded');
     
     function showThemeSongDialog(itemId) {
-        require(['globalize', 'loading', 'dialogHelper', 'formDialogStyle', 'emby-input', 'emby-button'], function(globalize, loading, dialogHelper) {
+        // Ensure require is available
+        if (typeof require === 'undefined' || typeof window.require === 'undefined') {
+            console.error('xThemeSong: RequireJS not available');
+            alert('Error: Jellyfin module loader not ready. Please try again.');
+            return;
+        }
+        
+        window.require(['globalize', 'loading', 'dialogHelper', 'formDialogStyle', 'emby-input', 'emby-button'], function(globalize, loading, dialogHelper) {
             var dlg = dialogHelper.createDialog({
                 size: 'medium',
                 removeOnClose: true,
@@ -179,9 +186,13 @@
                     loading.hide();
                     if (response.ok) {
                         dialogHelper.close(dlg);
-                        require(['toast'], function (toast) {
-                            toast('Theme song assigned successfully!');
-                        });
+                        if (typeof window.require !== 'undefined') {
+                            window.require(['toast'], function (toast) {
+                                toast('Theme song assigned successfully!');
+                            });
+                        } else {
+                            alert('Theme song assigned successfully!');
+                        }
                     } else {
                         return response.text().then(function (text) {
                             throw new Error(text || 'Failed to assign theme song');

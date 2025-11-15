@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.0.10.19",
+        "checksum": "A33293C8D3BE427DCF030D3AB8B87B09",
+        "changelog": "Fixed duplicate menu items with WeakSet tracking. Fixed 'require is not defined' errors by using window.require. Menu now appears once without errors. All naming consistent with xThemeSong.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.19/xThemeSong_0.0.10.19.zip",
+        "timestamp": "2025-11-15T18:54:00Z"
+      },
+      {
         "version": "0.0.10.18",
         "checksum": "9E7DB4DEFCF576233CF1488E9BF12BE9",
         "changelog": "Enhanced MutationObserver to watch both childList AND class attribute changes. Now detects action sheets appearing via class additions and nested elements. Improved logging for debugging.",
