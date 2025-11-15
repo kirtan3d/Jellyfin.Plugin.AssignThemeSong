@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.0.10.17",
+        "checksum": "2241BCDEA1DADDEF8470AC94C6845440",
+        "changelog": "Fixed initialization timing - waits for DOM to be fully ready before setting up observers. Enhanced action sheet detection with proper logging. All naming consistent using xThemeSong.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.17/xThemeSong_0.0.10.17.zip",
+        "timestamp": "2025-11-15T18:18:00Z"
+      },
+      {
         "version": "0.0.10.16",
         "checksum": "7D8620115228F3833BEB81EAC767FFA9",
         "changelog": "Enhanced action sheet detection - now checks for existing action sheets on page load AND monitors for new ones. Fixed script route mismatch. Includes web folder for file system fallback. All naming consistent using xThemeSong.",

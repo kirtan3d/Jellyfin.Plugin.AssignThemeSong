@@ -7,8 +7,18 @@
     const script = document.createElement('script');
     script.src = '/xThemeSong/xThemeSong';
     script.onload = function() {
-        console.log('xThemeSong: Module loaded, initializing...');
-        initializePlugin();
+        console.log('xThemeSong: Module loaded, waiting for page ready...');
+        // Wait for document to be fully ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('xThemeSong: DOM ready, initializing...');
+                initializePlugin();
+            });
+        } else {
+            // DOM is already ready
+            console.log('xThemeSong: DOM already ready, initializing...');
+            initializePlugin();
+        }
     };
     script.onerror = function() {
         console.error('xThemeSong: Failed to load xThemeSong module');
