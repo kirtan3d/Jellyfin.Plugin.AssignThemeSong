@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.0.10.4",
+        "checksum": "F694893A884C610627B8F87B8ED234AB",
+        "changelog": "CRITICAL FIX: Set Instance and logger BEFORE try block, never re-throw exceptions. Following exact HoverTrailer pattern - plugin now loads successfully and registers with File Transformation.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.4/xThemeSong_0.0.10.4.zip",
+        "timestamp": "2025-11-15T12:30:00Z"
+      },
+      {
         "version": "0.0.10.3",
         "checksum": "195FBEA8953123BF47BD4A05A15DE15B",
         "changelog": "Fixed constructor crash with comprehensive error handling and logging. Fixed wrong GUID in configuration page. Plugin now loads successfully with detailed logging for debugging.",
