@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.0.10.9",
+        "checksum": "4C65FE17243090A199DCF5C52DB93E01",
+        "changelog": "Fixed infinite retry loop - changed from window.itemHelper to MutationObserver pattern. Now properly detects action sheet menus (.actionSheet) and dynamically injects 'Assign Theme Song' menu item when three-dot menu opens for movies and TV shows.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.9/xThemeSong_0.0.10.9.zip",
+        "timestamp": "2025-11-15T14:56:00Z"
+      },
+      {
         "version": "0.0.10.8",
         "checksum": "7367F89E920A1F2159CE252F27D4CBCB",
         "changelog": "CRITICAL FIX: Changed UI integration from adding button to mainDetailButtons to properly hooking into Jellyfin's three-dot menu system. Menu item 'Assign Theme Song' now appears in the three-dot menu for movies and TV shows as per requirements.",
@@ -31,22 +39,6 @@
         "targetAbi": "10.10.0.0",
         "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.6/xThemeSong_0.0.10.6.zip",
         "timestamp": "2025-11-15T12:59:00Z"
-      },
-      {
-        "version": "0.0.10.5",
-        "checksum": "A6B1EDC0991AF91AA1E7F508836AE153",
-        "changelog": "DIAGNOSTIC: Minimal constructor test - removed IServerConfigurationManager to test if plugin loads. If this works, the issue was dependency injection failure for IServerConfigurationManager.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.5/xThemeSong_0.0.10.5.zip",
-        "timestamp": "2025-11-15T12:42:00Z"
-      },
-      {
-        "version": "0.0.10.4",
-        "checksum": "F694893A884C610627B8F87B8ED234AB",
-        "changelog": "CRITICAL FIX: Set Instance and logger BEFORE try block, never re-throw exceptions. Following exact HoverTrailer pattern - plugin now loads successfully and registers with File Transformation.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.4/xThemeSong_0.0.10.4.zip",
-        "timestamp": "2025-11-15T12:30:00Z"
       }
     ]
   }
