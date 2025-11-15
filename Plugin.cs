@@ -38,12 +38,32 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
         IServerConfigurationManager configurationManager)
         : base(applicationPaths, xmlSerializer)
     {
-        Instance = this;
-        _logger = logger;
-        _logger.LogInformation($"xThemeSong v{Version} initialized.");
+        try
+        {
+            Instance = this;
+            _logger = logger;
+            _logger.LogInformation("xThemeSong: Plugin constructor started");
+            _logger.LogInformation($"xThemeSong v{Version} initializing...");
 
-        // Register with File Transformation plugin
-        TryRegisterFileTransformation(configurationManager);
+            // Register with File Transformation plugin
+            try
+            {
+                TryRegisterFileTransformation(configurationManager);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "xThemeSong: Exception during File Transformation registration: {Message}", ex.Message);
+                // Don't re-throw - let plugin load even if registration fails
+            }
+
+            _logger.LogInformation("xThemeSong: Plugin constructor completed successfully");
+        }
+        catch (Exception ex)
+        {
+            // Log any constructor exception
+            logger?.LogCritical(ex, "xThemeSong: CRITICAL EXCEPTION in Plugin constructor: {Message}", ex.Message);
+            throw; // Re-throw to let Jellyfin know plugin failed to load
+        }
     }
 
     /// <summary>
