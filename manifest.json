@@ -9,44 +9,12 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
-        "version": "0.0.11.04",
-        "checksum": "3D031349A694E5B13BC4CD520703F6F5",
-        "changelog": "Fixed plugin installation 404 error by recreating release with proper structure. Updated YoutubeExplode to 6.5.6 for latest YouTube API compatibility and improved download reliability.",
+        "version": "0.0.11.05",
+        "checksum": "DD39C53D78C4E3AA244933792F476E09",
+        "changelog": "CRITICAL FIX: Plugin loading issues resolved by fixing dependency conflicts with System.Text.Encodings.Web. Updated project configuration to exclude unnecessary assemblies that conflict with Jellyfin's runtime.",
         "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.04/xThemeSong_0.0.11.04.zip",
-        "timestamp": "2025-11-17T11:48:00Z"
-      },
-      {
-        "version": "0.0.11.02",
-        "checksum": "9771E6B3BE08EC3B8A526DF49849C5CE",
-        "changelog": "CRITICAL FIXES: Fixed backdrop overlay staying open (dialogBackdrop), enhanced dialog system detection to use proper Jellyfin dialogs, updated YoutubeExplode to 6.4.2 to fix cipher manifest errors. Action sheets now close completely and YouTube downloads work reliably.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.02/xThemeSong_0.0.11.02.zip",
-        "timestamp": "2025-11-17T11:27:00Z"
-      },
-      {
-        "version": "0.0.11.01",
-        "checksum": "70B40C634BA755F4E8158B75ECBF087E",
-        "changelog": "CRITICAL FIX: Fixed API route mismatch and action sheet overlay issues. ThemeSongController route changed from 'Items/{itemId}/ThemeSong' to 'xThemeSong/{itemId}' to match JavaScript calls. Added proper action sheet closing before dialog opens.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.01/xThemeSong_0.0.11.01.zip",
-        "timestamp": "2025-11-17T10:56:00Z"
-      },
-      {
-        "version": "0.0.10.19",
-        "checksum": "A33293C8D3BE427DCF030D3AB8B87B09",
-        "changelog": "Fixed duplicate menu items with WeakSet tracking. Fixed 'require is not defined' errors by using window.require. Menu now appears once without errors. All naming consistent with xThemeSong.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.19/xThemeSong_0.0.10.19.zip",
-        "timestamp": "2025-11-15T18:54:00Z"
-      },
-      {
-        "version": "0.0.10.18",
-        "checksum": "9E7DB4DEFCF576233CF1488E9BF12BE9",
-        "changelog": "Enhanced MutationObserver to watch both childList AND class attribute changes. Now detects action sheets appearing via class additions and nested elements. Improved logging for debugging.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.10.18/xThemeSong_0.0.10.18.zip",
-        "timestamp": "2025-11-15T18:35:00Z"
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.05/xThemeSong_0.0.11.05.zip",
+        "timestamp": "2025-11-17T12:09:00Z"
       }
     ]
   }

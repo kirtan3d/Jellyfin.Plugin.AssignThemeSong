@@ -4,12 +4,15 @@
     <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>Jellyfin.Plugin.xThemeSong</AssemblyName>
     <RootNamespace>Jellyfin.Plugin.xThemeSong</RootNamespace>
-    <Version>0.0.11.04</Version>
-    <AssemblyVersion>0.0.11.04</AssemblyVersion>
-    <FileVersion>0.0.11.04</FileVersion>
+    <Version>0.0.11.05</Version>
+    <AssemblyVersion>0.0.11.05</AssemblyVersion>
+    <FileVersion>0.0.11.05</FileVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <PublishSingleFile>false</PublishSingleFile>
+    <SelfContained>false</SelfContained>
+    <IncludeNativeLibrariesForSelfExtract>false</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,9 +22,13 @@
     <PackageReference Include="Jellyfin.Model" Version="10.10.0">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="YoutubeExplode" Version="6.5.6" />
+    <PackageReference Include="YoutubeExplode" Version="6.5.6">
+      <PrivateAssets>All</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
       <PrivateAssets>All</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
   </ItemGroup>
 
@@ -32,5 +39,16 @@
     <None Include="web\**\*" CopyToOutputDirectory="PreserveNewest" />
     <None Include="meta.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+
+  <Target Name="RemoveUnnecessaryAssemblies" AfterTargets="Build">
+    <ItemGroup>
+      <FilesToDelete Include="$(OutputPath)System.*.dll" />
+      <FilesToDelete Include="$(OutputPath)Microsoft.*.dll" />
+      <FilesToDelete Include="$(OutputPath)AngleSharp.dll" />
+      <FilesToDelete Include="$(OutputPath)runtimeconfig.json" />
+      <FilesToDelete Include="$(OutputPath)*.pdb" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+  </Target>
 
 </Project>
