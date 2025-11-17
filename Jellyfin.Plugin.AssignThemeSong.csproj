@@ -4,12 +4,12 @@
     <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>Jellyfin.Plugin.xThemeSong</AssemblyName>
     <RootNamespace>Jellyfin.Plugin.xThemeSong</RootNamespace>
-    <Version>0.0.11.05</Version>
-    <AssemblyVersion>0.0.11.05</AssemblyVersion>
-    <FileVersion>0.0.11.05</FileVersion>
+    <Version>0.0.11.07</Version>
+    <AssemblyVersion>0.0.11.07</AssemblyVersion>
+    <FileVersion>0.0.11.07</FileVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <PublishSingleFile>false</PublishSingleFile>
     <SelfContained>false</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>false</IncludeNativeLibrariesForSelfExtract>
@@ -24,11 +24,9 @@
     </PackageReference>
     <PackageReference Include="YoutubeExplode" Version="6.5.6">
       <PrivateAssets>All</PrivateAssets>
-      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
       <PrivateAssets>All</PrivateAssets>
-      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
   </ItemGroup>
 
@@ -47,6 +45,7 @@
       <FilesToDelete Include="$(OutputPath)AngleSharp.dll" />
       <FilesToDelete Include="$(OutputPath)runtimeconfig.json" />
       <FilesToDelete Include="$(OutputPath)*.pdb" />
+      <FilesToDelete Include="$(OutputPath)*.runtimeconfig.json" />
     </ItemGroup>
     <Delete Files="@(FilesToDelete)" />
   </Target>

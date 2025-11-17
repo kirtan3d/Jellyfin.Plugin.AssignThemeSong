@@ -9,12 +9,20 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
-        "version": "0.0.11.05",
-        "checksum": "DD39C53D78C4E3AA244933792F476E09",
-        "changelog": "CRITICAL FIX: Plugin loading issues resolved by fixing dependency conflicts with System.Text.Encodings.Web. Updated project configuration to exclude unnecessary assemblies that conflict with Jellyfin's runtime.",
+        "version": "0.0.11.07",
+        "checksum": "BCD9FEC253C396CBDFD2EF9E97EA2122",
+        "changelog": "COMPREHENSIVE CODE REVIEW: Performed thorough code review and cleanup. Fixed naming inconsistencies, removed unused code, updated version numbers, and improved overall code quality. Enhanced error handling and logging.",
         "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.05/xThemeSong_0.0.11.05.zip",
-        "timestamp": "2025-11-17T12:09:00Z"
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.07/xThemeSong_0.0.11.07.zip",
+        "timestamp": "2025-11-17T12:37:00Z"
+      },
+      {
+        "version": "0.0.11.06",
+        "checksum": "9B24D453F9F285A1EAEEC77DA9381E46",
+        "changelog": "FIXED: Missing YoutubeExplode dependency that was preventing plugin load. Updated project configuration to include necessary dependencies while avoiding runtime conflicts.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.06/xThemeSong_0.0.11.06.zip",
+        "timestamp": "2025-11-17T12:19:00Z"
       }
     ]
   }
