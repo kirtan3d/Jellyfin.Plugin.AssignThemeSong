@@ -9,12 +9,12 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
-        "version": "0.0.11.03",
-        "checksum": "396740F40486E4DCD7D2EC31F9998A05",
-        "changelog": "Updated YoutubeExplode to 6.5.6 for latest YouTube API compatibility and improved download reliability. This fixes any remaining cipher manifest issues and ensures long-term YouTube download support.",
+        "version": "0.0.11.04",
+        "checksum": "3D031349A694E5B13BC4CD520703F6F5",
+        "changelog": "Fixed plugin installation 404 error by recreating release with proper structure. Updated YoutubeExplode to 6.5.6 for latest YouTube API compatibility and improved download reliability.",
         "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.03/xThemeSong_0.0.11.03.zip",
-        "timestamp": "2025-11-17T11:35:00Z"
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.04/xThemeSong_0.0.11.04.zip",
+        "timestamp": "2025-11-17T11:48:00Z"
       },
       {
         "version": "0.0.11.02",
