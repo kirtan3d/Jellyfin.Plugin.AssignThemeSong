@@ -6,6 +6,9 @@
     function showThemeSongDialog(itemId) {
         console.log('xThemeSong: Opening dialog for item', itemId);
         
+        // Close any open action sheets first
+        closeActionSheets();
+        
         // Try to use Jellyfin's dialog system first
         if (window.dialogHelper && window.dialogHelper.createDialog) {
             createJellyfinDialog(itemId);
@@ -13,6 +16,33 @@
             // Fallback to simple custom dialog
             createSimpleDialog(itemId);
         }
+    }
+    
+    function closeActionSheets() {
+        console.log('xThemeSong: Closing action sheets');
+        // Close any open action sheets (three-dot menus)
+        const actionSheets = document.querySelectorAll('.actionSheet');
+        actionSheets.forEach(sheet => {
+            if (sheet.style.display !== 'none') {
+                sheet.style.display = 'none';
+            }
+        });
+        
+        // Also close any dialogs that might be overlays
+        const dialogs = document.querySelectorAll('.dialog');
+        dialogs.forEach(dialog => {
+            if (dialog.style.display !== 'none' && dialog.classList.contains('actionSheet')) {
+                dialog.style.display = 'none';
+            }
+        });
+        
+        // Remove any backdrop overlays
+        const backdrops = document.querySelectorAll('.backdrop, .backdropFadeIn');
+        backdrops.forEach(backdrop => {
+            if (backdrop.parentNode) {
+                backdrop.parentNode.removeChild(backdrop);
+            }
+        });
     }
     
     function createJellyfinDialog(itemId) {

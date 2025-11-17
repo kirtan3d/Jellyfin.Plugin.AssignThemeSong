@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 namespace Jellyfin.Plugin.xThemeSong.Api
 {
     [ApiController]
-    [Route("Items/{itemId}/ThemeSong")]
+    [Route("xThemeSong/{itemId}")]
     public class ThemeSongController : ControllerBase
     {
         private readonly ILogger<ThemeSongController> _logger;

@@ -9,12 +9,12 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
-        "version": "0.0.11.00",
-        "checksum": "B6DBA07EC878E4BCD2D4E430B28FEF6A",
-        "changelog": "Major version bump to 0.0.11.00. Fixed RequireJS availability with robust fallback system. Menu integration now works with proper dialog handling. All dependencies properly packaged.",
+        "version": "0.0.11.01",
+        "checksum": "70B40C634BA755F4E8158B75ECBF087E",
+        "changelog": "CRITICAL FIX: Fixed API route mismatch and action sheet overlay issues. ThemeSongController route changed from 'Items/{itemId}/ThemeSong' to 'xThemeSong/{itemId}' to match JavaScript calls. Added proper action sheet closing before dialog opens.",
         "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.00/xThemeSong_0.0.11.00.zip",
-        "timestamp": "2025-11-15T19:20:00Z"
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.01/xThemeSong_0.0.11.01.zip",
+        "timestamp": "2025-11-17T10:56:00Z"
       },
       {
         "version": "0.0.10.19",

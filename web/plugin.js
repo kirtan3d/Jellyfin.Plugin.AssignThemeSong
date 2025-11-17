@@ -158,13 +158,8 @@
             
             console.log('xThemeSong: Menu item clicked');
             
-            // Close the action sheet
-            if (window.dialogHelper) {
-                const dialog = actionSheet.closest('.dialog');
-                if (dialog) {
-                    window.dialogHelper.close(dialog);
-                }
-            }
+            // Close the action sheet using multiple methods
+            closeActionSheet(actionSheet);
             
             // Show our dialog
             if (window.xThemeSongDialog && window.xThemeSongDialog.show) {
@@ -173,6 +168,36 @@
                 console.error('xThemeSong: Dialog not available');
             }
         });
+        
+        function closeActionSheet(actionSheet) {
+            console.log('xThemeSong: Closing action sheet');
+            
+            // Method 1: Use dialogHelper if available
+            if (window.dialogHelper) {
+                const dialog = actionSheet.closest('.dialog');
+                if (dialog) {
+                    window.dialogHelper.close(dialog);
+                    return;
+                }
+            }
+            
+            // Method 2: Hide the action sheet directly
+            actionSheet.style.display = 'none';
+            
+            // Method 3: Remove backdrop overlays
+            const backdrops = document.querySelectorAll('.backdrop, .backdropFadeIn');
+            backdrops.forEach(backdrop => {
+                if (backdrop.parentNode) {
+                    backdrop.parentNode.removeChild(backdrop);
+                }
+            });
+            
+            // Method 4: Close any parent dialogs
+            const parentDialog = actionSheet.closest('.dialog');
+            if (parentDialog) {
+                parentDialog.style.display = 'none';
+            }
+        }
         
         // Find a good place to insert - after "Share" or before first divider
         const divider = scroller.querySelector('.actionsheetDivider');
