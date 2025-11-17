@@ -177,25 +177,36 @@
                 const dialog = actionSheet.closest('.dialog');
                 if (dialog) {
                     window.dialogHelper.close(dialog);
-                    return;
                 }
             }
             
             // Method 2: Hide the action sheet directly
             actionSheet.style.display = 'none';
             
-            // Method 3: Remove backdrop overlays
-            const backdrops = document.querySelectorAll('.backdrop, .backdropFadeIn');
+            // Method 3: Remove all types of backdrop overlays
+            const backdrops = document.querySelectorAll('.backdrop, .backdropFadeIn, .dialogBackdrop, .dialogBackdropOpened');
             backdrops.forEach(backdrop => {
                 if (backdrop.parentNode) {
                     backdrop.parentNode.removeChild(backdrop);
                 }
             });
             
-            // Method 4: Close any parent dialogs
-            const parentDialog = actionSheet.closest('.dialog');
+            // Method 4: Close any parent dialogs and containers
+            const parentDialog = actionSheet.closest('.dialog, .dialogContainer');
             if (parentDialog) {
                 parentDialog.style.display = 'none';
+                if (parentDialog.parentNode) {
+                    parentDialog.parentNode.removeChild(parentDialog);
+                }
+            }
+            
+            // Method 5: Remove focus container if it exists
+            const focusContainer = document.querySelector('.focuscontainer.dialog');
+            if (focusContainer) {
+                focusContainer.style.display = 'none';
+                if (focusContainer.parentNode) {
+                    focusContainer.parentNode.removeChild(focusContainer);
+                }
             }
         }
         

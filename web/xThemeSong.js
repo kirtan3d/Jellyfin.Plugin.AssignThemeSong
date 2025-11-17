@@ -9,13 +9,42 @@
         // Close any open action sheets first
         closeActionSheets();
         
-        // Try to use Jellyfin's dialog system first
-        if (window.dialogHelper && window.dialogHelper.createDialog) {
+        // Enhanced dialog system detection
+        if (isJellyfinDialogSystemAvailable()) {
+            console.log('xThemeSong: Jellyfin dialog system available, using it');
             createJellyfinDialog(itemId);
         } else {
-            // Fallback to simple custom dialog
+            console.log('xThemeSong: Jellyfin dialog system not available, using fallback');
             createSimpleDialog(itemId);
         }
+    }
+    
+    function isJellyfinDialogSystemAvailable() {
+        // Check multiple ways Jellyfin dialog system might be available
+        if (window.dialogHelper && window.dialogHelper.createDialog) {
+            return true;
+        }
+        
+        // Check if we can access dialogHelper through RequireJS
+        if (typeof window.require !== 'undefined') {
+            try {
+                // Try to require dialogHelper synchronously (if possible)
+                const dialogHelper = window.require('dialogHelper');
+                if (dialogHelper && dialogHelper.createDialog) {
+                    window.dialogHelper = dialogHelper; // Make it globally available
+                    return true;
+                }
+            } catch (e) {
+                console.log('xThemeSong: RequireJS dialogHelper not available:', e.message);
+            }
+        }
+        
+        // Check if we're in a Jellyfin environment with dialog capabilities
+        if (window.Emby && window.Emby.Page) {
+            return true;
+        }
+        
+        return false;
     }
     
     function closeActionSheets() {
