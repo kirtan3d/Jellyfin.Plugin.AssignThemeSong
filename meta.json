@@ -8,5 +8,5 @@
   "owner": "Kirtan Patel",
   "category": "General",
   "imageUrl": "icon.png",
-  "changelog": "FIXED: Plugin loading issues by resolving dependency conflicts with System.Text.Encodings.Web. Updated project configuration to exclude unnecessary assemblies that conflict with Jellyfin's runtime."
+  "changelog": "CRITICAL FIX: Registered scheduled task in service collection to prevent plugin load failure. ENHANCEMENT: Completed scheduled task implementation to actually download theme songs from YouTube. FIX: Updated version numbers across all files for consistency. MAINTENANCE: Code cleanup and error handling improvements."
 }

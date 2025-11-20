@@ -1,5 +1,6 @@
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Plugins;
+using MediaBrowser.Model.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Jellyfin.Plugin.xThemeSong.Services;
 
@@ -14,6 +15,7 @@ namespace Jellyfin.Plugin.xThemeSong
         public void RegisterServices(IServiceCollection serviceCollection, IServerApplicationHost applicationHost)
         {
             serviceCollection.AddSingleton<ThemeDownloadService>();
+            serviceCollection.AddSingleton<IScheduledTask, xThemeSongTask>();
             // Note: StartupService removed - registration now happens in Plugin constructor
         }
     }

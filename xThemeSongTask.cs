@@ -21,13 +21,16 @@ namespace Jellyfin.Plugin.xThemeSong
         private readonly ILogger<xThemeSongTask> _logger;
         private readonly ILibraryManager _libraryManager;
         private readonly Plugin _plugin;
+        private readonly ThemeDownloadService _downloadService;
 
         public xThemeSongTask(
             ILogger<xThemeSongTask> logger,
-            ILibraryManager libraryManager)
+            ILibraryManager libraryManager,
+            ThemeDownloadService downloadService)
         {
             _logger = logger;
             _libraryManager = libraryManager;
+            _downloadService = downloadService;
             _plugin = Plugin.Instance;
         }
 
@@ -127,13 +130,34 @@ namespace Jellyfin.Plugin.xThemeSong
                     return;
                 }
 
-                if (string.IsNullOrEmpty(themeMetadata.YouTubeId) && !themeMetadata.IsUserUploaded)
+                if (themeMetadata.IsUserUploaded)
                 {
-                    _logger.LogWarning($"No YouTube ID or uploaded file found for {item.Name}, skipping.");
+                    _logger.LogInformation($"Theme song for {item.Name} is user uploaded, skipping scheduled download.");
                     return;
                 }
 
-                _logger.LogInformation($"Found theme metadata for {item.Name}, but download service integration needs completion.");
+                if (string.IsNullOrEmpty(themeMetadata.YouTubeId))
+                {
+                    _logger.LogWarning($"No YouTube ID found for {item.Name}, skipping.");
+                    return;
+                }
+
+                _logger.LogInformation($"Downloading theme song for {item.Name} from YouTube ID: {themeMetadata.YouTubeId}");
+
+                try
+                {
+                    await _downloadService.DownloadFromYouTube(
+                        themeMetadata.YouTubeId,
+                        itemDirectory,
+                        config.AudioBitrate,
+                        cancellationToken);
+
+                    _logger.LogInformation($"Successfully downloaded theme song for {item.Name}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Failed to download theme song for {item.Name}");
+                }
             }
             catch (Exception ex)
             {

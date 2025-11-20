@@ -132,7 +132,7 @@ dotnet publish -c Release -o publish
 
 ## 📝 Development Status
 
-**Current Version**: v0.0.10.7
+**Current Version**: v0.0.11.07
 
 This plugin is now stable and fully functional! Features:
 - ✅ Plugin loads successfully in Jellyfin
@@ -149,12 +149,11 @@ This plugin is now stable and fully functional! Features:
 - ✅ **Fallback Mechanism** - Direct file injection if File Transformation not available
 - ✅ **Base Path Handling** - Proper URL generation for script injection
 
-### Recent Changes (v0.0.10.7)
-- **CRITICAL FIX**: Fixed ScriptController namespace from "Jellyfin.Plugin.AssignThemeSong" to "Jellyfin.Plugin.xThemeSong"
-- **CRITICAL FIX**: Fixed ScriptController route endpoint from "assignThemeSong" to "xThemeSong" to match plugin.js
-- Added comprehensive logging to TransformIndexHtmlCallback method to track transformation process
-- Script injection now properly configured at `/xThemeSong/script`
-- These fixes should enable the Web UI menu item to appear in the three-dot menu
+### Recent Changes (v0.0.11.07)
+- **CRITICAL FIX**: Registered scheduled task in service collection to prevent plugin load failure
+- **ENHANCEMENT**: Completed scheduled task implementation to actually download theme songs from YouTube
+- **FIX**: Updated version numbers across all files for consistency
+- **MAINTENANCE**: Code cleanup and error handling improvements
 
 ## 🤝 Contributing
 
