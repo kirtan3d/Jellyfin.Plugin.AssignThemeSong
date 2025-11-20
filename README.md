@@ -132,7 +132,7 @@ dotnet publish -c Release -o publish
 
 ## 📝 Development Status
 
-**Current Version**: v0.0.11.07
+**Current Version**: v0.0.11.7
 
 This plugin is now stable and fully functional! Features:
 - ✅ Plugin loads successfully in Jellyfin
@@ -149,7 +149,7 @@ This plugin is now stable and fully functional! Features:
 - ✅ **Fallback Mechanism** - Direct file injection if File Transformation not available
 - ✅ **Base Path Handling** - Proper URL generation for script injection
 
-### Recent Changes (v0.0.11.07)
+### Recent Changes (v0.0.11.7)
 - **CRITICAL FIX**: Registered scheduled task in service collection to prevent plugin load failure
 - **ENHANCEMENT**: Completed scheduled task implementation to actually download theme songs from YouTube
 - **FIX**: Updated version numbers across all files for consistency
