@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <!-- Suppress package downgrade warnings since we must match Jellyfin's dependency versions -->
+    <MSBuildWarningAsErrors>$(MSBuildWarningAsErrors.Replace(';NU1605', ''))</MSBuildWarningAsErrors>
+    <NoWarn>$(NoWarn);NU1605</NoWarn>
+  </PropertyGroup>
+</Project>

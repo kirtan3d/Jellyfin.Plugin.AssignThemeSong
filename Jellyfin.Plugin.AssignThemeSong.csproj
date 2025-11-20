@@ -4,9 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>Jellyfin.Plugin.xThemeSong</AssemblyName>
     <RootNamespace>Jellyfin.Plugin.xThemeSong</RootNamespace>
-    <Version>0.0.11.8</Version>
-    <AssemblyVersion>0.0.11.8</AssemblyVersion>
-    <FileVersion>0.0.11.8</FileVersion>
+    <Version>0.0.11.9</Version>
+    <AssemblyVersion>0.0.11.9</AssemblyVersion>
+    <FileVersion>0.0.11.9</FileVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -22,10 +22,16 @@
     <PackageReference Include="Jellyfin.Model" Version="10.10.0">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="YoutubeExplode" Version="6.5.5" />
+    <!-- Specify exact version that matches Jellyfin's expectation -->
+    <PackageReference Include="YoutubeExplode" Version="6.3.16.0" />
+    
+    <!-- Mark dependencies that are included with Jellyfin as PrivateAssets -->
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
+    
+    <!-- Don't directly reference System libraries that are used by Jellyfin -->
+    <!-- They will be pulled in correctly via the YoutubeExplode dependency -->
   </ItemGroup>
 
   <ItemGroup>
@@ -36,16 +42,30 @@
     <None Include="meta.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
-  <!-- Do not remove YoutubeExplode assembly -->
+  <!-- Handle dependency conflicts by excluding assemblies that are likely to be in the Jellyfin host -->
   <Target Name="RemoveUnnecessaryAssemblies" AfterTargets="Build">
     <ItemGroup>
-      <FilesToDelete Include="$(OutputPath)System.*.dll" Exclude="$(OutputPath)System.Threading.Tasks.Extensions.dll" />
+      <!-- Avoid including System libraries that are loaded by the host -->
+      <FilesToDelete Include="$(OutputPath)System.*.dll" 
+                     Exclude="$(OutputPath)System.Threading.Tasks.Extensions.dll" />
+      
+      <!-- Specifically remove the assemblies that cause conflicts -->
+      <FilesToDelete Include="$(OutputPath)System.Text.Json.dll" />
+      <FilesToDelete Include="$(OutputPath)System.Text.Encodings.Web.dll" />
+      <FilesToDelete Include="$(OutputPath)System.Runtime.*.dll" />
+      
       <FilesToDelete Include="$(OutputPath)Microsoft.*.dll" />
       <FilesToDelete Include="$(OutputPath)runtimeconfig.json" />
       <FilesToDelete Include="$(OutputPath)*.pdb" />
       <FilesToDelete Include="$(OutputPath)*.runtimeconfig.json" />
+      
+      <!-- Debug assemblies that aren't needed -->
+      <FilesToDelete Include="$(OutputPath)*.xml" />
     </ItemGroup>
     <Delete Files="@(FilesToDelete)" />
+    
+    <!-- Output message for debugging -->
+    <Message Text="Removed unnecessary assemblies while preserving YoutubeExplode dependencies" Importance="high" />
   </Target>
 
 </Project>
