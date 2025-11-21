@@ -113,7 +113,7 @@ namespace Jellyfin.Plugin.xThemeSong.Services
             }
         }
 
-        public async Task<ThemeMetadata> SaveUploadedTheme(string sourcePath, string outputDirectory, int bitrate, CancellationToken cancellationToken)
+        public async Task<ThemeMetadata> SaveUploadedTheme(string sourcePath, string outputDirectory, int bitrate, string originalFileName, CancellationToken cancellationToken)
         {
             try
             {
@@ -146,7 +146,7 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                 var metadata = new ThemeMetadata
                 {
                     IsUserUploaded = true,
-                    OriginalFileName = Path.GetFileName(sourcePath),
+                    OriginalFileName = originalFileName,
                     DateAdded = DateTime.UtcNow,
                     DateModified = DateTime.UtcNow
                 };

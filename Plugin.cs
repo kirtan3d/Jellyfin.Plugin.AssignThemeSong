@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
@@ -20,6 +21,7 @@ namespace Jellyfin.Plugin.xThemeSong;
 /// </summary>
 public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
 {
+    private readonly IApplicationPaths _appPaths;
     private readonly ILogger<Plugin> _logger;
     private static string _transformBasePath = string.Empty;
     private static string _transformVersion = "Unknown";
@@ -39,8 +41,9 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
         : base(applicationPaths, xmlSerializer)
     {
         Instance = this;
+        _appPaths = applicationPaths;
         _logger = logger;
-
+        
         try
         {
             _logger.LogInformation("xThemeSong: Plugin constructor started - WITH File Transformation registration");
@@ -49,14 +52,13 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
             // Try File Transformation plugin first, fall back to direct injection
             if (!TryRegisterFileTransformation(configurationManager))
             {
-                _logger.LogWarning("xThemeSong: File Transformation plugin not available, Web UI features will not work");
+                _logger.LogWarning("xThemeSong: File Transformation plugin not available, attempting direct script injection...");
+                InjectScriptDirectly(configurationManager, applicationPaths);
             }
             else
             {
                 _logger.LogInformation("xThemeSong: Successfully registered with File Transformation plugin");
             }
-
-            _logger.LogInformation("xThemeSong: Plugin initialization completed successfully");
         }
         catch (Exception ex)
         {
@@ -65,6 +67,54 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
         }
     }
 
+    private void InjectScriptDirectly(IServerConfigurationManager configurationManager, IApplicationPaths applicationPaths)
+    {
+        try
+        {
+            var indexPath = Path.Combine(applicationPaths.WebPath, "index.html");
+            if (!File.Exists(indexPath))
+            {
+                _logger.LogError("xThemeSong: Could not find index.html at {Path} for direct injection", indexPath);
+                return;
+            }
+
+            var content = File.ReadAllText(indexPath);
+
+            var basePath = GetBasePathFromConfiguration(configurationManager);
+            var version = Version.ToString();
+
+            string scriptElement = string.Format(
+                CultureInfo.InvariantCulture,
+                "<script plugin=\"xThemeSong\" version=\"{1}\" src=\"{0}/xThemeSong/plugin\" defer></script>",
+                basePath,
+                version);
+
+            if (content.Contains(scriptElement, StringComparison.Ordinal))
+            {
+                _logger.LogInformation("xThemeSong: Script already injected directly, skipping.");
+                return;
+            }
+
+            string scriptReplace = "<script plugin=\"xThemeSong\".*?></script>";
+            content = Regex.Replace(content, scriptReplace, string.Empty);
+
+            int bodyClosing = content.LastIndexOf("</body>", StringComparison.Ordinal);
+            if (bodyClosing == -1)
+            {
+                _logger.LogWarning("xThemeSong: No </body> tag found in index.html for direct injection");
+                return;
+            }
+            
+            content = content.Insert(bodyClosing, scriptElement);
+            File.WriteAllText(indexPath, content);
+            _logger.LogInformation("xThemeSong: Successfully performed direct script injection into index.html");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "xThemeSong: Failed to perform direct script injection");
+        }
+    }
+    
     /// <summary>
     /// Attempts to register transformation with File Transformation plugin using reflection.
     /// </summary>

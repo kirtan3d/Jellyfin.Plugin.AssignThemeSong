@@ -132,7 +132,7 @@ dotnet publish -c Release -o publish
 
 ## 📝 Development Status
 
-**Current Version**: v0.0.11.7
+**Current Version**: v0.1.0
 
 This plugin is now stable and fully functional! Features:
 - ✅ Plugin loads successfully in Jellyfin
@@ -149,11 +149,15 @@ This plugin is now stable and fully functional! Features:
 - ✅ **Fallback Mechanism** - Direct file injection if File Transformation not available
 - ✅ **Base Path Handling** - Proper URL generation for script injection
 
-### Recent Changes (v0.0.11.7)
-- **CRITICAL FIX**: Registered scheduled task in service collection to prevent plugin load failure
-- **ENHANCEMENT**: Completed scheduled task implementation to actually download theme songs from YouTube
-- **FIX**: Updated version numbers across all files for consistency
-- **MAINTENANCE**: Code cleanup and error handling improvements
+### Recent Changes (v0.1.0)
+- **CRITICAL FIX**: Refactored API controller to use proper dependency injection for `ThemeDownloadService`, fixing the core logic for downloads and uploads.
+- **FIX**: Corrected a bug where the original filename of user-uploaded MP3s was not saved in the metadata.
+- **ENHANCEMENT**: Implemented a fallback mechanism for direct script injection into Jellyfin's `index.html`, ensuring UI works even if the File Transformation plugin is not installed.
+- **MAINTENANCE**: Performed a major code cleanup, including renaming classes to follow C# conventions (e.g., `ThemeSongTask`) and removing unnecessary files (`reference-plugins` directory).
+- **MAINTENANCE**: Updated project to ensure a clean and successful build.
+
+### Previous Changes
+- (v0.0.11.7) Fixed scheduled task registration; completed scheduled task implementation.
 
 ## 🤝 Contributing
 

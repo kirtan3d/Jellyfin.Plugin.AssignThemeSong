@@ -18,19 +18,22 @@ namespace Jellyfin.Plugin.xThemeSong.Api
     {
         private readonly ILogger<ThemeSongController> _logger;
         private readonly ILibraryManager _libraryManager;
+        private readonly ThemeDownloadService _themeDownloadService;
         private readonly Plugin _plugin;
 
         public ThemeSongController(
             ILogger<ThemeSongController> logger,
-            ILibraryManager libraryManager)
+            ILibraryManager libraryManager,
+            ThemeDownloadService themeDownloadService)
         {
             _logger = logger;
             _libraryManager = libraryManager;
+            _themeDownloadService = themeDownloadService;
             _plugin = Plugin.Instance;
         }
 
         [HttpPost]
-        public async Task<ActionResult> xThemeSong([FromRoute] string itemId, [FromForm] xThemeSongRequest request)
+        public async Task<ActionResult> AssignThemeSong([FromRoute] string itemId, [FromForm] ThemeSongRequest request)
         {
             var item = _libraryManager.GetItemById(itemId);
             if (item == null)
@@ -56,12 +59,7 @@ namespace Jellyfin.Plugin.xThemeSong.Api
             {
                 if (!string.IsNullOrEmpty(request.YouTubeUrl))
                 {
-                    // Create a logger for ThemeDownloadService
-                    var loggerFactory = (ILoggerFactory)HttpContext.RequestServices.GetService(typeof(ILoggerFactory));
-                    var downloadServiceLogger = loggerFactory.CreateLogger<ThemeDownloadService>();
-                    var downloadService = new ThemeDownloadService(downloadServiceLogger);
-                    
-                    await downloadService.DownloadFromYouTube(
+                    await _themeDownloadService.DownloadFromYouTube(
                         request.YouTubeUrl,
                         itemDirectory,
                         config.AudioBitrate,
@@ -69,28 +67,27 @@ namespace Jellyfin.Plugin.xThemeSong.Api
                 }
                 else if (request.UploadedFile != null && request.UploadedFile.Length > 0)
                 {
-                    // Create a logger for ThemeDownloadService
-                    var loggerFactory = (ILoggerFactory)HttpContext.RequestServices.GetService(typeof(ILoggerFactory));
-                    var downloadServiceLogger = loggerFactory.CreateLogger<ThemeDownloadService>();
-                    var downloadService = new ThemeDownloadService(downloadServiceLogger);
-                    
-                    // Save uploaded file temporarily
                     var tempPath = Path.GetTempFileName();
-                    using (var stream = new FileStream(tempPath, FileMode.Create))
+                    try
                     {
-                        await request.UploadedFile.CopyToAsync(stream);
+                        await using (var stream = new FileStream(tempPath, FileMode.Create))
+                        {
+                            await request.UploadedFile.CopyToAsync(stream);
+                        }
+
+                        await _themeDownloadService.SaveUploadedTheme(
+                            tempPath,
+                            itemDirectory,
+                            config.AudioBitrate,
+                            request.UploadedFile.FileName,
+                            default);
                     }
-
-                    await downloadService.SaveUploadedTheme(
-                        tempPath,
-                        itemDirectory,
-                        config.AudioBitrate,
-                        default);
-
-                    // Clean up temp file
-                    if (System.IO.File.Exists(tempPath))
+                    finally
                     {
-                        System.IO.File.Delete(tempPath);
+                        if (System.IO.File.Exists(tempPath))
+                        {
+                            System.IO.File.Delete(tempPath);
+                        }
                     }
                 }
                 else
@@ -108,7 +105,7 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         }
     }
 
-    public class xThemeSongRequest
+    public class ThemeSongRequest
     {
         public string? YouTubeUrl { get; set; }
         
