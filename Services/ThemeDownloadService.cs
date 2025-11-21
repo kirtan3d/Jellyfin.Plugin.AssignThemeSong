@@ -48,63 +48,75 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                 var audioStreamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
                 
                 // Create temporary file for downloaded audio
-                var tempFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.{audioStreamInfo.Container.Name}");
+            var tempFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.{audioStreamInfo.Container.Name}");
                 
-                // Download the audio
-                await _youtube.Videos.Streams.DownloadAsync(audioStreamInfo, tempFile, null, cancellationToken);
-
-                // Use FFmpeg from system PATH (Jellyfin should have it available)
-                var ffmpegPath = "ffmpeg";
-                if (OperatingSystem.IsWindows())
+                try
                 {
-                    ffmpegPath += ".exe";
-                }
+                    // Download the audio
+                    await _youtube.Videos.Streams.DownloadAsync(audioStreamInfo, tempFile, null, cancellationToken);
 
-                // Output path for the theme song
-                var outputPath = Path.Combine(outputDirectory, "theme.mp3");
-
-                // Convert to MP3 using FFmpeg with specified bitrate
-                var process = new System.Diagnostics.Process
-                {
-                    StartInfo = new System.Diagnostics.ProcessStartInfo
+                    // Use FFmpeg from system PATH (Jellyfin should have it available)
+                    var ffmpegPath = "ffmpeg";
+                    if (OperatingSystem.IsWindows())
                     {
-                        FileName = ffmpegPath,
-                        Arguments = $"-i \"{tempFile}\" -b:a {bitrate}k -vn \"{outputPath}\" -y",
-                        UseShellExecute = false,
-                        RedirectStandardError = true,
-                        CreateNoWindow = true
+                        ffmpegPath += ".exe";
                     }
-                };
 
-                process.Start();
-                await process.WaitForExitAsync(cancellationToken);
+                    // Output path for the theme song
+                    var outputPath = Path.Combine(outputDirectory, "theme.mp3");
 
-                // Clean up temp file
-                if (File.Exists(tempFile))
-                {
-                    File.Delete(tempFile);
+                    // Convert to MP3 using FFmpeg with specified bitrate
+                    var process = new System.Diagnostics.Process
+                    {
+                        StartInfo = new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = ffmpegPath,
+                            Arguments = $"-i \"{tempFile}\" -b:a {bitrate}k -vn \"{outputPath}\" -y",
+                            UseShellExecute = false,
+                            RedirectStandardError = true,
+                            CreateNoWindow = true
+                        }
+                    };
+
+                    process.Start();
+                    await process.WaitForExitAsync(cancellationToken);
+
+                    // Create metadata
+                    var metadata = new ThemeMetadata
+                    {
+                        YouTubeId = videoId,
+                        YouTubeUrl = $"https://www.youtube.com/watch?v={videoId}",
+                        Title = video.Title,
+                        Uploader = video.Author.ChannelTitle,
+                        DateAdded = DateTime.UtcNow,
+                        DateModified = DateTime.UtcNow,
+                        IsUserUploaded = false
+                    };
+
+                    // Save metadata
+                    var metadataPath = Path.Combine(outputDirectory, "theme.json");
+                    await File.WriteAllTextAsync(metadataPath, JsonSerializer.Serialize(metadata, new JsonSerializerOptions 
+                    { 
+                        WriteIndented = true 
+                    }), cancellationToken);
+
+                    return metadata;
                 }
-
-                // Create metadata
-                var metadata = new ThemeMetadata
+                finally
                 {
-                    YouTubeId = videoId,
-                    YouTubeUrl = $"https://www.youtube.com/watch?v={videoId}",
-                    Title = video.Title,
-                    Uploader = video.Author.ChannelTitle,
-                    DateAdded = DateTime.UtcNow,
-                    DateModified = DateTime.UtcNow,
-                    IsUserUploaded = false
-                };
-
-                // Save metadata
-                var metadataPath = Path.Combine(outputDirectory, "theme.json");
-                await File.WriteAllTextAsync(metadataPath, JsonSerializer.Serialize(metadata, new JsonSerializerOptions 
-                { 
-                    WriteIndented = true 
-                }), cancellationToken);
-
-                return metadata;
+                    // Clean up temp file
+                    if (File.Exists(tempFile))
+                    {
+                        try 
+                        {
+                            File.Delete(tempFile);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex, "Failed to delete temp file {TempFile}", tempFile);
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {

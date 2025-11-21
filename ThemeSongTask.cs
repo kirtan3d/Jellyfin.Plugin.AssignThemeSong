@@ -126,23 +126,23 @@ namespace Jellyfin.Plugin.xThemeSong
 
                 if (themeMetadata == null)
                 {
-                    _logger.LogWarning($"Invalid theme.json for {item.Name}, skipping.");
+                    _logger.LogWarning("Invalid theme.json for {ItemName} at {Path}, skipping.", item.Name, themeJsonPath);
                     return;
                 }
 
                 if (themeMetadata.IsUserUploaded)
                 {
-                    _logger.LogInformation($"Theme song for {item.Name} is user uploaded, skipping scheduled download.");
+                    _logger.LogDebug("Theme song for {ItemName} is user uploaded, skipping scheduled download.", item.Name);
                     return;
                 }
 
                 if (string.IsNullOrEmpty(themeMetadata.YouTubeId))
                 {
-                    _logger.LogWarning($"No YouTube ID found for {item.Name}, skipping.");
+                    _logger.LogWarning("No YouTube ID found for {ItemName} in theme.json, skipping.", item.Name);
                     return;
                 }
 
-                _logger.LogInformation($"Downloading theme song for {item.Name} from YouTube ID: {themeMetadata.YouTubeId}");
+                _logger.LogInformation("Downloading theme song for {ItemName} from YouTube ID: {YouTubeId}", item.Name, themeMetadata.YouTubeId);
 
                 try
                 {
@@ -152,16 +152,24 @@ namespace Jellyfin.Plugin.xThemeSong
                         config.AudioBitrate,
                         cancellationToken);
 
-                    _logger.LogInformation($"Successfully downloaded theme song for {item.Name}");
+                    _logger.LogInformation("Successfully downloaded theme song for {ItemName}", item.Name);
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"Failed to download theme song for {item.Name}");
+                    _logger.LogError(ex, "Failed to download theme song for {ItemName} from YouTube ID {YouTubeId}", item.Name, themeMetadata.YouTubeId);
                 }
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "Error deserializing theme.json for {ItemName} at {Path}", item.Name, themeJsonPath);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error processing theme song for {item.Name}.");
+                _logger.LogError(ex, "Error processing theme song for {ItemName}", item.Name);
             }
         }
 

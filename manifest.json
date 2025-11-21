@@ -1,45 +1,51 @@
-[
-  {
-    "name": "xThemeSong",
-    "guid": "97db7543-d64d-45e1-b2e7-62729b56371f",
-    "overview": "Download theme songs from YouTube or upload custom MP3s for your media library",
-    "description": "A plugin that automatically downloads theme songs from YouTube by user provided video ID/URL or allows uploading custom MP3 files. Theme songs are saved as theme.mp3 in media folders along with metadata in theme.json files. Supports both movies and TV shows. Features a complete Web UI with drag-and-drop upload.",
-    "owner": "Kirtan Patel",
-    "category": "General",
-    "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
-    "versions": [
-      {
-        "version": "0.1.0",
-        "checksum": "4a198e749eeb262e667569e0002a0dda",
-        "changelog": "CRITICAL FIX: Refactored API controller to use proper dependency injection, fixing the core logic for downloads and uploads. FIX: Corrected a bug where the original filename of user-uploaded MP3s was not saved. ENHANCEMENT: Implemented a fallback mechanism for direct script injection, ensuring UI works even if the File Transformation plugin is not installed. MAINTENANCE: Major code cleanup, including renaming classes, removing unnecessary files, and ensuring a clean build.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.1.0/xThemeSong_v0.1.0.zip",
-        "timestamp": "2025-11-21T22:00:00Z"
-      },
-      {
-        "version": "0.0.11.9",
-        "checksum": "2BFD8F170DFAE8E774363436DA768240",
-        "changelog": "CRITICAL FIX: Resolved assembly loading conflict with System.Text.Encodings.Web. Modified dependency handling to prevent conflicts with Jellyfin's built-in assemblies. Improved cleanup process to ensure only compatible assemblies are included in the final plugin. Aligned YoutubeExplode to version 6.3.16.0 expected by Jellyfin.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.9/xThemeSong_0.0.11.9.zip",
-        "timestamp": "2025-11-20T16:36:00Z"
-      },
-      {
-        "version": "0.0.11.7",
-        "checksum": "C8D0A6ECA7E066E7CE8955D1EF8BBB3C",
-        "changelog": "CRITICAL FIX: Registered scheduled task in service collection to prevent plugin load failure. ENHANCEMENT: Completed scheduled task implementation to actually download theme songs from YouTube. FIX: Updated version numbers across all files for consistency. MAINTENANCE: Code cleanup and error handling improvements.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.7/xThemeSong_0.0.11.7.zip",
-        "timestamp": "2025-11-20T15:50:00Z"
-      },
-      {
-        "version": "0.0.11.06",
-        "checksum": "9B24D453F9F285A1EAEEC77DA9381E46",
-        "changelog": "FIXED: Missing YoutubeExplode dependency that was preventing plugin load. Updated project configuration to include necessary dependencies while avoiding runtime conflicts.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.06/xThemeSong_0.0.11.06.zip",
-        "timestamp": "2025-11-17T12:19:00Z"
-      }
-    ]
-  }
-]
+{
+    "name":  "xThemeSong",
+    "guid":  "97db7543-d64d-45e1-b2e7-62729b56371f",
+    "overview":  "Download theme songs from YouTube or upload custom MP3s for your media library",
+    "description":  "A plugin that automatically downloads theme songs from YouTube by user provided video ID/URL or allows uploading custom MP3 files. Theme songs are saved as theme.mp3 in media folders along with metadata in theme.json files. Supports both movies and TV shows. Features a complete Web UI with drag-and-drop upload.",
+    "owner":  "Kirtan Patel",
+    "category":  "General",
+    "imageUrl":  "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
+    "versions":  [
+                     {
+                         "version":  "0.1.0",
+                         "checksum":  "7561df79596a0b07c1886af8e68c4cfd",
+                         "changelog":  "CRITICAL FIX: Resolved assembly loading conflict with System.Text.Encodings.Web. Modified dependency handling to prevent conflicts with Jellyfin\u0027s built-in assemblies. Improved cleanup process to ensure only compatible assemblies are included in the final plugin. Aligned YoutubeExplode to version 6.3.16.0 expected by Jellyfin.",
+                         "targetAbi":  "10.10.0.0",
+                         "sourceUrl":  "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.1.0/xThemeSong_v0.1.0.zip",
+                         "timestamp":  "2025-11-21T16:35:35Z"
+                     },
+                     {
+                         "version":  "0.1.0",
+                         "checksum":  "4a198e749eeb262e667569e0002a0dda",
+                         "changelog":  "CRITICAL FIX: Refactored API controller to use proper dependency injection, fixing the core logic for downloads and uploads. FIX: Corrected a bug where the original filename of user-uploaded MP3s was not saved. ENHANCEMENT: Implemented a fallback mechanism for direct script injection, ensuring UI works even if the File Transformation plugin is not installed. MAINTENANCE: Major code cleanup, including renaming classes, removing unnecessary files, and ensuring a clean build.",
+                         "targetAbi":  "10.10.0.0",
+                         "sourceUrl":  "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.1.0/xThemeSong_v0.1.0.zip",
+                         "timestamp":  "2025-11-21T22:00:00Z"
+                     },
+                     {
+                         "version":  "0.0.11.9",
+                         "checksum":  "2BFD8F170DFAE8E774363436DA768240",
+                         "changelog":  "CRITICAL FIX: Resolved assembly loading conflict with System.Text.Encodings.Web. Modified dependency handling to prevent conflicts with Jellyfin\u0027s built-in assemblies. Improved cleanup process to ensure only compatible assemblies are included in the final plugin. Aligned YoutubeExplode to version 6.3.16.0 expected by Jellyfin.",
+                         "targetAbi":  "10.10.0.0",
+                         "sourceUrl":  "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.9/xThemeSong_0.0.11.9.zip",
+                         "timestamp":  "2025-11-20T16:36:00Z"
+                     },
+                     {
+                         "version":  "0.0.11.7",
+                         "checksum":  "C8D0A6ECA7E066E7CE8955D1EF8BBB3C",
+                         "changelog":  "CRITICAL FIX: Registered scheduled task in service collection to prevent plugin load failure. ENHANCEMENT: Completed scheduled task implementation to actually download theme songs from YouTube. FIX: Updated version numbers across all files for consistency. MAINTENANCE: Code cleanup and error handling improvements.",
+                         "targetAbi":  "10.10.0.0",
+                         "sourceUrl":  "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.7/xThemeSong_0.0.11.7.zip",
+                         "timestamp":  "2025-11-20T15:50:00Z"
+                     },
+                     {
+                         "version":  "0.0.11.06",
+                         "checksum":  "9B24D453F9F285A1EAEEC77DA9381E46",
+                         "changelog":  "FIXED: Missing YoutubeExplode dependency that was preventing plugin load. Updated project configuration to include necessary dependencies while avoiding runtime conflicts.",
+                         "targetAbi":  "10.10.0.0",
+                         "sourceUrl":  "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.0.11.06/xThemeSong_0.0.11.06.zip",
+                         "timestamp":  "2025-11-17T12:19:00Z"
+                     }
+                 ]
+}

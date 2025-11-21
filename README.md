@@ -32,23 +32,6 @@ A Jellyfin plugin that allows you to download theme songs from YouTube or upload
 
 ### Method 1: From Jellyfin Plugin Catalog (Recommended)
 
-1. In Jellyfin, go to **Dashboard → Plugins → Catalog**
-2. Search for "xThemeSong"
-3. Click **Install**
-4. Restart Jellyfin
-
-### Method 2: Manual Installation
-
-1. Download the latest release from [GitHub Releases](https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases)
-2. Extract the zip file
-3. Copy the contents to your Jellyfin plugins directory:
-   - Windows: `%AppData%\Jellyfin\Server\plugins\xThemeSong`
-   - Linux: `/var/lib/jellyfin/plugins/xThemeSong`
-   - Docker: `/config/plugins/xThemeSong`
-4. Restart Jellyfin
-
-## 📖 Usage
-
 ### Assigning a Theme Song
 
 1. Navigate to a movie or TV show in Jellyfin
