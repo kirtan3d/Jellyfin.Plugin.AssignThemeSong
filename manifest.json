@@ -9,11 +9,11 @@
   "versions": [
     {
       "version": "0.1.0",
-      "checksum": "bd7c812c5f28adc72822afe455de5f8a",
-      "changelog": "CRITICAL FIX: Resolved assembly loading conflict with System.Text.Encodings.Web. Modified dependency handling to prevent conflicts with Jellyfin's built-in assemblies. Improved cleanup process to ensure only compatible assemblies are included in the final plugin. Aligned YoutubeExplode to version 6.3.16.0 expected by Jellyfin.",
+      "checksum": "2f3d42cb1fe12d2a5dfc95807028e099",
+      "changelog": "CRITICAL FIX: Improved error handling in API controller to ensure proper file uploads. Modified dependency handling to prevent conflicts with Jellyfin's built-in assemblies. Improved cleanup process to ensure only compatible assemblies are included in the final plugin. Aligned YoutubeExplode to version 6.3.16.0 expected by Jellyfin.",
       "targetAbi": "10.10.0.0",
       "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.1.0/xThemeSong_v0.1.0.zip",
-      "timestamp": "2025-11-21T16:38:00Z"
+      "timestamp": "2025-11-24T11:18:10Z"
     },
     {
       "version": "0.0.11.9",

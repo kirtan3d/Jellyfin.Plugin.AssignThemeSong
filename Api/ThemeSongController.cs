@@ -59,14 +59,22 @@ namespace Jellyfin.Plugin.xThemeSong.Api
             {
                 if (!string.IsNullOrEmpty(request.YouTubeUrl))
                 {
+                    _logger.LogInformation("Downloading theme from YouTube URL: {Url} for item {ItemName}", 
+                        request.YouTubeUrl, item.Name);
+                        
                     await _themeDownloadService.DownloadFromYouTube(
                         request.YouTubeUrl,
                         itemDirectory,
                         config.AudioBitrate,
                         default);
+                        
+                    _logger.LogInformation("Successfully downloaded theme from YouTube for {ItemName}", item.Name);
                 }
                 else if (request.UploadedFile != null && request.UploadedFile.Length > 0)
                 {
+                    _logger.LogInformation("Processing uploaded file: {FileName} ({FileSize} bytes) for {ItemName}", 
+                        request.UploadedFile.FileName, request.UploadedFile.Length, item.Name);
+                        
                     var tempPath = Path.GetTempFileName();
                     try
                     {
@@ -81,12 +89,21 @@ namespace Jellyfin.Plugin.xThemeSong.Api
                             config.AudioBitrate,
                             request.UploadedFile.FileName,
                             default);
+                            
+                        _logger.LogInformation("Successfully processed uploaded theme for {ItemName}", item.Name);
                     }
                     finally
                     {
                         if (System.IO.File.Exists(tempPath))
                         {
-                            System.IO.File.Delete(tempPath);
+                            try
+                            {
+                                System.IO.File.Delete(tempPath);
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogWarning(ex, "Failed to delete temporary file {TempFile}", tempPath);
+                            }
                         }
                     }
                 }

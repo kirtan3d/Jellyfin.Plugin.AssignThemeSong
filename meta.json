@@ -8,5 +8,5 @@
   "owner": "Kirtan Patel",
   "category": "General",
   "imageUrl": "icon.png",
-  "changelog": "CRITICAL FIX: Resolved assembly loading conflict with System.Text.Encodings.Web. Modified dependency handling to prevent conflicts with Jellyfin's built-in assemblies. Improved cleanup process to ensure only compatible assemblies are included in the final plugin. Aligned YoutubeExplode to version 6.3.16.0 expected by Jellyfin."
+  "changelog": "CRITICAL FIX: Improved error handling in API controller to ensure proper file uploads. Modified dependency handling to prevent conflicts with Jellyfin's built-in assemblies. Improved cleanup process to ensure only compatible assemblies are included in the final plugin. Aligned YoutubeExplode to version 6.3.16.0 expected by Jellyfin."
 }

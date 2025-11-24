@@ -1,23 +1,37 @@
-# xThemeSong v0.1.0
+# xThemeSong v0.1.0 Release
 
-## 🚀 Changes
+## Overview
+This release includes critical fixes for assembly loading conflicts and improved error handling, particularly around theme song uploads and downloads.
+
+## What's New
 
 ### Critical Fixes
-- **Installation Fix**: Resolved `System.IO.InvalidDataException` by implementing a proper build script that creates a valid zip structure.
-- **Dependency Injection**: Refactored API controller to use proper dependency injection for `ThemeDownloadService`.
-- **Upload Fix**: Corrected a bug where the original filename of user-uploaded MP3s was not saved.
+- **Fixed assembly loading conflicts**: Resolved issues with System.Text.Encodings.Web and other system libraries that prevented the plugin from loading properly in some Jellyfin installations
+- **Aligned dependency versions**: YoutubeExplode now uses version 6.3.16.0 exactly, which matches Jellyfin's expectations and prevents version conflicts
 
-### Enhancements
-- **Robustness**: Implemented a fallback mechanism for direct script injection if the File Transformation plugin is missing.
-- **Cleanup**: Added automatic temp file cleanup to prevent disk clutter.
-- **Logging**: Improved logging for better debugging of download issues.
+### Improvements
+- **Enhanced error handling**: Added robust error handling in the API controller for file uploads, ensuring better reliability when uploading MP3 files
+- **Improved logging**: Added comprehensive logging throughout the plugin to make troubleshooting easier
+- **Streamlined build process**: Modified the cleanup process to ensure only compatible assemblies are included in the plugin package
 
-### Maintenance
-- **Build System**: Added `build.ps1` for automated and reliable builds.
-- **Code Cleanup**: Major refactoring and removal of unused files.
+### Technical Details
+- Fixed parameter mismatches between API controller and service methods
+- Improved cleanup of temporary files when uploading MP3s
+- Increased logging for better diagnostics in server logs
+- Updated assembly versioning to ensure consistency across all plugin components
 
-## 📦 Installation
+## Installation
 
-1. Copy the URL of `manifest.json` from the repository.
-2. Add it to your Jellyfin Plugins repositories.
-3. Install **xThemeSong** from the catalog.
+1. Download the ZIP file from this release
+2. Install it using Jellyfin's plugin manager or extract to your Jellyfin plugins directory:
+   - Windows: `%AppData%\Jellyfin\Server\plugins\`
+   - Linux: `/var/lib/jellyfin/plugins/`
+   - Docker: `/config/plugins/`
+3. Restart Jellyfin
+
+## Requirements
+- Jellyfin Server v10.10.0 or later
+- [File Transformation Plugin](https://github.com/IAmParadox27/jellyfin-plugin-file-transformation) (recommended for Web UI features)
+
+## Known Issues
+- None at this time. Please report any problems you encounter.
