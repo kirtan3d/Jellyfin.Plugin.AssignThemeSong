@@ -4,9 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>Jellyfin.Plugin.xThemeSong</AssemblyName>
     <RootNamespace>Jellyfin.Plugin.xThemeSong</RootNamespace>
-    <Version>0.1.5</Version>
-    <AssemblyVersion>0.1.5</AssemblyVersion>
-    <FileVersion>0.1.5</FileVersion>
+    <Version>0.1.6</Version>
+    <AssemblyVersion>0.1.6</AssemblyVersion>
+    <FileVersion>0.1.6</FileVersion>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -23,7 +23,7 @@
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
     <!-- Use latest YoutubeExplode to fix cipher issues -->
-    <PackageReference Include="YoutubeExplode" Version="6.5.1" />
+    <PackageReference Include="YoutubeExplode" Version="6.5.6" />
     
     <!-- Mark dependencies that are included with Jellyfin as PrivateAssets -->
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
