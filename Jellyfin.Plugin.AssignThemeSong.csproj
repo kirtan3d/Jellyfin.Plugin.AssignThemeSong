@@ -4,9 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>Jellyfin.Plugin.xThemeSong</AssemblyName>
     <RootNamespace>Jellyfin.Plugin.xThemeSong</RootNamespace>
-    <Version>0.1.1</Version>
-    <AssemblyVersion>0.1.1</AssemblyVersion>
-    <FileVersion>0.1.1</FileVersion>
+    <Version>0.1.2</Version>
+    <AssemblyVersion>0.1.2</AssemblyVersion>
+    <FileVersion>0.1.2</FileVersion>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -42,30 +42,35 @@
     <None Include="meta.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
-  <!-- Handle dependency conflicts by excluding assemblies that are likely to be in the Jellyfin host -->
+  <!-- Handle dependency conflicts by excluding assemblies that are provided by Jellyfin host -->
   <Target Name="RemoveUnnecessaryAssemblies" AfterTargets="Build">
     <ItemGroup>
-      <!-- Avoid including System libraries that are loaded by the host -->
-      <FilesToDelete Include="$(OutputPath)System.*.dll" 
-                     Exclude="$(OutputPath)System.Threading.Tasks.Extensions.dll" />
+      <!-- Remove ALL Jellyfin/MediaBrowser assemblies - they are provided by the host -->
+      <FilesToDelete Include="$(OutputPath)Jellyfin.*.dll" />
+      <FilesToDelete Include="$(OutputPath)MediaBrowser.*.dll" />
+      <FilesToDelete Include="$(OutputPath)Emby.*.dll" />
       
-      <!-- Specifically remove the assemblies that cause conflicts -->
-      <FilesToDelete Include="$(OutputPath)System.Text.Json.dll" />
-      <FilesToDelete Include="$(OutputPath)System.Text.Encodings.Web.dll" />
-      <FilesToDelete Include="$(OutputPath)System.Runtime.*.dll" />
+      <!-- Remove System libraries that are loaded by the host -->
+      <FilesToDelete Include="$(OutputPath)System.*.dll" />
       
+      <!-- Remove Microsoft libraries that are loaded by the host -->
       <FilesToDelete Include="$(OutputPath)Microsoft.*.dll" />
-      <FilesToDelete Include="$(OutputPath)runtimeconfig.json" />
-      <FilesToDelete Include="$(OutputPath)*.pdb" />
-      <FilesToDelete Include="$(OutputPath)*.runtimeconfig.json" />
       
-      <!-- Debug assemblies that aren't needed -->
+      <!-- Remove other assemblies that conflict with Jellyfin -->
+      <FilesToDelete Include="$(OutputPath)Newtonsoft.Json.dll" />
+      <FilesToDelete Include="$(OutputPath)ICU4N*.dll" />
+      <FilesToDelete Include="$(OutputPath)J2N.dll" />
+      <FilesToDelete Include="$(OutputPath)Diacritics.dll" />
+      
+      <!-- Remove build artifacts -->
+      <FilesToDelete Include="$(OutputPath)*.pdb" />
       <FilesToDelete Include="$(OutputPath)*.xml" />
+      <FilesToDelete Include="$(OutputPath)*.runtimeconfig.json" />
     </ItemGroup>
     <Delete Files="@(FilesToDelete)" />
     
     <!-- Output message for debugging -->
-    <Message Text="Removed unnecessary assemblies while preserving YoutubeExplode dependencies" Importance="high" />
+    <Message Text="Removed Jellyfin host assemblies and unnecessary files" Importance="high" />
   </Target>
 
 </Project>

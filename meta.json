@@ -1,12 +1,12 @@
 {
   "name": "xThemeSong",
   "guid": "97db7543-d64d-45e1-b2e7-62729b56371f",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "targetAbi": "10.10.0.0",
   "overview": "Download theme songs from YouTube or upload custom MP3s for your media library",
   "description": "A plugin that automatically downloads theme songs from YouTube by user provided video ID/URL or allows uploading custom MP3 files. Features complete Web UI with three-dot menu integration, drag-and-drop upload, and audio player.",
   "owner": "Kirtan Patel",
   "category": "General",
   "imageUrl": "icon.png",
-  "changelog": "v0.1.1: Code review and cleanup. Removed unused imports and empty directories. Verified all API endpoints, services, and web components are properly integrated."
+  "changelog": "v0.1.2: CRITICAL FIX - Fixed plugin loading by removing conflicting Jellyfin host assemblies from build output. Plugin was bundling Jellyfin 10.10 assemblies causing conflicts with Jellyfin 10.11.x servers."
 }

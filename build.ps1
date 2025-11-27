@@ -36,7 +36,28 @@ New-Item -ItemType Directory -Path $zipContentDir | Out-Null
 Copy-Item "$releaseDir\bin\*" $zipContentDir -Recurse
 
 # Remove unnecessary files from zip content
-Get-ChildItem $zipContentDir -Include *.pdb,*.xml,*.runtimeconfig.json -Recurse | Remove-Item -Force
+Get-ChildItem $zipContentDir -Include *.pdb,*.xml,*.runtimeconfig.json,*.deps.json -Recurse | Remove-Item -Force
+
+# Remove Jellyfin host assemblies that cause version conflicts
+$jellyfinAssemblies = @(
+    "Jellyfin.Data.dll",
+    "Jellyfin.Extensions.dll", 
+    "MediaBrowser.Common.dll",
+    "MediaBrowser.Controller.dll",
+    "MediaBrowser.Model.dll",
+    "Emby.Naming.dll",
+    "Microsoft.Extensions.*.dll",
+    "Newtonsoft.Json.dll",
+    "ICU4N*.dll",
+    "J2N.dll",
+    "Diacritics.dll"
+)
+
+foreach ($pattern in $jellyfinAssemblies) {
+    Get-ChildItem $zipContentDir -Include $pattern -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
+}
+
+Write-Host "Cleaned up Jellyfin host assemblies from zip" -ForegroundColor Yellow
 
 # Create Zip
 $zipFileName = "xThemeSong_v$version.zip"
