@@ -75,7 +75,10 @@ $meta = Get-Content $metaPath | ConvertFrom-Json
 
 # Update manifest.json - it's an array of plugins
 Write-Host "Updating manifest.json..." -ForegroundColor Yellow
-$manifestArray = Get-Content $manifestPath -Raw | ConvertFrom-Json
+
+# Read manifest content as string and parse manually to preserve array
+$manifestContent = Get-Content $manifestPath -Raw
+$manifestArray = $manifestContent | ConvertFrom-Json
 
 $newVersionObj = [PSCustomObject]@{
     version = $version
@@ -88,7 +91,10 @@ $newVersionObj = [PSCustomObject]@{
 
 # Access the first plugin in the array and update its versions
 $manifestArray[0].versions = @($newVersionObj) + $manifestArray[0].versions
-$manifestArray | ConvertTo-Json -Depth 10 | Set-Content $manifestPath
+
+# Write back as proper JSON array - using @() to ensure array output
+$jsonOutput = @($manifestArray) | ConvertTo-Json -Depth 10
+$jsonOutput | Set-Content $manifestPath -Encoding UTF8
 
 Write-Host ""
 Write-Host "============================================" -ForegroundColor Green
