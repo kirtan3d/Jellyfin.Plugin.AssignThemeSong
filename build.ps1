@@ -52,9 +52,9 @@ Write-Host "MD5: $md5" -ForegroundColor Green
 # Get metadata for changelog
 $meta = Get-Content $metaPath | ConvertFrom-Json
 
-# Update manifest.json - it's a single object, not an array
+# Update manifest.json - it's an array of plugins
 Write-Host "Updating manifest.json..." -ForegroundColor Yellow
-$manifest = Get-Content $manifestPath | ConvertFrom-Json
+$manifestArray = Get-Content $manifestPath -Raw | ConvertFrom-Json
 
 $newVersionObj = [PSCustomObject]@{
     version = $version
@@ -65,9 +65,9 @@ $newVersionObj = [PSCustomObject]@{
     timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
 }
 
-# Add new version to the beginning of the versions array
-$manifest.versions = @($newVersionObj) + $manifest.versions
-$manifest | ConvertTo-Json -Depth 10 | Set-Content $manifestPath
+# Access the first plugin in the array and update its versions
+$manifestArray[0].versions = @($newVersionObj) + $manifestArray[0].versions
+$manifestArray | ConvertTo-Json -Depth 10 | Set-Content $manifestPath
 
 Write-Host ""
 Write-Host "============================================" -ForegroundColor Green
