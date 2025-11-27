@@ -315,6 +315,18 @@
     function createSimpleDialog(itemId) {
         console.log('xThemeSong: Using simple fallback dialog');
         
+        // Close and remove any Jellyfin dialog containers that may be blocking
+        var dialogContainers = document.querySelectorAll('.dialogContainer, .dialog-container');
+        dialogContainers.forEach(function(container) {
+            container.style.display = 'none';
+            if (container.parentNode) {
+                container.parentNode.removeChild(container);
+            }
+        });
+        
+        // Also close any action sheets and backdrops
+        closeActionSheets();
+        
         // Create a simple modal dialog as fallback
         var overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:10000;display:flex;align-items:center;justify-content:center;';

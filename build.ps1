@@ -47,10 +47,13 @@ $jellyfinAssemblies = @(
     "MediaBrowser.Model.dll",
     "Emby.Naming.dll",
     "Microsoft.Extensions.*.dll",
+    "Microsoft.*.dll",
     "Newtonsoft.Json.dll",
     "ICU4N*.dll",
     "J2N.dll",
-    "Diacritics.dll"
+    "Diacritics.dll",
+    "System.*.dll",
+    "runtimes"
 )
 
 foreach ($pattern in $jellyfinAssemblies) {
