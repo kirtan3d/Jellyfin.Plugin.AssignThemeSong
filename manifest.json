@@ -1,4 +1,4 @@
-[
+﻿[
   {
     "name": "xThemeSong",
     "guid": "97db7543-d64d-45e1-b2e7-62729b56371f",
@@ -8,6 +8,14 @@
     "category": "General",
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
+      {
+        "version": "0.1.3",
+        "checksum": "b1585397706139449a3926f8d7a92aab",
+        "changelog": "v0.1.3: Fixed dialog error when dialogHelper.createDialog is undefined. Added proper fallback to simple dialog.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.1.3/xThemeSong_v0.1.3.zip",
+        "timestamp": "2025-11-27T12:15:00Z"
+      },
       {
         "version": "0.1.2",
         "checksum": "8f7aa5b60cff3e110735d45044f92543",
@@ -23,14 +31,6 @@
         "targetAbi": "10.10.0.0",
         "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.1.1/xThemeSong_v0.1.1.zip",
         "timestamp": "2025-11-27T11:31:13Z"
-      },
-      {
-        "version": "0.1.0",
-        "checksum": "2f3d42cb1fe12d2a5dfc95807028e099",
-        "changelog": "CRITICAL FIX: Improved error handling in API controller.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.1.0/xThemeSong_v0.1.0.zip",
-        "timestamp": "2025-11-24T11:18:10Z"
       }
     ]
   }

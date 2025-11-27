@@ -79,16 +79,35 @@
         
         // Try with RequireJS first
         if (typeof window.require !== 'undefined') {
-            window.require(['loading', 'dialogHelper'], function(loading, dialogHelper) {
-                createDialogWithHelper(itemId, dialogHelper, loading);
-            });
-        } else {
+            try {
+                window.require(['loading', 'dialogHelper'], function(loading, dialogHelper) {
+                    if (dialogHelper && dialogHelper.createDialog) {
+                        createDialogWithHelper(itemId, dialogHelper, loading);
+                    } else {
+                        console.log('xThemeSong: dialogHelper not available after require, using fallback');
+                        createSimpleDialog(itemId);
+                    }
+                });
+            } catch (e) {
+                console.log('xThemeSong: RequireJS error:', e);
+                createSimpleDialog(itemId);
+            }
+        } else if (window.dialogHelper && window.dialogHelper.createDialog) {
             // Use global dialogHelper directly
             createDialogWithHelper(itemId, window.dialogHelper, window.loading);
+        } else {
+            console.log('xThemeSong: No dialog system available, using fallback');
+            createSimpleDialog(itemId);
         }
     }
     
     function createDialogWithHelper(itemId, dialogHelper, loading) {
+        if (!dialogHelper || !dialogHelper.createDialog) {
+            console.log('xThemeSong: dialogHelper.createDialog not available, using fallback');
+            createSimpleDialog(itemId);
+            return;
+        }
+        
         var dlg = dialogHelper.createDialog({
             size: 'medium',
             removeOnClose: true,
