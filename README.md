@@ -115,7 +115,7 @@ dotnet publish -c Release -o publish
 
 ## 📝 Development Status
 
-**Current Version**: v0.1.0
+**Current Version**: v0.1.1
 
 This plugin is now stable and fully functional! Features:
 - ✅ Plugin loads successfully in Jellyfin
@@ -132,12 +132,18 @@ This plugin is now stable and fully functional! Features:
 - ✅ **Fallback Mechanism** - Direct file injection if File Transformation not available
 - ✅ **Base Path Handling** - Proper URL generation for script injection
 
-### Recent Changes (v0.1.0)
-- **CRITICAL FIX**: Refactored API controller to use proper dependency injection for `ThemeDownloadService`, fixing the core logic for downloads and uploads.
+### Recent Changes (v0.1.1)
+- **MAINTENANCE**: Comprehensive code review and cleanup of all source files.
+- **MAINTENANCE**: Removed unused imports and verified all API endpoints.
+- **MAINTENANCE**: Cleaned up empty directories and unnecessary files.
+- **ENHANCEMENT**: Verified all web components (plugin.js, xThemeSong.js) are properly integrated.
+- **ENHANCEMENT**: Updated build script for more reliable builds.
+
+### Previous Changes (v0.1.0)
+- **CRITICAL FIX**: Refactored API controller to use proper dependency injection for `ThemeDownloadService`.
 - **FIX**: Corrected a bug where the original filename of user-uploaded MP3s was not saved in the metadata.
-- **ENHANCEMENT**: Implemented a fallback mechanism for direct script injection into Jellyfin's `index.html`, ensuring UI works even if the File Transformation plugin is not installed.
-- **MAINTENANCE**: Performed a major code cleanup, including renaming classes to follow C# conventions (e.g., `ThemeSongTask`) and removing unnecessary files (`reference-plugins` directory).
-- **MAINTENANCE**: Updated project to ensure a clean and successful build.
+- **ENHANCEMENT**: Implemented a fallback mechanism for direct script injection into Jellyfin's `index.html`.
+- **MAINTENANCE**: Performed a major code cleanup and removed unnecessary files.
 
 ### Previous Changes
 - (v0.0.11.7) Fixed scheduled task registration; completed scheduled task implementation.
