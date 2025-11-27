@@ -205,3 +205,42 @@ public class TransformationRegistrationPayload
 7. **File Transformation expects plain filename** "index.html", not regex pattern
 8. **Dependency management is critical** - must align with Jellyfin's expected versions
 9. **Proper error handling in constructor** ensures plugin loads even if certain features fail
+
+## CRITICAL: Manifest.json Format
+
+**The Jellyfin plugin repository manifest MUST be an array of plugin objects, not a single object!**
+
+### Correct Format (Array):
+```json
+[
+  {
+    "name": "PluginName",
+    "guid": "plugin-guid-here",
+    "overview": "Short description",
+    "description": "Long description",
+    "owner": "Owner Name",
+    "category": "General",
+    "imageUrl": "https://url/to/icon.png",
+    "versions": [
+      {
+        "version": "1.0.0",
+        "checksum": "md5-hash",
+        "changelog": "Changes...",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://url/to/plugin.zip",
+        "timestamp": "2025-01-01T00:00:00Z"
+      }
+    ]
+  }
+]
+```
+
+### Wrong Format (Single Object - WILL NOT WORK):
+```json
+{
+  "name": "PluginName",
+  ...
+}
+```
+
+This is a critical requirement for Jellyfin to recognize the plugin repository. Without the array format, the plugin will not appear in Jellyfin's available plugins list.
