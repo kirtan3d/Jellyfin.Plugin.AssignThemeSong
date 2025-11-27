@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "0.1.7",
+        "checksum": "4eac40fad77efc72e17a90c9db4efcee",
+        "changelog": "v0.1.7: Fixed FFmpeg path detection to work on Windows, Mac, Linux and Docker. Now checks JELLYFIN_FFMPEG env variable and common installation paths.",
+        "targetAbi": "10.10.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.1.7/xThemeSong_v0.1.7.zip",
+        "timestamp": "2025-11-27T13:16:00Z"
+      },
+      {
         "version": "0.1.6",
         "checksum": "ff79d4229c326c038de0c62d4cf8a761",
         "changelog": "v0.1.6: Updated YoutubeExplode to v6.5.6 to fix cipher extraction error.",
@@ -23,14 +31,6 @@
         "targetAbi": "10.10.0.0",
         "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.1.5/xThemeSong_v0.1.5.zip",
         "timestamp": "2025-11-27T12:51:00Z"
-      },
-      {
-        "version": "0.1.4",
-        "checksum": "1f92f4b3611121559de3cca0fa5d5dad",
-        "changelog": "v0.1.4: Fixed YouTube cipher error by upgrading YoutubeExplode to v6.5.1.",
-        "targetAbi": "10.10.0.0",
-        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v0.1.4/xThemeSong_v0.1.4.zip",
-        "timestamp": "2025-11-27T12:39:00Z"
       }
     ]
   }

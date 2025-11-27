@@ -1,12 +1,12 @@
 {
   "name": "xThemeSong",
   "guid": "97db7543-d64d-45e1-b2e7-62729b56371f",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "targetAbi": "10.10.0.0",
   "overview": "Download theme songs from YouTube or upload custom MP3s for your media library",
   "description": "A plugin that automatically downloads theme songs from YouTube by user provided video ID/URL or allows uploading custom MP3 files. Features complete Web UI with three-dot menu integration, drag-and-drop upload, and audio player.",
   "owner": "Kirtan Patel",
   "category": "General",
   "imageUrl": "icon.png",
-  "changelog": "v0.1.6: Updated YoutubeExplode to v6.5.6 to fix cipher extraction error."
+  "changelog": "v0.1.7: Fixed FFmpeg path detection to work on Windows, Mac, Linux and Docker. Now checks JELLYFIN_FFMPEG env variable and common installation paths."
 }

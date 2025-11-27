@@ -21,6 +21,52 @@ namespace Jellyfin.Plugin.xThemeSong.Services
             _youtube = new YoutubeClient();
         }
 
+        /// <summary>
+        /// Gets the FFmpeg path, checking environment variables and common locations.
+        /// </summary>
+        private string GetFfmpegPath()
+        {
+            // Check Jellyfin's environment variable first (used in Docker)
+            var jellyfinFfmpeg = Environment.GetEnvironmentVariable("JELLYFIN_FFMPEG");
+            if (!string.IsNullOrEmpty(jellyfinFfmpeg) && File.Exists(jellyfinFfmpeg))
+            {
+                _logger.LogInformation("Using FFmpeg from JELLYFIN_FFMPEG environment variable: {Path}", jellyfinFfmpeg);
+                return jellyfinFfmpeg;
+            }
+
+            // Common FFmpeg locations to check
+            var possiblePaths = new[]
+            {
+                // Linux/Docker Jellyfin locations
+                "/usr/lib/jellyfin-ffmpeg/ffmpeg",
+                "/usr/bin/ffmpeg",
+                "/usr/local/bin/ffmpeg",
+                
+                // macOS locations
+                "/opt/homebrew/bin/ffmpeg",
+                "/usr/local/bin/ffmpeg",
+                
+                // Windows locations
+                @"C:\Program Files\Jellyfin\Server\ffmpeg.exe",
+                @"C:\ProgramData\chocolatey\bin\ffmpeg.exe",
+                @"C:\ffmpeg\bin\ffmpeg.exe"
+            };
+
+            foreach (var path in possiblePaths)
+            {
+                if (File.Exists(path))
+                {
+                    _logger.LogInformation("Found FFmpeg at: {Path}", path);
+                    return path;
+                }
+            }
+
+            // Fall back to PATH - just use "ffmpeg" and let the OS find it
+            var ffmpegName = OperatingSystem.IsWindows() ? "ffmpeg.exe" : "ffmpeg";
+            _logger.LogInformation("Using FFmpeg from system PATH: {Name}", ffmpegName);
+            return ffmpegName;
+        }
+
         public async Task<ThemeMetadata> DownloadFromYouTube(string input, string outputDirectory, int bitrate, CancellationToken cancellationToken)
         {
             try
@@ -40,6 +86,8 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                     }
                 }
 
+                _logger.LogInformation("Downloading audio from YouTube video: {VideoId}", videoId);
+
                 // Get video details
                 var video = await _youtube.Videos.GetAsync(videoId, cancellationToken);
                 var streamManifest = await _youtube.Videos.Streams.GetManifestAsync(videoId, cancellationToken);
@@ -48,22 +96,21 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                 var audioStreamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
                 
                 // Create temporary file for downloaded audio
-            var tempFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.{audioStreamInfo.Container.Name}");
+                var tempFile = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.{audioStreamInfo.Container.Name}");
                 
                 try
                 {
                     // Download the audio
+                    _logger.LogInformation("Downloading audio stream to temp file: {TempFile}", tempFile);
                     await _youtube.Videos.Streams.DownloadAsync(audioStreamInfo, tempFile, null, cancellationToken);
 
-                    // Use FFmpeg from system PATH (Jellyfin should have it available)
-                    var ffmpegPath = "ffmpeg";
-                    if (OperatingSystem.IsWindows())
-                    {
-                        ffmpegPath += ".exe";
-                    }
+                    // Get FFmpeg path
+                    var ffmpegPath = GetFfmpegPath();
 
                     // Output path for the theme song
                     var outputPath = Path.Combine(outputDirectory, "theme.mp3");
+
+                    _logger.LogInformation("Converting to MP3 using FFmpeg: {FfmpegPath}", ffmpegPath);
 
                     // Convert to MP3 using FFmpeg with specified bitrate
                     var process = new System.Diagnostics.Process
@@ -74,12 +121,24 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                             Arguments = $"-i \"{tempFile}\" -b:a {bitrate}k -vn \"{outputPath}\" -y",
                             UseShellExecute = false,
                             RedirectStandardError = true,
+                            RedirectStandardOutput = true,
                             CreateNoWindow = true
                         }
                     };
 
                     process.Start();
+                    
+                    // Read error output for debugging
+                    var errorOutput = await process.StandardError.ReadToEndAsync();
                     await process.WaitForExitAsync(cancellationToken);
+
+                    if (process.ExitCode != 0)
+                    {
+                        _logger.LogError("FFmpeg conversion failed with exit code {ExitCode}. Error: {Error}", process.ExitCode, errorOutput);
+                        throw new Exception($"FFmpeg conversion failed: {errorOutput}");
+                    }
+
+                    _logger.LogInformation("Successfully converted to MP3: {OutputPath}", outputPath);
 
                     // Create metadata
                     var metadata = new ThemeMetadata
@@ -100,6 +159,7 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                         WriteIndented = true 
                     }), cancellationToken);
 
+                    _logger.LogInformation("Theme song downloaded successfully for video: {Title}", video.Title);
                     return metadata;
                 }
                 finally
@@ -129,14 +189,12 @@ namespace Jellyfin.Plugin.xThemeSong.Services
         {
             try
             {
-                // Use FFmpeg from system PATH (Jellyfin should have it available)
-                var ffmpegPath = "ffmpeg";
-                if (OperatingSystem.IsWindows())
-                {
-                    ffmpegPath += ".exe";
-                }
+                // Get FFmpeg path
+                var ffmpegPath = GetFfmpegPath();
 
                 var outputPath = Path.Combine(outputDirectory, "theme.mp3");
+
+                _logger.LogInformation("Converting uploaded file to MP3 using FFmpeg: {FfmpegPath}", ffmpegPath);
 
                 // Convert/normalize uploaded MP3 using FFmpeg
                 var process = new System.Diagnostics.Process
@@ -147,12 +205,24 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                         Arguments = $"-i \"{sourcePath}\" -b:a {bitrate}k -vn \"{outputPath}\" -y",
                         UseShellExecute = false,
                         RedirectStandardError = true,
+                        RedirectStandardOutput = true,
                         CreateNoWindow = true
                     }
                 };
 
                 process.Start();
+                
+                // Read error output for debugging
+                var errorOutput = await process.StandardError.ReadToEndAsync();
                 await process.WaitForExitAsync(cancellationToken);
+
+                if (process.ExitCode != 0)
+                {
+                    _logger.LogError("FFmpeg conversion failed with exit code {ExitCode}. Error: {Error}", process.ExitCode, errorOutput);
+                    throw new Exception($"FFmpeg conversion failed: {errorOutput}");
+                }
+
+                _logger.LogInformation("Successfully converted uploaded file to MP3: {OutputPath}", outputPath);
 
                 // Create metadata
                 var metadata = new ThemeMetadata
