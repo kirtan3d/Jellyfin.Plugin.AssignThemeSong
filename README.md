@@ -1,6 +1,9 @@
 # xThemeSong
 
 A Jellyfin plugin that allows you to download theme songs from YouTube or upload custom MP3 files for your movies and TV shows.
+<p align="center">
+<img alt="Logo" src="https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png" />
+</p>
 
 ## ✨ Features
 
