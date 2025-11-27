@@ -11,6 +11,9 @@ A Jellyfin plugin that allows you to download theme songs from YouTube or upload
 - 📝 Stores metadata in `theme.json` files
 - ⏰ Scheduled task to process theme songs
 - 🎛️ Configuration page in Jellyfin dashboard
+- 🔄 Loading animations during processing
+- 🎧 Audio player for existing theme songs
+- ✅ Modern modal dialogs for success/error messages
 
 ## 📋 Requirements
 
@@ -30,7 +33,24 @@ A Jellyfin plugin that allows you to download theme songs from YouTube or upload
 3. Install it and restart Jellyfin
 4. Then proceed with installing xThemeSong
 
-### Method 1: From Jellyfin Plugin Catalog (Recommended)
+### Method 1: From Repository (Recommended)
+
+1. Add repository URL to Jellyfin: `https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/manifest.json`
+2. Go to **Dashboard → Plugins → Catalog**
+3. Search for "xThemeSong"
+4. Click **Install** and restart Jellyfin
+
+### Method 2: Manual Installation
+
+1. Download the latest release from [GitHub Releases](https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases)
+2. Extract the zip file
+3. Copy the contents to your Jellyfin plugins directory:
+   - **Windows**: `%AppData%\Jellyfin\Server\plugins\xThemeSong`
+   - **Linux**: `/var/lib/jellyfin/plugins/xThemeSong`
+   - **Docker**: `/config/plugins/xThemeSong`
+4. Restart Jellyfin
+
+## 📖 Usage
 
 ### Assigning a Theme Song
 
@@ -38,13 +58,15 @@ A Jellyfin plugin that allows you to download theme songs from YouTube or upload
 2. Click the **"⋮" (three dots)** menu
 3. Select **"xThemeSong"**
 4. A modal dialog will open showing:
-   - Existing theme song audio player (if available)
+   - 🎧 Existing theme song audio player (if available)
    - YouTube URL/Video ID input field
    - Drag-and-drop area for MP3 files
 5. Choose one of the following:
    - Enter a YouTube video ID or URL
    - Upload an MP3 file (drag-and-drop or browse)
 6. Click **"Save Theme Song"**
+7. Wait for the loading animation to complete
+8. Success message will appear when done!
 
 ### Scheduled Task
 
@@ -115,38 +137,23 @@ dotnet publish -c Release -o publish
 
 ## 📝 Development Status
 
-**Current Version**: v0.1.1
+**Current Version**: v1.0.0
 
-This plugin is now stable and fully functional! Features:
+### v1.0.0 Features
 - ✅ Plugin loads successfully in Jellyfin
 - ✅ **Web UI integration** - Three-dot menu item "xThemeSong"
-- ✅ **Modal dialog** with drag-and-drop file upload
-- ✅ **Audio player** for existing theme songs
-- ✅ YouTube download service with YoutubeExplode (dependency included)
-- ✅ MP3 upload support with drag-and-drop
-- ✅ API endpoints for assigning theme songs
+- ✅ **Modern Modal Dialog** with dark theme
+- ✅ **Loading Animations** during download/upload
+- ✅ **Success/Error Messages** in modal dialogs (no JavaScript alerts)
+- ✅ **Audio Player** for existing theme songs
+- ✅ **Drag-and-drop** file upload
+- ✅ YouTube download service with YoutubeExplode v6.5.6
+- ✅ MP3 upload support
+- ✅ API endpoints for theme management
 - ✅ Scheduled task for batch processing
 - ✅ Configuration page
-- ✅ Extensive logging for debugging plugin initialization
-- ✅ **File Transformation Plugin Integration** - Reliable script injection
-- ✅ **Fallback Mechanism** - Direct file injection if File Transformation not available
-- ✅ **Base Path Handling** - Proper URL generation for script injection
-
-### Recent Changes (v0.1.1)
-- **MAINTENANCE**: Comprehensive code review and cleanup of all source files.
-- **MAINTENANCE**: Removed unused imports and verified all API endpoints.
-- **MAINTENANCE**: Cleaned up empty directories and unnecessary files.
-- **ENHANCEMENT**: Verified all web components (plugin.js, xThemeSong.js) are properly integrated.
-- **ENHANCEMENT**: Updated build script for more reliable builds.
-
-### Previous Changes (v0.1.0)
-- **CRITICAL FIX**: Refactored API controller to use proper dependency injection for `ThemeDownloadService`.
-- **FIX**: Corrected a bug where the original filename of user-uploaded MP3s was not saved in the metadata.
-- **ENHANCEMENT**: Implemented a fallback mechanism for direct script injection into Jellyfin's `index.html`.
-- **MAINTENANCE**: Performed a major code cleanup and removed unnecessary files.
-
-### Previous Changes
-- (v0.0.11.7) Fixed scheduled task registration; completed scheduled task implementation.
+- ✅ **Cross-Platform FFmpeg Detection** - Windows, Mac, Linux, Docker
+- ✅ File Transformation Plugin Integration
 
 ## 🤝 Contributing
 
@@ -160,7 +167,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - [Jellyfin](https://github.com/jellyfin/jellyfin) - The media server
 - [YoutubeExplode](https://github.com/Tyrrrz/YoutubeExplode) - YouTube download library
-- Reference plugins: Themerr, Theme Songs Plugin, and others
+- Reference plugins: File Transformation, HoverTrailer, and others
 
 ## 📧 Support
 

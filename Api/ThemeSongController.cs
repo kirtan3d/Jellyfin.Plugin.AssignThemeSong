@@ -1,10 +1,9 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.xThemeSong.Models;
 using Jellyfin.Plugin.xThemeSong.Services;
-using MediaBrowser.Common;
 using MediaBrowser.Controller.Library;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace Jellyfin.Plugin.xThemeSong.Api
 {
     [ApiController]
-    [Route("xThemeSong/{itemId}")]
+    [Route("xThemeSong")]
     public class ThemeSongController : ControllerBase
     {
         private readonly ILogger<ThemeSongController> _logger;
@@ -32,7 +31,7 @@ namespace Jellyfin.Plugin.xThemeSong.Api
             _plugin = Plugin.Instance;
         }
 
-        [HttpPost]
+        [HttpPost("{itemId}")]
         public async Task<ActionResult> AssignThemeSong([FromRoute] string itemId, [FromForm] ThemeSongRequest request)
         {
             var item = _libraryManager.GetItemById(itemId);
@@ -117,6 +116,85 @@ namespace Jellyfin.Plugin.xThemeSong.Api
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error assigning theme song");
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("{itemId}/metadata")]
+        public ActionResult GetThemeMetadata([FromRoute] string itemId)
+        {
+            var item = _libraryManager.GetItemById(itemId);
+            if (item == null)
+            {
+                return NotFound($"Item {itemId} not found");
+            }
+
+            var itemPath = item.Path;
+            if (string.IsNullOrEmpty(itemPath))
+            {
+                return NotFound("Item has no valid path");
+            }
+
+            var itemDirectory = Path.GetDirectoryName(itemPath);
+            if (string.IsNullOrEmpty(itemDirectory))
+            {
+                return NotFound("Could not determine item directory");
+            }
+
+            var metadataPath = Path.Combine(itemDirectory, "theme.json");
+            if (!System.IO.File.Exists(metadataPath))
+            {
+                return NotFound("No theme metadata found");
+            }
+
+            try
+            {
+                var json = System.IO.File.ReadAllText(metadataPath);
+                var metadata = JsonSerializer.Deserialize<ThemeMetadata>(json);
+                return Ok(metadata);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error reading theme metadata");
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("{itemId}/audio")]
+        public ActionResult GetThemeAudio([FromRoute] string itemId)
+        {
+            var item = _libraryManager.GetItemById(itemId);
+            if (item == null)
+            {
+                return NotFound($"Item {itemId} not found");
+            }
+
+            var itemPath = item.Path;
+            if (string.IsNullOrEmpty(itemPath))
+            {
+                return NotFound("Item has no valid path");
+            }
+
+            var itemDirectory = Path.GetDirectoryName(itemPath);
+            if (string.IsNullOrEmpty(itemDirectory))
+            {
+                return NotFound("Could not determine item directory");
+            }
+
+            var audioPath = Path.Combine(itemDirectory, "theme.mp3");
+            if (!System.IO.File.Exists(audioPath))
+            {
+                return NotFound("No theme audio found");
+            }
+
+            try
+            {
+                var stream = new FileStream(audioPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                return File(stream, "audio/mpeg", "theme.mp3");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error streaming theme audio");
                 return StatusCode(500, $"Error: {ex.Message}");
             }
         }
