@@ -4,6 +4,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.xThemeSong.Models;
 using Jellyfin.Plugin.xThemeSong.Services;
+using MediaBrowser.Controller.Entities;
+using MediaBrowser.Controller.Entities.Movies;
+using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +34,49 @@ namespace Jellyfin.Plugin.xThemeSong.Api
             _plugin = Plugin.Instance;
         }
 
+        /// <summary>
+        /// Gets the correct directory for storing theme files based on item type.
+        /// For Series: Use the series folder directly (item.Path is the folder)
+        /// For Season: Navigate to parent series folder
+        /// For Movie: Use the parent directory of the movie file
+        /// </summary>
+        private string? GetThemeDirectory(BaseItem item)
+        {
+            var itemPath = item.Path;
+            if (string.IsNullOrEmpty(itemPath))
+            {
+                return null;
+            }
+
+            // For Series, the Path IS the series folder
+            if (item is Series)
+            {
+                _logger.LogDebug("Item is Series, using path directly: {Path}", itemPath);
+                return itemPath;
+            }
+
+            // For Season, navigate up to the Series folder
+            if (item is Season season)
+            {
+                // Get parent series
+                var series = season.Series;
+                if (series != null && !string.IsNullOrEmpty(series.Path))
+                {
+                    _logger.LogDebug("Item is Season, using parent Series path: {Path}", series.Path);
+                    return series.Path;
+                }
+                // Fallback: go up one directory from season folder
+                var parentDir = Path.GetDirectoryName(itemPath);
+                _logger.LogDebug("Item is Season (no series ref), using parent: {Path}", parentDir);
+                return parentDir;
+            }
+
+            // For Movie and other file-based items, use the containing directory
+            var directory = Path.GetDirectoryName(itemPath);
+            _logger.LogDebug("Item is {Type}, using directory: {Path}", item.GetType().Name, directory);
+            return directory;
+        }
+
         [HttpPost("{itemId}")]
         public async Task<ActionResult> AssignThemeSong([FromRoute] string itemId, [FromForm] ThemeSongRequest request)
         {
@@ -40,17 +86,14 @@ namespace Jellyfin.Plugin.xThemeSong.Api
                 return NotFound($"Item {itemId} not found");
             }
 
-            var itemPath = item.Path;
-            if (string.IsNullOrEmpty(itemPath))
-            {
-                return BadRequest("Item has no valid path");
-            }
-
-            var itemDirectory = Path.GetDirectoryName(itemPath);
+            var itemDirectory = GetThemeDirectory(item);
             if (string.IsNullOrEmpty(itemDirectory))
             {
                 return BadRequest("Could not determine item directory");
             }
+
+            _logger.LogInformation("Theme directory for {ItemName} ({ItemType}): {Directory}", 
+                item.Name, item.GetType().Name, itemDirectory);
 
             var config = _plugin.Configuration;
 
@@ -129,19 +172,15 @@ namespace Jellyfin.Plugin.xThemeSong.Api
                 return NotFound($"Item {itemId} not found");
             }
 
-            var itemPath = item.Path;
-            if (string.IsNullOrEmpty(itemPath))
-            {
-                return NotFound("Item has no valid path");
-            }
-
-            var itemDirectory = Path.GetDirectoryName(itemPath);
+            var itemDirectory = GetThemeDirectory(item);
             if (string.IsNullOrEmpty(itemDirectory))
             {
                 return NotFound("Could not determine item directory");
             }
 
             var metadataPath = Path.Combine(itemDirectory, "theme.json");
+            _logger.LogDebug("Looking for metadata at: {Path}", metadataPath);
+            
             if (!System.IO.File.Exists(metadataPath))
             {
                 return NotFound("No theme metadata found");
@@ -169,19 +208,15 @@ namespace Jellyfin.Plugin.xThemeSong.Api
                 return NotFound($"Item {itemId} not found");
             }
 
-            var itemPath = item.Path;
-            if (string.IsNullOrEmpty(itemPath))
-            {
-                return NotFound("Item has no valid path");
-            }
-
-            var itemDirectory = Path.GetDirectoryName(itemPath);
+            var itemDirectory = GetThemeDirectory(item);
             if (string.IsNullOrEmpty(itemDirectory))
             {
                 return NotFound("Could not determine item directory");
             }
 
             var audioPath = Path.Combine(itemDirectory, "theme.mp3");
+            _logger.LogDebug("Looking for audio at: {Path}", audioPath);
+            
             if (!System.IO.File.Exists(audioPath))
             {
                 return NotFound("No theme audio found");

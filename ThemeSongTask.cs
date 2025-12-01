@@ -8,6 +8,8 @@ using System.Text.Json;
 using MediaBrowser.Common;
 using MediaBrowser.Common.Plugins;
 using MediaBrowser.Controller.Entities;
+using MediaBrowser.Controller.Entities.Movies;
+using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Model.Tasks;
 using Microsoft.Extensions.Logging;
@@ -82,22 +84,44 @@ namespace Jellyfin.Plugin.xThemeSong
             _logger.LogInformation("xThemeSong task finished.");
         }
 
-        private async Task ProcessMediaItem(BaseItem item, PluginConfiguration config, CancellationToken cancellationToken)
+        /// <summary>
+        /// Gets the correct directory for storing theme files based on item type.
+        /// For Series: Use the series folder directly (item.Path is the folder)
+        /// For Movie: Use the parent directory of the movie file
+        /// </summary>
+        private string? GetThemeDirectory(BaseItem item)
         {
-            // Determine the path where the theme song should be saved
             var itemPath = item.Path;
             if (string.IsNullOrEmpty(itemPath))
             {
-                _logger.LogWarning($"Item {item.Name} has no path, skipping.");
+                return null;
+            }
+
+            // For Series, the Path IS the series folder
+            if (item is Series)
+            {
+                _logger.LogDebug("Item is Series, using path directly: {Path}", itemPath);
+                return itemPath;
+            }
+
+            // For Movie and other file-based items, use the containing directory
+            var directory = Path.GetDirectoryName(itemPath);
+            _logger.LogDebug("Item is {Type}, using directory: {Path}", item.GetType().Name, directory);
+            return directory;
+        }
+
+        private async Task ProcessMediaItem(BaseItem item, PluginConfiguration config, CancellationToken cancellationToken)
+        {
+            // Determine the path where the theme song should be saved
+            var itemDirectory = GetThemeDirectory(item);
+            if (string.IsNullOrEmpty(itemDirectory))
+            {
+                _logger.LogWarning("Item {ItemName} has no valid path, skipping.", item.Name);
                 return;
             }
 
-            var itemDirectory = Path.GetDirectoryName(itemPath);
-            if (string.IsNullOrEmpty(itemDirectory))
-            {
-                _logger.LogWarning($"Could not determine directory for item {item.Name}, skipping.");
-                return;
-            }
+            _logger.LogDebug("Theme directory for {ItemName} ({ItemType}): {Directory}", 
+                item.Name, item.GetType().Name, itemDirectory);
 
             var themeSongFilePath = Path.Combine(itemDirectory, "theme.mp3");
 
