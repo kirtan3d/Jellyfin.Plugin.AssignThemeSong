@@ -180,7 +180,7 @@ namespace Jellyfin.Plugin.xThemeSong
             {
                 new TaskTriggerInfo
                 {
-                    Type = TaskTriggerInfo.TriggerDaily,
+                    Type = TaskTriggerInfoType.DailyTrigger,
                     TimeOfDayTicks = TimeSpan.FromHours(2).Ticks
                 }
             };

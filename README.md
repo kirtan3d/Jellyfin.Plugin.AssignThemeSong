@@ -20,7 +20,7 @@ A Jellyfin plugin that allows you to download theme songs from YouTube or upload
 
 ## 📋 Requirements
 
-- **Jellyfin Server**: Version 10.10.0 or later
+- **Jellyfin Server**: Version 10.11.0 or later
 - **File Transformation Plugin**: **REQUIRED** for Web UI features to work. Install from [here](https://github.com/IAmParadox27/jellyfin-plugin-file-transformation)
 - **FFmpeg**: Must be installed on your Jellyfin server (usually bundled with Jellyfin)
 - **Internet Connection**: Required for YouTube downloads
@@ -118,7 +118,7 @@ Access plugin settings in **Dashboard → Plugins → xThemeSong**:
 ### Plugin doesn't appear in Jellyfin
 
 1. Check Jellyfin logs for errors: `/config/log/log_*.log`
-2. Ensure you're running Jellyfin 10.10.0 or later
+2. Ensure you're running Jellyfin 10.11.0 or later
 3. Verify the plugin files are in the correct directory
 4. Restart Jellyfin after installation
 
