@@ -4,9 +4,9 @@
     <TargetFramework>net9.0</TargetFramework>
     <AssemblyName>Jellyfin.Plugin.xThemeSong</AssemblyName>
     <RootNamespace>Jellyfin.Plugin.xThemeSong</RootNamespace>
-    <Version>1.0.3.0</Version>
-    <AssemblyVersion>1.0.3.0</AssemblyVersion>
-    <FileVersion>1.0.3.0</FileVersion>
+    <Version>1.0.4.0</Version>
+    <AssemblyVersion>1.0.4.0</AssemblyVersion>
+    <FileVersion>1.0.4.0</FileVersion>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -45,8 +45,13 @@
   <!-- Handle dependency conflicts by excluding assemblies that are provided by Jellyfin host -->
   <Target Name="RemoveUnnecessaryAssemblies" AfterTargets="Build">
     <ItemGroup>
-      <!-- Remove ALL Jellyfin/MediaBrowser assemblies - they are provided by the host -->
-      <FilesToDelete Include="$(OutputPath)Jellyfin.*.dll" />
+      <!-- Remove Jellyfin/MediaBrowser assemblies EXCEPT our own plugin -->
+      <FilesToDelete Include="$(OutputPath)Jellyfin.Controller.dll" />
+      <FilesToDelete Include="$(OutputPath)Jellyfin.Model.dll" />
+      <FilesToDelete Include="$(OutputPath)Jellyfin.Data.dll" />
+      <FilesToDelete Include="$(OutputPath)Jellyfin.Extensions.dll" />
+      <FilesToDelete Include="$(OutputPath)Jellyfin.Networking.dll" />
+      <FilesToDelete Include="$(OutputPath)Jellyfin.MediaEncoding.dll" />
       <FilesToDelete Include="$(OutputPath)MediaBrowser.*.dll" />
       <FilesToDelete Include="$(OutputPath)Emby.*.dll" />
       
@@ -70,7 +75,7 @@
     <Delete Files="@(FilesToDelete)" />
     
     <!-- Output message for debugging -->
-    <Message Text="Removed Jellyfin host assemblies and unnecessary files" Importance="high" />
+    <Message Text="Removed Jellyfin host assemblies and unnecessary files (kept Jellyfin.Plugin.xThemeSong.dll)" Importance="high" />
   </Target>
 
 </Project>
