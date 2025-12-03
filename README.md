@@ -164,21 +164,30 @@ dotnet publish -c Release -o publish
 
 ## 📝 Development Status
 
-**Current Version**: v1.0.0
+**Current Version**: v1.1.0
 
-### v1.0.0 Features
+### v1.1.0 Features (Latest)
+- ✅ **Tabbed Settings Page** - Clean organization with Settings and Media Library tabs
+- ✅ **Media Library Overview** - View all media with theme song status at a glance
+- ✅ **Inline Audio Players** - Preview theme songs directly in the library table
+- ✅ **Bulk YouTube URL Assignment** - Set URLs for multiple items, download via scheduled task
+- ✅ **Statistics Dashboard** - Total media, with themes, without themes counts
+- ✅ **Improved Table Styling** - Better visual hierarchy and responsive layout
+
+### v1.0.x Features
 - ✅ Plugin loads successfully in Jellyfin
-- ✅ **Web UI integration** - Three-dot menu item "xThemeSong"
+- ✅ **Web UI integration** - Three-dot menu item "Assign Theme Song"
 - ✅ **Modern Modal Dialog** with dark theme
 - ✅ **Loading Animations** during download/upload
 - ✅ **Success/Error Messages** in modal dialogs (no JavaScript alerts)
 - ✅ **Audio Player** for existing theme songs
+- ✅ **Delete Theme Songs** with confirmation dialog
 - ✅ **Drag-and-drop** file upload
 - ✅ YouTube download service with YoutubeExplode v6.5.6
 - ✅ MP3 upload support
 - ✅ API endpoints for theme management
-- ✅ Scheduled task for batch processing
-- ✅ Configuration page
+- ✅ Scheduled task for batch processing  
+- ✅ **Custom FFmpeg Path** configuration
 - ✅ **Cross-Platform FFmpeg Detection** - Windows, Mac, Linux, Docker
 - ✅ File Transformation Plugin Integration
 

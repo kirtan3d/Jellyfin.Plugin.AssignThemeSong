@@ -124,7 +124,7 @@
                 text-align: left;
                 padding: 10px 8px;
                 color: #888;
-                font-weight: 500;
+                font-weight: 700;
                 border-bottom: 1px solid #333;
             }
             .xthemesong-media-table td {
@@ -132,8 +132,11 @@
                 border-bottom: 1px solid #252525;
                 vertical-align: middle;
             }
+            .xthemesong-media-table td:last-child {
+                border-bottom: 1px solid transparent !important;
+            }
             .xthemesong-badge-has {
-                display: inline-block;
+                display: none;
                 padding: 3px 8px;
                 border-radius: 4px;
                 font-size: 11px;
@@ -196,7 +199,8 @@
                 cursor: not-allowed;
             }
             .xthemesong-mini-audio {
-                width: 140px;
+                min-width: 140px;
+                width: 100%;
                 height: 28px;
             }
             .xthemesong-save-row {
@@ -338,24 +342,20 @@
                         html += '<div class="xthemesong-library-group" data-library-id="' + library.libraryId + '">';
                         html += '<h4 class="xthemesong-library-header">' + escapeHtml(library.libraryName) + ' (' + library.items.length + ')</h4>';
                         html += '<table class="xthemesong-media-table">';
-                        html += '<thead><tr><th>Title</th><th>Status</th><th>YouTube URL</th><th>Action</th></tr></thead>';
+                        html += '<thead><tr><th width="27%">Title</th><th width="33%">Status</th><th width="30%">YouTube URL</th><th width="10%" style="text-align: right;">Action</th></tr></thead>';
                         html += '<tbody>';
                         
                         library.items.forEach(function(item) {
                             var typeClass = item.type === 'Movie' ? 'xthemesong-type-movie' : 'xthemesong-type-series';
-                            var statusBadge = item.hasThemeSong 
-                                ? '<span class="xthemesong-badge-has">Has Theme</span>'
+                            var statusBadgePlayer = item.hasThemeSong 
+                                ? '<audio class="xthemesong-mini-audio" controls src="' + ApiClient.getUrl('xThemeSong/' + item.itemId + '/audio') + '?api_key=' + ApiClient.accessToken() + '"></audio>'
                                 : '<span class="xthemesong-badge-none">No Theme</span>';
-                            
-                            var playerHtml = item.hasThemeSong
-                                ? '<br><audio class="xthemesong-mini-audio" controls src="' + ApiClient.getUrl('xThemeSong/' + item.itemId + '/audio') + '?api_key=' + ApiClient.accessToken() + '"></audio>'
-                                : '';
-                            
+
                             html += '<tr data-item-id="' + item.itemId + '">';
                             html += '<td>' + escapeHtml(item.title) + '<span class="' + typeClass + '">' + item.type + '</span></td>';
-                            html += '<td>' + statusBadge + playerHtml + '</td>';
+                            html += '<td>' + statusBadgePlayer + '</td>';
                             html += '<td><input type="text" class="xthemesong-url-field" data-item-id="' + item.itemId + '" value="' + escapeHtml(item.youtubeUrl || '') + '" placeholder="https://youtube.com/watch?v=..." /></td>';
-                            html += '<td><button type="button" class="xthemesong-btn" onclick="window.xThemeSongOpenAssign(\'' + item.itemId + '\')">Assign</button></td>';
+                            html += '<td style="text-align: right;"><button type="button" class="xthemesong-btn" onclick="window.xThemeSongOpenAssign(\'' + item.itemId + '\')">Assign</button></td>';
                             html += '</tr>';
                         });
                         
