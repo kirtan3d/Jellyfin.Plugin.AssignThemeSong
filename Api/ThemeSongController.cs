@@ -25,7 +25,6 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         private readonly ILogger<ThemeSongController> _logger;
         private readonly ILibraryManager _libraryManager;
         private readonly ThemeDownloadService _themeDownloadService;
-        private readonly Plugin _plugin;
 
         public ThemeSongController(
             ILogger<ThemeSongController> logger,
@@ -35,7 +34,14 @@ namespace Jellyfin.Plugin.xThemeSong.Api
             _logger = logger;
             _libraryManager = libraryManager;
             _themeDownloadService = themeDownloadService;
-            _plugin = Plugin.Instance;
+        }
+
+        /// <summary>
+        /// Gets the plugin configuration safely.
+        /// </summary>
+        private PluginConfiguration GetConfiguration()
+        {
+            return Plugin.Instance?.Configuration ?? new PluginConfiguration();
         }
 
         /// <summary>
@@ -99,7 +105,7 @@ namespace Jellyfin.Plugin.xThemeSong.Api
             _logger.LogInformation("Theme directory for {ItemName} ({ItemType}): {Directory}", 
                 item.Name, item.GetType().Name, itemDirectory);
 
-            var config = _plugin.Configuration;
+            var config = GetConfiguration();
 
             try
             {

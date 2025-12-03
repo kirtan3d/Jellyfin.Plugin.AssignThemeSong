@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "1.0.3.0",
+        "checksum": "ea7c5d613ac41cb613c883d42a8948e5",
+        "changelog": "v1.0.3: Fixed plugin initialization - resolved null reference issue that prevented settings page and menu from appearing.",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v1.0.3/xThemeSong_v1.0.3.zip",
+        "timestamp": "2025-12-03T12:38:00Z"
+      },
+      {
         "version": "1.0.2.0",
         "checksum": "8c56db2e3fe433cdd6ee5687c1236b3f",
         "changelog": "v1.0.2: Added delete theme song functionality, custom FFmpeg path configuration, media library overview tab with bulk URL assignment, handle theme.mp3 without theme.json.",

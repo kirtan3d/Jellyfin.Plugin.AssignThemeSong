@@ -24,7 +24,6 @@ namespace Jellyfin.Plugin.xThemeSong
     {
         private readonly ILogger<ThemeSongTask> _logger;
         private readonly ILibraryManager _libraryManager;
-        private readonly Plugin _plugin;
         private readonly ThemeDownloadService _downloadService;
 
         public ThemeSongTask(
@@ -35,7 +34,14 @@ namespace Jellyfin.Plugin.xThemeSong
             _logger = logger;
             _libraryManager = libraryManager;
             _downloadService = downloadService;
-            _plugin = Plugin.Instance;
+        }
+
+        /// <summary>
+        /// Gets the plugin configuration safely.
+        /// </summary>
+        private PluginConfiguration GetConfiguration()
+        {
+            return Plugin.Instance?.Configuration ?? new PluginConfiguration();
         }
 
         public string Name => "xTheme Songs";
@@ -54,7 +60,7 @@ namespace Jellyfin.Plugin.xThemeSong
         {
             _logger.LogInformation("xThemeSong task started.");
 
-            var config = _plugin.Configuration;
+            var config = GetConfiguration();
             _logger.LogInformation($"Overwrite Existing Files: {config.OverwriteExistingFiles}");
             _logger.LogInformation($"Audio Bitrate: {config.AudioBitrate}");
 
