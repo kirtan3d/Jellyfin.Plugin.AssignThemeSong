@@ -3,57 +3,299 @@
 <head>
     <meta charset="utf-8">
     <title>xThemeSong</title>
+    <style>
+        .xthemesong-tabs {
+            display: flex;
+            border-bottom: 2px solid #333;
+            margin-bottom: 20px;
+        }
+        .xthemesong-tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: #aaa;
+            font-size: 14px;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+        .xthemesong-tab:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
+        .xthemesong-tab.active {
+            color: #00a4dc;
+            border-bottom-color: #00a4dc;
+        }
+        .xthemesong-tab-content {
+            display: none;
+        }
+        .xthemesong-tab-content.active {
+            display: block;
+        }
+        .xthemesong-library-section {
+            margin-bottom: 30px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .xthemesong-library-title {
+            font-size: 1.2em;
+            color: #00a4dc;
+            margin: 0 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #333;
+        }
+        .xthemesong-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .xthemesong-table th {
+            text-align: left;
+            padding: 12px 8px;
+            color: #888;
+            font-weight: 500;
+            border-bottom: 1px solid #333;
+        }
+        .xthemesong-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #252525;
+            vertical-align: middle;
+        }
+        .xthemesong-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+        .xthemesong-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .xthemesong-badge-success {
+            background: #2e7d32;
+            color: #fff;
+        }
+        .xthemesong-badge-warning {
+            background: #f57c00;
+            color: #fff;
+        }
+        .xthemesong-badge-none {
+            background: #424242;
+            color: #aaa;
+        }
+        .xthemesong-mini-player {
+            width: 150px;
+            height: 30px;
+        }
+        .xthemesong-url-input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background: #2a2a2a;
+            color: #fff;
+            font-size: 12px;
+        }
+        .xthemesong-url-input:focus {
+            outline: none;
+            border-color: #00a4dc;
+        }
+        .xthemesong-btn-small {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            background: #00a4dc;
+            color: #fff;
+        }
+        .xthemesong-btn-small:hover {
+            background: #0090c4;
+        }
+        .xthemesong-btn-small:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        .xthemesong-save-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .xthemesong-loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+        .xthemesong-spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #333;
+            border-top-color: #00a4dc;
+            border-radius: 50%;
+            animation: xthemesong-spin 1s linear infinite;
+        }
+        @keyframes xthemesong-spin {
+            to { transform: rotate(360deg); }
+        }
+        .xthemesong-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .xthemesong-stat {
+            background: #252525;
+            padding: 16px 24px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .xthemesong-stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00a4dc;
+        }
+        .xthemesong-stat-label {
+            color: #888;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        .xthemesong-type-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-left: 8px;
+        }
+        .xthemesong-type-movie {
+            background: #1976d2;
+            color: #fff;
+        }
+        .xthemesong-type-series {
+            background: #7b1fa2;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
     <div id="xThemeSongConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-checkbox,emby-select">
         <div data-role="content">
             <div class="content-primary">
-                <form id="xThemeSongConfigForm">
-                    <div class="verticalSection verticalSection-extrabottompadding">
+                <!-- Tabs -->
+                <div class="xthemesong-tabs">
+                    <button class="xthemesong-tab active" data-tab="settings">⚙️ Settings</button>
+                    <button class="xthemesong-tab" data-tab="library">📚 Media Library</button>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settingsTab" class="xthemesong-tab-content active">
+                    <form id="xThemeSongConfigForm">
+                        <div class="verticalSection verticalSection-extrabottompadding">
+                            <div class="sectionTitleContainer flex align-items-center">
+                                <h2 class="sectionTitle">xThemeSong Settings</h2>
+                            </div>
+
+                            <div class="checkboxContainer checkboxContainer-withDescription">
+                                <label class="emby-checkbox-label">
+                                    <input id="OverwriteExistingFiles" name="OverwriteExistingFiles" type="checkbox" is="emby-checkbox" />
+                                    <span>Overwrite Existing Files</span>
+                                </label>
+                                <div class="fieldDescription checkboxFieldDescription">
+                                    Enable this to overwrite existing theme.mp3 files when running the scheduled task
+                                </div>
+                            </div>
+
+                            <div class="inputContainer">
+                                <label class="inputLabel inputLabelUnfocused" for="AudioBitrate">Audio Bitrate (kbps)</label>
+                                <input id="AudioBitrate" name="AudioBitrate" type="number" is="emby-input" min="64" max="320" step="32" />
+                                <div class="fieldDescription">
+                                    Audio bitrate for downloaded theme songs (default: 192)
+                                </div>
+                            </div>
+
+                            <div class="inputContainer">
+                                <label class="inputLabel inputLabelUnfocused" for="FFmpegPath">FFmpeg Path</label>
+                                <input id="FFmpegPath" name="FFmpegPath" type="text" is="emby-input" placeholder="Leave empty for auto-detect" />
+                                <div class="fieldDescription">
+                                    Custom path to FFmpeg executable. Leave empty to auto-detect from common locations and system PATH.
+                                </div>
+                            </div>
+
+                            <br />
+                            <div>
+                                <button is="emby-button" type="submit" class="raised button-submit block">
+                                    <span>Save</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Media Library Tab -->
+                <div id="libraryTab" class="xthemesong-tab-content">
+                    <div class="verticalSection">
                         <div class="sectionTitleContainer flex align-items-center">
-                            <h2 class="sectionTitle">xThemeSong Settings</h2>
+                            <h2 class="sectionTitle">Media Library Overview</h2>
                         </div>
-
-                        <div class="checkboxContainer checkboxContainer-withDescription">
-                            <label class="emby-checkbox-label">
-                                <input id="OverwriteExistingFiles" name="OverwriteExistingFiles" type="checkbox" is="emby-checkbox" />
-                                <span>Overwrite Existing Files</span>
-                            </label>
-                            <div class="fieldDescription checkboxFieldDescription">
-                                Enable this to overwrite existing theme.mp3 files when running the scheduled task
+                        
+                        <div id="libraryStats" class="xthemesong-stats"></div>
+                        
+                        <div id="libraryContent">
+                            <div class="xthemesong-loading">
+                                <div class="xthemesong-spinner"></div>
+                                <p>Loading media library...</p>
                             </div>
-                        </div>
-
-                        <div class="inputContainer">
-                            <label class="inputLabel inputLabelUnfocused" for="AudioBitrate">Audio Bitrate (kbps)</label>
-                            <input id="AudioBitrate" name="AudioBitrate" type="number" is="emby-input" min="64" max="320" step="32" />
-                            <div class="fieldDescription">
-                                Audio bitrate for downloaded theme songs (default: 192)
-                            </div>
-                        </div>
-
-                        <br />
-                        <div>
-                            <button is="emby-button" type="submit" class="raised button-submit block">
-                                <span>Save</span>
-                            </button>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
 
         <script type="text/javascript">
             var xThemeSongConfig = {
-                pluginUniqueId: '97db7543-d64d-45e1-b2e7-62729b56371f'
+                pluginUniqueId: '97db7543-d64d-45e1-b2e7-62729b56371f',
+                libraryData: null,
+                pendingChanges: {}
             };
 
+            // Tab switching
+            document.querySelectorAll('.xthemesong-tab').forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    var tabName = this.getAttribute('data-tab');
+                    
+                    // Update active tab button
+                    document.querySelectorAll('.xthemesong-tab').forEach(function(t) {
+                        t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    document.querySelectorAll('.xthemesong-tab-content').forEach(function(content) {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(tabName + 'Tab').classList.add('active');
+                    
+                    // Load library data when switching to library tab
+                    if (tabName === 'library' && !xThemeSongConfig.libraryData) {
+                        loadLibraryOverview();
+                    }
+                });
+            });
+
+            // Settings page events
             document.querySelector('#xThemeSongConfigPage')
                 .addEventListener('pageshow', function() {
                     Dashboard.showLoadingMsg();
                     ApiClient.getPluginConfiguration(xThemeSongConfig.pluginUniqueId).then(function(config) {
                         document.querySelector('#OverwriteExistingFiles').checked = config.OverwriteExistingFiles || false;
                         document.querySelector('#AudioBitrate').value = config.AudioBitrate || 192;
+                        document.querySelector('#FFmpegPath').value = config.FFmpegPath || '';
                         Dashboard.hideLoadingMsg();
                     });
                 });
@@ -66,6 +308,7 @@
                     ApiClient.getPluginConfiguration(xThemeSongConfig.pluginUniqueId).then(function(config) {
                         config.OverwriteExistingFiles = document.querySelector('#OverwriteExistingFiles').checked;
                         config.AudioBitrate = parseInt(document.querySelector('#AudioBitrate').value) || 192;
+                        config.FFmpegPath = document.querySelector('#FFmpegPath').value.trim() || null;
 
                         ApiClient.updatePluginConfiguration(xThemeSongConfig.pluginUniqueId, config).then(function(result) {
                             Dashboard.processPluginConfigurationUpdateResult(result);
@@ -74,6 +317,197 @@
 
                     return false;
                 });
+
+            // Library overview functions
+            function loadLibraryOverview() {
+                var contentDiv = document.getElementById('libraryContent');
+                var statsDiv = document.getElementById('libraryStats');
+                
+                contentDiv.innerHTML = '<div class="xthemesong-loading"><div class="xthemesong-spinner"></div><p>Loading media library...</p></div>';
+                statsDiv.innerHTML = '';
+
+                var apiUrl = ApiClient.getUrl('xThemeSong/library/overview');
+                
+                fetch(apiUrl, {
+                    headers: { 'X-Emby-Token': ApiClient.accessToken() }
+                }).then(function(response) {
+                    if (response.ok) return response.json();
+                    throw new Error('Failed to load library');
+                }).then(function(data) {
+                    xThemeSongConfig.libraryData = data;
+                    renderLibraryOverview(data);
+                }).catch(function(error) {
+                    contentDiv.innerHTML = '<div class="xthemesong-loading" style="color: #f44336;">Error loading library: ' + error.message + '</div>';
+                });
+            }
+
+            function renderLibraryOverview(data) {
+                var contentDiv = document.getElementById('libraryContent');
+                var statsDiv = document.getElementById('libraryStats');
+                
+                // Calculate stats
+                var totalItems = 0;
+                var withTheme = 0;
+                var withoutTheme = 0;
+                
+                data.libraries.forEach(function(lib) {
+                    lib.items.forEach(function(item) {
+                        totalItems++;
+                        if (item.hasThemeSong) withTheme++;
+                        else withoutTheme++;
+                    });
+                });
+                
+                // Render stats
+                statsDiv.innerHTML = `
+                    <div class="xthemesong-stat">
+                        <div class="xthemesong-stat-value">${totalItems}</div>
+                        <div class="xthemesong-stat-label">Total Media</div>
+                    </div>
+                    <div class="xthemesong-stat">
+                        <div class="xthemesong-stat-value" style="color: #4caf50;">${withTheme}</div>
+                        <div class="xthemesong-stat-label">With Theme Songs</div>
+                    </div>
+                    <div class="xthemesong-stat">
+                        <div class="xthemesong-stat-value" style="color: #ff9800;">${withoutTheme}</div>
+                        <div class="xthemesong-stat-label">Without Theme Songs</div>
+                    </div>
+                `;
+                
+                // Render library sections
+                var html = '';
+                
+                data.libraries.forEach(function(library) {
+                    html += '<div class="xthemesong-library-section" data-library-id="' + library.libraryId + '">';
+                    html += '<h3 class="xthemesong-library-title">📁 ' + escapeHtml(library.libraryName) + ' (' + library.items.length + ' items)</h3>';
+                    html += '<table class="xthemesong-table">';
+                    html += '<thead><tr>';
+                    html += '<th style="width: 30%;">Media Title</th>';
+                    html += '<th style="width: 20%;">Theme Song</th>';
+                    html += '<th style="width: 35%;">YouTube URL</th>';
+                    html += '<th style="width: 15%;">Action</th>';
+                    html += '</tr></thead>';
+                    html += '<tbody>';
+                    
+                    library.items.forEach(function(item) {
+                        var typeBadge = item.type === 'Movie' 
+                            ? '<span class="xthemesong-type-badge xthemesong-type-movie">Movie</span>'
+                            : '<span class="xthemesong-type-badge xthemesong-type-series">Series</span>';
+                        
+                        var themeBadge = item.hasThemeSong
+                            ? '<span class="xthemesong-badge xthemesong-badge-success">✓ Has Theme</span>'
+                            : '<span class="xthemesong-badge xthemesong-badge-none">No Theme</span>';
+                        
+                        var playerHtml = item.hasThemeSong
+                            ? '<audio class="xthemesong-mini-player" controls src="' + ApiClient.getUrl('xThemeSong/' + item.itemId + '/audio') + '?api_key=' + ApiClient.accessToken() + '"></audio>'
+                            : '<span style="color: #666;">—</span>';
+                        
+                        html += '<tr data-item-id="' + item.itemId + '">';
+                        html += '<td>' + escapeHtml(item.title) + typeBadge + '</td>';
+                        html += '<td>' + themeBadge + '<br>' + playerHtml + '</td>';
+                        html += '<td><input type="text" class="xthemesong-url-input" data-item-id="' + item.itemId + '" value="' + escapeHtml(item.youtubeUrl || '') + '" placeholder="https://youtube.com/watch?v=..." /></td>';
+                        html += '<td><button class="xthemesong-btn-small" onclick="openAssignDialog(\'' + item.itemId + '\')">🎵 Assign</button></td>';
+                        html += '</tr>';
+                    });
+                    
+                    html += '</tbody></table>';
+                    html += '<div class="xthemesong-save-section">';
+                    html += '<button class="xthemesong-btn-small" onclick="saveLibraryUrls(\'' + library.libraryId + '\')">💾 Save URLs for this Library</button>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                
+                if (data.libraries.length === 0) {
+                    html = '<div class="xthemesong-loading">No media found in your libraries.</div>';
+                }
+                
+                contentDiv.innerHTML = html;
+                
+                // Track URL changes
+                document.querySelectorAll('.xthemesong-url-input').forEach(function(input) {
+                    input.addEventListener('input', function() {
+                        var itemId = this.getAttribute('data-item-id');
+                        xThemeSongConfig.pendingChanges[itemId] = this.value;
+                    });
+                });
+            }
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                var div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function openAssignDialog(itemId) {
+                if (window.xThemeSongDialog && window.xThemeSongDialog.show) {
+                    window.xThemeSongDialog.show(itemId);
+                } else {
+                    // Fallback: Navigate to item page
+                    window.location.hash = '#/details?id=' + itemId;
+                }
+            }
+
+            function saveLibraryUrls(libraryId) {
+                var section = document.querySelector('[data-library-id="' + libraryId + '"]');
+                if (!section) return;
+                
+                var inputs = section.querySelectorAll('.xthemesong-url-input');
+                var saveBtn = section.querySelector('.xthemesong-save-section button');
+                var originalText = saveBtn.textContent;
+                
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving...';
+                
+                var promises = [];
+                
+                inputs.forEach(function(input) {
+                    var itemId = input.getAttribute('data-item-id');
+                    var url = input.value.trim();
+                    
+                    // Only save if changed
+                    if (xThemeSongConfig.pendingChanges[itemId] !== undefined) {
+                        var apiUrl = ApiClient.getUrl('xThemeSong/' + itemId + '/url');
+                        promises.push(
+                            fetch(apiUrl, {
+                                method: 'POST',
+                                headers: { 
+                                    'X-Emby-Token': ApiClient.accessToken(),
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ youtubeUrl: url || null })
+                            })
+                        );
+                    }
+                });
+                
+                if (promises.length === 0) {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = originalText;
+                    Dashboard.alert('No changes to save');
+                    return;
+                }
+                
+                Promise.all(promises).then(function(results) {
+                    var allOk = results.every(function(r) { return r.ok; });
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = originalText;
+                    
+                    if (allOk) {
+                        Dashboard.alert('URLs saved successfully! Run the scheduled task to download theme songs.');
+                        // Clear pending changes for this library
+                        inputs.forEach(function(input) {
+                            delete xThemeSongConfig.pendingChanges[input.getAttribute('data-item-id')];
+                        });
+                    } else {
+                        Dashboard.alert('Some URLs failed to save. Please try again.');
+                    }
+                }).catch(function(error) {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = originalText;
+                    Dashboard.alert('Error saving URLs: ' + error.message);
+                });
+            }
         </script>
     </div>
 </body>

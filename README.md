@@ -13,10 +13,14 @@ A Jellyfin plugin that allows you to download theme songs from YouTube or upload
 - 📁 Automatically saves theme songs as `theme.mp3` in media folders
 - 📝 Stores metadata in `theme.json` files
 - ⏰ Scheduled task to process theme songs
-- 🎛️ Configuration page in Jellyfin dashboard
+- 🎛️ Configuration page in Jellyfin dashboard with **tabbed interface**
 - 🔄 Loading animations during processing
 - 🎧 Audio player for existing theme songs
 - ✅ Modern modal dialogs for success/error messages
+- 🗑️ **Delete existing theme songs** with confirmation dialog
+- ⚙️ **Custom FFmpeg path configuration** (with auto-detect fallback)
+- 📚 **Media Library Overview** - View all media with theme song status
+- 📝 **Bulk YouTube URL assignment** - Set URLs in settings, download via scheduled task
 
 ## 📋 Requirements
 
@@ -59,7 +63,7 @@ A Jellyfin plugin that allows you to download theme songs from YouTube or upload
 
 1. Navigate to a movie or TV show in Jellyfin
 2. Click the **"⋮" (three dots)** menu
-3. Select **"xThemeSong"**
+3. Select **"Assign Theme Song"**
 4. A modal dialog will open showing:
    - 🎧 Existing theme song audio player (if available)
    - YouTube URL/Video ID input field
@@ -110,8 +114,28 @@ For each media item with a theme song, the plugin creates:
 
 Access plugin settings in **Dashboard → Plugins → xThemeSong**:
 
+### Settings Tab
 - **Overwrite Existing Files**: Whether to overwrite existing theme.mp3 files
 - **Audio Bitrate**: Audio quality for downloaded theme songs (default: 192 kbps)
+- **FFmpeg Path**: Custom path to FFmpeg executable (leave empty for auto-detect)
+
+### Media Library Tab
+The Media Library tab provides a comprehensive overview of all your media:
+
+- **Statistics**: See total media count, items with themes, and items without themes
+- **Library Tables**: View all movies and TV shows grouped by library
+- **Theme Status**: Quick badges showing which items have theme songs
+- **Mini Audio Player**: Preview existing theme songs directly in the table
+- **YouTube URL Input**: Enter YouTube URLs for each item
+- **Bulk Save**: Save URLs for an entire library, then run the scheduled task to download
+
+### Deleting Theme Songs
+
+To remove an existing theme song:
+1. Navigate to the movie or TV show
+2. Click the **"⋮" (three dots)** menu and select **"Assign Theme Song"**
+3. Click the **"🗑️ Delete"** button next to the existing theme
+4. Confirm the deletion
 
 ## 🐛 Troubleshooting
 

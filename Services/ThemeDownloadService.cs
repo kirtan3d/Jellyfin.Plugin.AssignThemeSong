@@ -22,11 +22,26 @@ namespace Jellyfin.Plugin.xThemeSong.Services
         }
 
         /// <summary>
-        /// Gets the FFmpeg path, checking environment variables and common locations.
+        /// Gets the FFmpeg path, checking user configuration, environment variables, and common locations.
         /// </summary>
         private string GetFfmpegPath()
         {
-            // Check Jellyfin's environment variable first (used in Docker)
+            // Priority 1: Check user-configured path (from plugin settings)
+            var configuredPath = Plugin.Instance?.Configuration?.FFmpegPath;
+            if (!string.IsNullOrEmpty(configuredPath))
+            {
+                if (File.Exists(configuredPath))
+                {
+                    _logger.LogInformation("Using user-configured FFmpeg path: {Path}", configuredPath);
+                    return configuredPath;
+                }
+                else
+                {
+                    _logger.LogWarning("User-configured FFmpeg path does not exist: {Path}, falling back to auto-detection", configuredPath);
+                }
+            }
+
+            // Priority 2: Check Jellyfin's environment variable (used in Docker)
             var jellyfinFfmpeg = Environment.GetEnvironmentVariable("JELLYFIN_FFMPEG");
             if (!string.IsNullOrEmpty(jellyfinFfmpeg) && File.Exists(jellyfinFfmpeg))
             {
@@ -34,7 +49,7 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                 return jellyfinFfmpeg;
             }
 
-            // Common FFmpeg locations to check
+            // Priority 3: Check common FFmpeg locations
             var possiblePaths = new[]
             {
                 // Linux/Docker Jellyfin locations
@@ -61,7 +76,7 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                 }
             }
 
-            // Fall back to PATH - just use "ffmpeg" and let the OS find it
+            // Priority 4: Fall back to PATH - just use "ffmpeg" and let the OS find it
             var ffmpegName = OperatingSystem.IsWindows() ? "ffmpeg.exe" : "ffmpeg";
             _logger.LogInformation("Using FFmpeg from system PATH: {Name}", ffmpegName);
             return ffmpegName;

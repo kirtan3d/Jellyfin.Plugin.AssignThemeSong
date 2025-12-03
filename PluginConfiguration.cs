@@ -1,3 +1,5 @@
+#nullable enable
+
 using MediaBrowser.Model.Plugins;
 
 namespace Jellyfin.Plugin.xThemeSong
@@ -16,5 +18,10 @@ namespace Jellyfin.Plugin.xThemeSong
         /// Gets or sets the audio bitrate for downloaded theme songs.
         /// </summary>
         public int AudioBitrate { get; set; } = 192;
+
+        /// <summary>
+        /// Gets or sets the custom FFmpeg path. If empty, auto-detection will be used.
+        /// </summary>
+        public string? FFmpegPath { get; set; }
     }
 }

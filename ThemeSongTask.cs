@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -124,9 +126,17 @@ namespace Jellyfin.Plugin.xThemeSong
                 item.Name, item.GetType().Name, itemDirectory);
 
             var themeSongFilePath = Path.Combine(itemDirectory, "theme.mp3");
+            var themeJsonPath = Path.Combine(itemDirectory, "theme.json");
 
             // Check if theme song already exists
             var themeSongExists = File.Exists(themeSongFilePath);
+
+            // Feature 2: Handle theme.mp3 without theme.json - skip if mp3 exists but no json
+            if (themeSongExists && !File.Exists(themeJsonPath))
+            {
+                _logger.LogInformation("Theme.mp3 exists without theme.json for {ItemName}, skipping (existing manual theme).", item.Name);
+                return;
+            }
 
             if (themeSongExists && !config.OverwriteExistingFiles)
             {
@@ -136,7 +146,6 @@ namespace Jellyfin.Plugin.xThemeSong
 
             _logger.LogInformation($"Attempting to assign theme song for {item.Name}.");
 
-            var themeJsonPath = Path.Combine(itemDirectory, "theme.json");
             if (!File.Exists(themeJsonPath))
             {
                 _logger.LogInformation($"No theme.json found for {item.Name}, skipping.");

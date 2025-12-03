@@ -189,15 +189,50 @@
             border-radius: 8px;
             padding: 16px;
         }
+        .xthemesong-existing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
         .xthemesong-existing-title {
             color: #fff;
-            margin: 0 0 8px 0;
+            margin: 0;
             font-size: 1em;
         }
         .xthemesong-existing-meta {
             color: #888;
             font-size: 0.85em;
             margin-top: 8px;
+        }
+        .xthemesong-btn-delete {
+            background: #dc3545;
+            color: #fff;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        .xthemesong-btn-delete:hover {
+            background: #c82333;
+        }
+        .xthemesong-confirm-dialog {
+            text-align: center;
+            padding: 20px;
+        }
+        .xthemesong-confirm-icon {
+            font-size: 48px;
+            color: #ffc107;
+            margin-bottom: 16px;
+        }
+        .xthemesong-confirm-text {
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .xthemesong-confirm-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
         }
     `;
     document.head.appendChild(styleElement);
@@ -248,7 +283,10 @@
             <div id="xthemesongContent">
                 <div id="xthemesongExisting" class="xthemesong-section" style="display:none;">
                     <div class="xthemesong-existing">
-                        <h4 class="xthemesong-existing-title">🎧 Current Theme Song</h4>
+                        <div class="xthemesong-existing-header">
+                            <h4 class="xthemesong-existing-title">🎧 Current Theme Song</h4>
+                            <button id="xthemesongDelete" class="xthemesong-btn xthemesong-btn-delete">🗑️ Delete</button>
+                        </div>
                         <audio id="xthemesongPlayer" class="xthemesong-player" controls></audio>
                         <div id="xthemesongMeta" class="xthemesong-existing-meta"></div>
                     </div>
@@ -425,6 +463,7 @@
                 var existingSection = dialog.querySelector('#xthemesongExisting');
                 var player = dialog.querySelector('#xthemesongPlayer');
                 var metaDiv = dialog.querySelector('#xthemesongMeta');
+                var deleteBtn = dialog.querySelector('#xthemesongDelete');
                 
                 // Get audio URL
                 var audioUrl = ApiClient.getUrl('xThemeSong/' + itemId + '/audio');
@@ -438,10 +477,227 @@
                 metaDiv.textContent = metaText.join(' • ');
                 
                 existingSection.style.display = 'block';
+                
+                // Setup delete button event
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', function() {
+                        showDeleteConfirmation(itemId, dialog);
+                    });
+                }
             }
         }).catch(function() {
             // No existing theme, that's fine
         });
+    }
+    
+    function showDeleteConfirmation(itemId, dialog) {
+        var content = dialog.querySelector('#xthemesongContent');
+        content.innerHTML = `
+            <div class="xthemesong-confirm-dialog">
+                <div class="xthemesong-confirm-icon">⚠️</div>
+                <div class="xthemesong-confirm-text">Are you sure you want to delete this theme song?</div>
+                <div class="xthemesong-message-detail">This action cannot be undone.</div>
+                <div class="xthemesong-confirm-buttons">
+                    <button id="xthemesongCancelDelete" class="xthemesong-btn xthemesong-btn-secondary">Cancel</button>
+                    <button id="xthemesongConfirmDelete" class="xthemesong-btn xthemesong-btn-delete">🗑️ Delete</button>
+                </div>
+            </div>
+        `;
+        
+        // Cancel - reload dialog
+        dialog.querySelector('#xthemesongCancelDelete').addEventListener('click', function() {
+            // Recreate dialog content
+            content.innerHTML = getDialogContent();
+            loadExistingTheme(itemId, dialog);
+            setupFormEvents(dialog, itemId);
+        });
+        
+        // Confirm delete
+        dialog.querySelector('#xthemesongConfirmDelete').addEventListener('click', function() {
+            deleteThemeSong(itemId, dialog);
+        });
+    }
+    
+    function deleteThemeSong(itemId, dialog) {
+        var content = dialog.querySelector('#xthemesongContent');
+        content.innerHTML = `
+            <div class="xthemesong-loading">
+                <div class="xthemesong-spinner"></div>
+                <div class="xthemesong-loading-text">Deleting theme song...</div>
+            </div>
+        `;
+        
+        var apiUrl = ApiClient.getUrl('xThemeSong/' + itemId);
+        
+        fetch(apiUrl, {
+            method: 'DELETE',
+            headers: { 'X-Emby-Token': ApiClient.accessToken() }
+        }).then(function(response) {
+            if (response.ok) {
+                return response.json();
+            }
+            return response.text().then(function(text) {
+                throw new Error(text || 'Failed to delete theme song');
+            });
+        }).then(function(result) {
+            content.innerHTML = `
+                <div class="xthemesong-message">
+                    <div class="xthemesong-message-icon success">✅</div>
+                    <div class="xthemesong-message-text">Theme Song Deleted!</div>
+                    <div class="xthemesong-message-detail">${result.message || 'The theme song has been removed.'}</div>
+                </div>
+                <div class="xthemesong-footer">
+                    <button id="xthemesongOkDelete" class="xthemesong-btn xthemesong-btn-primary">OK</button>
+                </div>
+            `;
+            dialog.querySelector('#xthemesongOkDelete').addEventListener('click', function() {
+                var overlay = dialog.closest('.xthemesong-overlay');
+                if (overlay) document.body.removeChild(overlay);
+            });
+        }).catch(function(error) {
+            content.innerHTML = `
+                <div class="xthemesong-message">
+                    <div class="xthemesong-message-icon error">❌</div>
+                    <div class="xthemesong-message-text">Delete Failed</div>
+                    <div class="xthemesong-message-detail">${error.message || 'Failed to delete theme song'}</div>
+                </div>
+                <div class="xthemesong-footer">
+                    <button id="xthemesongOkDelete" class="xthemesong-btn xthemesong-btn-primary">OK</button>
+                </div>
+            `;
+            dialog.querySelector('#xthemesongOkDelete').addEventListener('click', function() {
+                var overlay = dialog.closest('.xthemesong-overlay');
+                if (overlay) document.body.removeChild(overlay);
+            });
+        });
+    }
+    
+    function getDialogContent() {
+        return `
+            <div id="xthemesongExisting" class="xthemesong-section" style="display:none;">
+                <div class="xthemesong-existing">
+                    <div class="xthemesong-existing-header">
+                        <h4 class="xthemesong-existing-title">🎧 Current Theme Song</h4>
+                        <button id="xthemesongDelete" class="xthemesong-btn xthemesong-btn-delete">🗑️ Delete</button>
+                    </div>
+                    <audio id="xthemesongPlayer" class="xthemesong-player" controls></audio>
+                    <div id="xthemesongMeta" class="xthemesong-existing-meta"></div>
+                </div>
+            </div>
+            
+            <div class="xthemesong-section">
+                <label class="xthemesong-label">YouTube URL or Video ID</label>
+                <input type="text" id="xthemesongYouTube" class="xthemesong-input" 
+                       placeholder="https://www.youtube.com/watch?v=... or video ID">
+            </div>
+            
+            <div class="xthemesong-section">
+                <label class="xthemesong-label">Or Upload MP3 File</label>
+                <div id="xthemesongDropzone" class="xthemesong-dropzone">
+                    <div class="xthemesong-dropzone-icon">📁</div>
+                    <div class="xthemesong-dropzone-text">Drag & drop an MP3 file here</div>
+                    <div class="xthemesong-dropzone-text" style="font-size:0.9em;">or click to browse</div>
+                    <input type="file" id="xthemesongFile" accept=".mp3,audio/mpeg" style="display:none;">
+                </div>
+                <div id="xthemesongFileInfo" class="xthemesong-file-info" style="display:none;"></div>
+            </div>
+            
+            <div class="xthemesong-footer">
+                <button id="xthemesongCancel" class="xthemesong-btn xthemesong-btn-secondary">Cancel</button>
+                <button id="xthemesongSubmit" class="xthemesong-btn xthemesong-btn-primary">Save Theme Song</button>
+            </div>
+        `;
+    }
+    
+    function setupFormEvents(dialog, itemId) {
+        var selectedFile = null;
+        var overlay = dialog.closest('.xthemesong-overlay');
+        
+        // Cancel button
+        var cancelBtn = dialog.querySelector('#xthemesongCancel');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function() {
+                if (overlay) document.body.removeChild(overlay);
+            });
+        }
+        
+        // Dropzone events
+        var dropzone = dialog.querySelector('#xthemesongDropzone');
+        var fileInput = dialog.querySelector('#xthemesongFile');
+        var fileInfo = dialog.querySelector('#xthemesongFileInfo');
+        
+        if (dropzone && fileInput) {
+            dropzone.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            ['dragenter', 'dragover'].forEach(function(e) {
+                dropzone.addEventListener(e, function(ev) {
+                    ev.preventDefault();
+                    dropzone.classList.add('active');
+                });
+            });
+            
+            ['dragleave', 'drop'].forEach(function(e) {
+                dropzone.addEventListener(e, function(ev) {
+                    ev.preventDefault();
+                    dropzone.classList.remove('active');
+                });
+            });
+            
+            dropzone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                var files = e.dataTransfer.files;
+                if (files.length > 0 && (files[0].type === 'audio/mpeg' || files[0].name.endsWith('.mp3'))) {
+                    selectedFile = files[0];
+                    showSelectedFile(selectedFile, fileInfo);
+                }
+            });
+            
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    selectedFile = this.files[0];
+                    showSelectedFile(selectedFile, fileInfo);
+                }
+            });
+        }
+        
+        // Submit button
+        var submitBtn = dialog.querySelector('#xthemesongSubmit');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function() {
+                var youtubeUrl = dialog.querySelector('#xthemesongYouTube').value.trim();
+                
+                if (!youtubeUrl && !selectedFile) {
+                    showMessage(dialog, 'error', 'Missing Input', 'Please enter a YouTube URL or upload an MP3 file.', overlay);
+                    return;
+                }
+                
+                showLoading(dialog, youtubeUrl ? 'Downloading from YouTube...' : 'Uploading file...');
+                
+                var formData = new FormData();
+                if (youtubeUrl) formData.append('YouTubeUrl', youtubeUrl);
+                if (selectedFile) formData.append('UploadedFile', selectedFile);
+                
+                var apiUrl = ApiClient.getUrl('xThemeSong/' + itemId);
+                
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'X-Emby-Token': ApiClient.accessToken() },
+                    body: formData
+                }).then(function(response) {
+                    if (response.ok) {
+                        showMessage(dialog, 'success', 'Theme Song Saved!', 'The theme song has been successfully assigned.', overlay);
+                    } else {
+                        return response.text().then(function(text) {
+                            throw new Error(text || 'Failed to assign theme song');
+                        });
+                    }
+                }).catch(function(error) {
+                    showMessage(dialog, 'error', 'Error', error.message || 'Failed to assign theme song', overlay);
+                });
+            });
+        }
     }
     
     // Export to global scope

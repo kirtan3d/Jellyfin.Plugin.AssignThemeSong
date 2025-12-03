@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace Jellyfin.Plugin.xThemeSong.Models
 {
     /// <summary>

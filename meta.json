@@ -1,12 +1,12 @@
 {
   "name": "xThemeSong",
   "guid": "97db7543-d64d-45e1-b2e7-62729b56371f",
-  "version": "1.0.1.0",
+  "version": "1.0.2.0",
   "targetAbi": "10.11.0.0",
   "overview": "Download theme songs from YouTube or upload custom MP3s for your media library",
-  "description": "A plugin that automatically downloads theme songs from YouTube by user provided video ID/URL or allows uploading custom MP3 files. Features complete Web UI with drag-and-drop upload, audio player for existing themes, and loading animations.",
+  "description": "A plugin that automatically downloads theme songs from YouTube by user provided video ID/URL or allows uploading custom MP3 files. Features complete Web UI with drag-and-drop upload, audio player for existing themes, loading animations, delete functionality, and media library overview.",
   "owner": "Kirtan Patel",
   "category": "General",
   "imageUrl": "icon.png",
-  "changelog": "v1.0.1: Fixed TV show path handling - theme songs now correctly save to show folder instead of parent directory. Also fixed Season to use parent Series folder."
+  "changelog": "v1.0.2: Added delete theme song functionality, custom FFmpeg path configuration, media library overview tab with bulk URL assignment, handle theme.mp3 without theme.json."
 }

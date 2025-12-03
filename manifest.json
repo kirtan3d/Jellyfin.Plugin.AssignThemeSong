@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+        "version": "1.0.2.0",
+        "checksum": "8c56db2e3fe433cdd6ee5687c1236b3f",
+        "changelog": "v1.0.2: Added delete theme song functionality, custom FFmpeg path configuration, media library overview tab with bulk URL assignment, handle theme.mp3 without theme.json.",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v1.0.2/xThemeSong_v1.0.2.zip",
+        "timestamp": "2025-12-03T12:23:00Z"
+      },
+      {
         "version": "1.0.1.0",
         "checksum": "0cdaf6326ec7490fa8826151092040b9",
         "changelog": "v1.0.1: Fixed TV show path handling - theme songs now correctly save to show folder instead of parent directory. Also fixed Season to use parent Series folder.",
