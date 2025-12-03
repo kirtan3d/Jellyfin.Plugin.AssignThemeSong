@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Jellyfin.Data.Enums;
 using Jellyfin.Plugin.xThemeSong.Models;
 using Jellyfin.Plugin.xThemeSong.Services;
 using MediaBrowser.Controller.Entities;
@@ -342,13 +343,21 @@ namespace Jellyfin.Plugin.xThemeSong.Api
                 var response = new LibraryOverviewResponse();
                 var libraryGroups = new Dictionary<string, LibraryGroup>();
 
-                // Get all movies and series
-                var allItems = _libraryManager.GetItemList(new InternalItemsQuery
+                // Get movies
+                var movies = _libraryManager.GetItemList(new InternalItemsQuery
                 {
-                    Recursive = true
+                    Recursive = true,
+                    IncludeItemTypes = new[] { BaseItemKind.Movie }
                 });
 
-                var mediaItems = allItems.Where(item => item is Movie || item is Series).ToList();
+                // Get series
+                var series = _libraryManager.GetItemList(new InternalItemsQuery
+                {
+                    Recursive = true,
+                    IncludeItemTypes = new[] { BaseItemKind.Series }
+                });
+
+                var mediaItems = movies.Concat(series).ToList();
 
                 foreach (var item in mediaItems)
                 {
