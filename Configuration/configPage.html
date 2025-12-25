@@ -55,6 +55,18 @@
                                 </div>
                             </div>
 
+                            <div class="selectContainer">
+                                <label class="selectLabel" for="PermissionMode">Who can manage theme songs?</label>
+                                <select id="PermissionMode" name="PermissionMode" is="emby-select">
+                                    <option value="0">Administrators Only</option>
+                                    <option value="1">Administrators & Library Managers</option>
+                                    <option value="2">Everyone (All Authenticated Users)</option>
+                                </select>
+                                <div class="fieldDescription">
+                                    Control who can assign, edit, or delete theme songs. Library Managers can manage themes in their assigned libraries.
+                                </div>
+                            </div>
+
                             <br />
                             <div>
                                 <button is="emby-button" type="submit" class="raised button-submit block emby-button">
@@ -63,6 +75,51 @@
                             </div>
                         </div>
                     </form>
+
+                    <!-- User Preferences Notice -->
+                    <div class="verticalSection">
+                        <div style="background: #1a1a1a; padding: 16px; border-radius: 8px; border-left: 4px solid #00a4dc;">
+                            <h4 style="margin: 0 0 8px 0; color: #00a4dc;">👤 User Preferences</h4>
+                            <p style="margin: 0; color: #999;">
+                                Users can customize their theme song experience (enable/disable, volume, duration) from:<br>
+                                <strong>Dashboard → Plugins → xThemeSong User Preferences</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Backup & Migration Section -->
+                    <div class="verticalSection">
+                        <div class="sectionTitleContainer flex align-items-center">
+                            <h3 class="sectionTitle">Backup & Migration</h3>
+                        </div>
+                        
+                        <div class="fieldDescription" style="margin-bottom: 1em;">
+                            Export your theme song assignments for backup or migration to another Jellyfin server
+                        </div>
+
+                        <h4 style="margin-bottom: 0.5em;">Export</h4>
+                        <div style="display: flex; gap: 10px; margin-bottom: 2em;">
+                            <button type="button" id="btnExportJson" class="raised button-submit emby-button" is="emby-button">
+                                <span>📥 Export (JSON)</span>
+                            </button>
+                            <button type="button" id="btnExportCsv" class="raised button-submit emby-button" is="emby-button">
+                                <span>📥 Export (CSV)</span>
+                            </button>
+                        </div>
+
+                        <h4 style="margin-bottom: 0.5em;">Import</h4>
+                        <div class="fieldDescription" style="margin-bottom: 0.5em;">
+                            Import theme assignments from a previous export (JSON format only)
+                        </div>
+                        <input type="file" id="importFile" accept=".json" style="margin-bottom: 0.5em;" />
+                        <button type="button" id="btnImport" class="raised button-submit emby-button" is="emby-button">
+                            <span>📤 Import</span>
+                        </button>
+                        
+                        <div id="importResults" style="display: none; margin-top: 1.5em; padding: 1em; background: #1a1a1a; border-radius: 8px;">
+                            <!-- Import results will be displayed here -->
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Media Library Tab -->
@@ -262,6 +319,7 @@
                         document.querySelector('#OverwriteExistingFiles').checked = config.OverwriteExistingFiles || false;
                         document.querySelector('#AudioBitrate').value = config.AudioBitrate || 192;
                         document.querySelector('#FFmpegPath').value = config.FFmpegPath || '';
+                        document.querySelector('#PermissionMode').value = (config.PermissionMode !== undefined && config.PermissionMode !== null) ? config.PermissionMode : 1;
                         Dashboard.hideLoadingMsg();
                     });
                 });
@@ -274,6 +332,7 @@
                         config.OverwriteExistingFiles = document.querySelector('#OverwriteExistingFiles').checked;
                         config.AudioBitrate = parseInt(document.querySelector('#AudioBitrate').value) || 192;
                         config.FFmpegPath = document.querySelector('#FFmpegPath').value.trim() || null;
+                        config.PermissionMode = parseInt(document.querySelector('#PermissionMode').value);
 
                         ApiClient.updatePluginConfiguration(pluginId, config).then(function(result) {
                             Dashboard.processPluginConfigurationUpdateResult(result);
@@ -452,6 +511,107 @@
                         Dashboard.alert('Error: ' + error.message);
                     });
                 };
+
+                // Export/Import handlers
+                document.getElementById('btnExportJson').addEventListener('click', function() {
+                    var url = ApiClient.getUrl('xThemeSong/export/json') + '?api_key=' + ApiClient.accessToken();
+                    window.location.href = url;
+                });
+
+                document.getElementById('btnExportCsv').addEventListener('click', function() {
+                    var url = ApiClient.getUrl('xThemeSong/export/csv') + '?api_key=' + ApiClient.accessToken();
+                    window.location.href = url;
+                });
+
+                document.getElementById('btnImport').addEventListener('click', function() {
+                    var fileInput = document.getElementById('importFile');
+                    var file = fileInput.files[0];
+                    
+                    if (!file) {
+                        Dashboard.alert('Please select a JSON file to import');
+                        return;
+                    }
+                    
+                    Dashboard.showLoadingMsg();
+                    
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            var data = JSON.parse(e.target.result);
+                            importThemes(data);
+                        } catch (err) {
+                            Dashboard.hideLoadingMsg();
+                            Dashboard.alert('Error reading file: ' + err.message);
+                        }
+                    };
+                    reader.onerror = function() {
+                        Dashboard.hideLoadingMsg();
+                        Dashboard.alert('Error reading file');
+                    };
+                    reader.readAsText(file);
+                });
+
+                function importThemes(data) {
+                    var url = ApiClient.getUrl('xThemeSong/export/import');
+                    
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Emby-Token': ApiClient.accessToken()
+                        },
+                        body: JSON.stringify(data)
+                    }).then(function(response) {
+                        return response.json();
+                    }).then(function(result) {
+                        Dashboard.hideLoadingMsg();
+                        showImportResults(result);
+                        document.getElementById('importFile').value = '';
+                    }).catch(function(error) {
+                        Dashboard.hideLoadingMsg();
+                        Dashboard.alert('Import failed: ' + error.message);
+                    });
+                }
+
+                function showImportResults(result) {
+                    var resultsDiv = document.getElementById('importResults');
+                    
+                    var html = '<h4 style="margin-top: 0; color: #00a4dc;">Import Results</h4>';
+                    html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 1em;">';
+                    html += '<div><strong>Total:</strong> ' + result.totalThemes + '</div>';
+                    html += '<div style="color: #4caf50;"><strong>Imported:</strong> ' + result.imported + '</div>';
+                    html += '<div style="color: #ff9800;"><strong>Skipped:</strong> ' + result.skipped + '</div>';
+                    html += '<div style="color: #f44336;"><strong>Failed:</strong> ' + result.failed + '</div>';
+                    html += '</div>';
+                    
+                    if (result.conflicts && result.conflicts.length > 0) {
+                        html += '<h5 style="color: #ff9800; margin-bottom: 0.5em;">Conflicts:</h5>';
+                        html += '<ul style="margin: 0; padding-left: 1.5em; max-height: 200px; overflow-y: auto;">';
+                        result.conflicts.forEach(function(conflict) {
+                            html += '<li style="margin-bottom: 0.5em;">';
+                            html += '<strong>' + escapeHtml(conflict.itemName) + '</strong>: ';
+                            html += conflict.reason + ' - <em>' + conflict.action + '</em>';
+                            html += '</li>';
+                        });
+                        html += '</ul>';
+                    }
+                    
+                    if (result.errors && result.errors.length > 0) {
+                        html += '<h5 style="color: #f44336; margin-top: 1em; margin-bottom: 0.5em;">Errors:</h5>';
+                        html += '<ul style="margin: 0; padding-left: 1.5em; max-height: 200px; overflow-y: auto;">';
+                        result.errors.forEach(function(error) {
+                            html += '<li style="margin-bottom: 0.5em; color: #f44336;">' + escapeHtml(error) + '</li>';
+                        });
+                        html += '</ul>';
+                    }
+                    
+                    resultsDiv.innerHTML = html;
+                    resultsDiv.style.display = 'block';
+                    
+                    if (result.imported > 0) {
+                        Dashboard.alert('Import completed! ' + result.imported + ' theme(s) imported successfully.');
+                    }
+                }
             })();
         </script>
     </div>

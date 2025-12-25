@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -42,7 +44,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     {
         Instance = this;
         _appPaths = applicationPaths;
-        _logger = logger;
+        _logger = logger!; // Null-forgiving operator - logger is required by DI
         
         try
         {
@@ -301,6 +303,12 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
             {
                 Name = Name,
                 EmbeddedResourcePath = string.Format(CultureInfo.InvariantCulture, "{0}.Configuration.configPage.html", GetType().Namespace)
+            },
+            new PluginPageInfo
+            {
+                Name = "xThemeSong User Preferences",
+                EmbeddedResourcePath = string.Format(CultureInfo.InvariantCulture, "{0}.Configuration.userPreferences.html", GetType().Namespace),
+                DisplayName = "xThemeSong Preferences"
             }
         ];
     }

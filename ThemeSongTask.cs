@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Text.Json;
+using Jellyfin.Data.Enums;
 using MediaBrowser.Common;
 using MediaBrowser.Common.Plugins;
 using MediaBrowser.Controller.Entities;
@@ -64,14 +65,12 @@ namespace Jellyfin.Plugin.xThemeSong
             _logger.LogInformation($"Overwrite Existing Files: {config.OverwriteExistingFiles}");
             _logger.LogInformation($"Audio Bitrate: {config.AudioBitrate}");
 
-            // Get all items from the library (simplified approach)
-            var allItems = _libraryManager.GetItemList(new InternalItemsQuery
+            // Get only Movies and Series from the library to avoid deserialization errors
+            var mediaItems = _libraryManager.GetItemList(new InternalItemsQuery
             {
+                IncludeItemTypes = new[] { BaseItemKind.Movie, BaseItemKind.Series },
                 Recursive = true
-            });
-
-            var mediaItems = allItems.Where(item => item is MediaBrowser.Controller.Entities.Movies.Movie || 
-                                                   item is MediaBrowser.Controller.Entities.TV.Series).ToList();
+            }).ToList();
 
             var totalItems = mediaItems.Count;
             var processedItems = 0;

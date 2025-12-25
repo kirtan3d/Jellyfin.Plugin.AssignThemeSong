@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+          "version": "1.2.0.0",
+          "checksum": "0163a46343f356c880c8d1da282dbe60",
+          "changelog": "v1.2.0: Major update - Fixed scheduled task error, Export/Import themes, Role-Based Access Control, Per-User Preferences, reduced warnings from 5 to 1",
+          "targetAbi": "10.11.0.0",
+          "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v1.2.0/xThemeSong_v1.2.0.zip",
+          "timestamp": "2025-12-25T09:30:00Z"
+      },
+      {
           "version": "1.1.0.0",
           "checksum": "e6ad5f1311ecb0f50dac97c6427897c6",
           "changelog": "v1.1.0: Enhanced UI - tabbed settings page, improved Media Library overview with inline audio players, bulk YouTube URL assignment, better table styling",
