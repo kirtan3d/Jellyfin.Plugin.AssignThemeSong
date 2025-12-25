@@ -28,8 +28,63 @@
     // Track processed action sheets to avoid duplicates
     const processedActionSheets = new WeakSet();
     
+    /**
+     * Injects the "xThemeSong Preferences" link into the user preferences menu (mypreferencesmenu.html).
+     * Adds it as the last item in the first vertical section (after Controls).
+     */
+    function addUserPreferencesLink() {
+        const addLinkToMenu = function() {
+            const menuContainer = document.querySelector('#myPreferencesMenuPage:not(.hide) .verticalSection');
+            if (!menuContainer) return false;
+            
+            // Check if link already exists
+            if (document.querySelector('#xThemeSongUserPrefsLink')) return true;
+
+            // Create the link element matching Jellyfin's structure
+            const prefsLink = document.createElement('a');
+            prefsLink.id = 'xThemeSongUserPrefsLink';
+            prefsLink.setAttribute('is', 'emby-linkbutton');
+            prefsLink.setAttribute('data-ripple', 'false');
+            prefsLink.href = '#/configurationpage?name=xThemeSong%20User%20Preferences';
+            prefsLink.className = 'listItem-border emby-button';
+            prefsLink.style.display = 'block';
+            prefsLink.style.padding = '0';
+            prefsLink.style.margin = '0';
+            
+            prefsLink.innerHTML = `
+                <div class="listItem">
+                    <span class="material-icons listItemIcon listItemIcon-transparent music_note" aria-hidden="true"></span>
+                    <div class="listItemBody">
+                        <div class="listItemBodyText">xThemeSong Preferences</div>
+                    </div>
+                </div>
+            `;
+
+            // Insert at the end of the first vertical section
+            menuContainer.appendChild(prefsLink);
+            console.log('xThemeSong: User preferences link added to user menu');
+            return true;
+        };
+
+        // Try to add immediately
+        if (addLinkToMenu()) return;
+
+        // If not found, observe for when the menu is loaded and visible
+        const observer = new MutationObserver(function() {
+            if (addLinkToMenu()) {
+                observer.disconnect();
+            }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+        console.log('xThemeSong: User preferences menu observer installed');
+    }
+    
     function initializePlugin() {
-        console.log('xThemeSong: Initializing menu observer...');
+        console.log('xThemeSong: Initializing plugin...');
+        
+        // Add link to user preferences menu
+        addUserPreferencesLink();
         
         // Check for existing action sheets first
         const existingActionSheets = document.querySelectorAll('.actionSheet');

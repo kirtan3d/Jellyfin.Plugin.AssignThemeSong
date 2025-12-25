@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+          "version": "1.2.1.0",
+          "checksum": "b7deda7b0113cf9a37d600cc6399725e",
+          "changelog": "v1.2.1: Fixed user preferences menu visibility and permission checks - now properly restricts non-admin users",
+          "targetAbi": "10.11.0.0",
+          "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v1.2.1/xThemeSong_v1.2.1.zip",
+          "timestamp": "2025-12-25T10:50:00Z"
+      },
+      {
           "version": "1.2.0.0",
           "checksum": "0163a46343f356c880c8d1da282dbe60",
           "changelog": "v1.2.0: Major update - Fixed scheduled task error, Export/Import themes, Role-Based Access Control, Per-User Preferences, reduced warnings from 5 to 1",

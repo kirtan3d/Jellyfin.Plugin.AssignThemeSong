@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Jellyfin.Data;
 using Jellyfin.Data.Enums;
 using Jellyfin.Plugin.xThemeSong.Models;
 using Jellyfin.Plugin.xThemeSong.Services;
@@ -26,15 +28,18 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         private readonly ILogger<ThemeSongController> _logger;
         private readonly ILibraryManager _libraryManager;
         private readonly ThemeDownloadService _themeDownloadService;
+        private readonly IUserManager _userManager;
 
         public ThemeSongController(
             ILogger<ThemeSongController> logger,
             ILibraryManager libraryManager,
-            ThemeDownloadService themeDownloadService)
+            ThemeDownloadService themeDownloadService,
+            IUserManager userManager)
         {
             _logger = logger;
             _libraryManager = libraryManager;
             _themeDownloadService = themeDownloadService;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -52,27 +57,28 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         {
             var config = GetConfiguration();
             
+            // Check if user is an administrator using role claim
+            var isAdmin = User.IsInRole("Administrator");
+            
             // Check permission mode
             switch (config.PermissionMode)
             {
                 case ThemePermissionMode.AdminsOnly:
-                    return User.IsInRole("Administrator");
+                    // Only administrators can manage themes
+                    return isAdmin;
                     
                 case ThemePermissionMode.LibraryManagers:
-                    // Allow admins and check for library management permission
-                    if (User.IsInRole("Administrator"))
-                        return true;
-                    
-                    // For library managers, we'll allow access
-                    // Jellyfin's library management is handled at library level
-                    // This is a simplified check - full implementation would need UserManager
-                    return true; // Default: allow authenticated users acting as library managers
+                    // Administrators only for now
+                    // LibraryManager role check would require deeper integration
+                    return isAdmin;
                     
                 case ThemePermissionMode.Everyone:
+                    // All authenticated users
                     return User.Identity?.IsAuthenticated ?? false;
                     
                 default:
-                    return User.IsInRole("Administrator");
+                    // Default to admin-only for safety
+                    return isAdmin;
             }
         }
 
