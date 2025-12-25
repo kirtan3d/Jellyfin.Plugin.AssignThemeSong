@@ -39,20 +39,6 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         }
 
         /// <summary>
-        /// Gets the current user's ID from claims
-        /// </summary>
-        private Guid GetCurrentUserId()
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var userId))
-            {
-                return userId;
-            }
-            
-            throw new UnauthorizedAccessException("User ID not found");
-        }
-
-        /// <summary>
         /// Gets the preferences file path for a user
         /// </summary>
         private string GetPreferencesPath(Guid userId)
@@ -63,16 +49,30 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         }
 
         /// <summary>
-        /// Get current user's theme song preferences
+        /// Get user's theme song preferences
         /// </summary>
         [HttpGet]
         [ProducesResponseType(typeof(UserThemePreferences), 200)]
-        public ActionResult<UserThemePreferences> GetPreferences()
+        public ActionResult<UserThemePreferences> GetPreferences([FromQuery] string? userId = null)
         {
             try
             {
-                var userId = GetCurrentUserId();
-                var prefsPath = GetPreferencesPath(userId);
+                // Use provided userId or fallback to current user
+                Guid userGuid;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                    if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out userGuid))
+                    {
+                        return Unauthorized("User ID not found");
+                    }
+                }
+                else if (!Guid.TryParse(userId, out userGuid))
+                {
+                    return BadRequest("Invalid user ID");
+                }
+
+                var prefsPath = GetPreferencesPath(userGuid);
 
                 UserThemePreferences prefs;
 
@@ -87,13 +87,8 @@ namespace Jellyfin.Plugin.xThemeSong.Api
                     prefs = new UserThemePreferences();
                 }
 
-                _logger.LogDebug("Retrieved preferences for user {UserId}", userId);
+                _logger.LogDebug("Retrieved preferences for user {UserId}", userGuid);
                 return Ok(prefs);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                _logger.LogWarning(ex, "Unauthorized access to preferences");
-                return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -103,15 +98,34 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         }
 
         /// <summary>
-        /// Save current user's theme song preferences
+        /// Save user's theme song preferences
         /// </summary>
         [HttpPost]
-        public ActionResult SavePreferences([FromBody] UserThemePreferences preferences)
+        public ActionResult SavePreferences([FromQuery] string? userId = null, [FromBody] UserThemePreferences? preferences = null)
         {
             try
             {
-                var userId = GetCurrentUserId();
-                var prefsPath = GetPreferencesPath(userId);
+                if (preferences == null)
+                {
+                    return BadRequest("Preferences required");
+                }
+
+                // Use provided userId or fallback to current user
+                Guid userGuid;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                    if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out userGuid))
+                    {
+                        return Unauthorized("User ID not found");
+                    }
+                }
+                else if (!Guid.TryParse(userId, out userGuid))
+                {
+                    return BadRequest("Invalid user ID");
+                }
+
+                var prefsPath = GetPreferencesPath(userGuid);
 
                 // Update last modified
                 preferences.LastModified = DateTime.UtcNow;
@@ -128,13 +142,8 @@ namespace Jellyfin.Plugin.xThemeSong.Api
                 });
                 System.IO.File.WriteAllText(prefsPath, json);
 
-                _logger.LogInformation("Saved preferences for user {UserId}", userId);
+                _logger.LogInformation("Saved preferences for user {UserId}", userGuid);
                 return Ok(new { message = "Preferences saved successfully" });
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                _logger.LogWarning(ex, "Unauthorized access to save preferences");
-                return Unauthorized();
             }
             catch (Exception ex)
             {

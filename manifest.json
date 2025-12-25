@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+          "version": "1.2.2.0",
+          "checksum": "f840854446ed686fddf85aee5149095b",
+          "changelog": "v1.2.2: Fixed user preferences userId parameter, client-side permission checks hide menu for non-admins",
+          "targetAbi": "10.11.0.0",
+          "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v1.2.2/xThemeSong_v1.2.2.zip",
+          "timestamp": "2025-12-25T11:30:00Z"
+      },
+      {
           "version": "1.2.1.0",
           "checksum": "b7deda7b0113cf9a37d600cc6399725e",
           "changelog": "v1.2.1: Fixed user preferences menu visibility and permission checks - now properly restricts non-admin users",

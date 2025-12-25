@@ -64,7 +64,8 @@
                 document.querySelector('#xThemeSongUserPreferencesPage').addEventListener('pageshow', function() {
                     Dashboard.showLoadingMsg();
                     
-                    var url = ApiClient.getUrl('xThemeSong/preferences');
+                    var userId = ApiClient.getCurrentUserId();
+                    var url = ApiClient.getUrl('xThemeSong/preferences?userId=' + userId);
                     
                     fetch(url, {
                         headers: { 'X-Emby-Token': ApiClient.accessToken() }
@@ -105,7 +106,8 @@
                         volume: volumeFloat
                     };
 
-                    var url = ApiClient.getUrl('xThemeSong/preferences');
+                    var userId = ApiClient.getCurrentUserId();
+                    var url = ApiClient.getUrl('xThemeSong/preferences?userId=' + userId);
                     
                     fetch(url, {
                         method: 'POST',

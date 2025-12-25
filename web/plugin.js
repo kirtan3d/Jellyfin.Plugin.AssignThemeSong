@@ -170,14 +170,45 @@
             return;
         }
         
-        // Get item details to verify it's a Movie or Series
+        // Check permissions first
         if (window.ApiClient) {
-            window.ApiClient.getItem(window.ApiClient.getCurrentUserId(), itemId).then(function(item) {
-                if (item && (item.Type === 'Movie' || item.Type === 'Series')) {
-                    addMenuItemToActionSheet(actionSheet, itemId);
+            // Get plugin configuration to check permission mode
+            var pluginId = '97db7543-d64d-45e1-b2e7-62729b56371f';
+            window.ApiClient.getPluginConfiguration(pluginId).then(function(config) {
+                var permissionMode = config.PermissionMode || 1; // Default: LibraryManagers
+                
+                // Check if user is admin
+                var currentUser = window.ApiClient.getCurrentUser ? window.ApiClient.getCurrentUser() : null;
+                var isAdmin = currentUser && currentUser.Policy && currentUser.Policy.IsAdministrator;
+                
+                // Determine if user has permission
+                var hasPermission = false;
+                if (permissionMode === 0) {
+                    // AdminsOnly
+                    hasPermission = isAdmin;
+                } else if (permissionMode === 1) {
+                    // LibraryManagers (admins only for now)
+                    hasPermission = isAdmin;
+                } else if (permissionMode === 2) {
+                    // Everyone
+                    hasPermission = true;
                 }
+                
+                if (!hasPermission) {
+                    console.log('xThemeSong: User does not have permission to manage themes');
+                    return;
+                }
+                
+                // User has permission, check item type
+                window.ApiClient.getItem(window.ApiClient.getCurrentUserId(), itemId).then(function(item) {
+                    if (item && (item.Type === 'Movie' || item.Type === 'Series')) {
+                        addMenuItemToActionSheet(actionSheet, itemId);
+                    }
+                }).catch(function(err) {
+                    console.error('xThemeSong: Error getting item', err);
+                });
             }).catch(function(err) {
-                console.error('xThemeSong: Error getting item', err);
+                console.error('xThemeSong: Error getting plugin config', err);
             });
         }
     }
