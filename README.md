@@ -7,20 +7,28 @@ A Jellyfin plugin that allows you to download theme songs from YouTube or upload
 
 ## ✨ Features
 
+### Core Features
 - 🎵 Download theme songs from YouTube by providing video ID or URL
 - 📤 Upload your own MP3 files as theme songs
 - 🎬 Supports both movies and TV shows
 - 📁 Automatically saves theme songs as `theme.mp3` in media folders
 - 📝 Stores metadata in `theme.json` files
-- ⏰ Scheduled task to process theme songs
-- 🎛️ Configuration page in Jellyfin dashboard with **tabbed interface**
+- ⏰ Scheduled task to process theme songs (now with fixed error handling!)
+
+### User Interface
+- 🎛️ Configuration page with **tabbed interface** (Settings & Media Library)
 - 🔄 Loading animations during processing
 - 🎧 Audio player for existing theme songs
 - ✅ Modern modal dialogs for success/error messages
 - 🗑️ **Delete existing theme songs** with confirmation dialog
-- ⚙️ **Custom FFmpeg path configuration** (with auto-detect fallback)
-- 📚 **Media Library Overview** - View all media with theme song status
-- 📝 **Bulk YouTube URL assignment** - Set URLs in settings, download via scheduled task
+
+### Advanced Features (v1.2.0+)
+- 📤 **Export/Import Theme Mappings** - Backup and migrate themes between servers
+- 🔐 **Role-Based Access Control** - Control who can manage theme songs
+- 👤 **Per-User Preferences** - Individual settings for enable/disable, volume, duration
+- 📚 **Media Library Overview** - View all media with theme song status at a glance
+- 📝 **Bulk YouTube URL Assignment** - Set URLs for multiple items in settings
+- ⚙️ **Custom FFmpeg Path** - Configure FFmpeg location or use auto-detect
 
 ## 📋 Requirements
 
@@ -114,12 +122,19 @@ For each media item with a theme song, the plugin creates:
 
 Access plugin settings in **Dashboard → Plugins → xThemeSong**:
 
-### Settings Tab
+### Settings Tab (Admin Access)
 - **Overwrite Existing Files**: Whether to overwrite existing theme.mp3 files
 - **Audio Bitrate**: Audio quality for downloaded theme songs (default: 192 kbps)
 - **FFmpeg Path**: Custom path to FFmpeg executable (leave empty for auto-detect)
+- **Permission Mode**: Control who can manage theme songs (Admins Only / Library Managers / Everyone)
 
-### Media Library Tab
+### Backup & Migration (Admin)
+- **Export to JSON**: Download all theme assignments for backup
+- **Export to CSV**: Export for editing in spreadsheet applications
+- **Import from JSON**: Restore themes from backup with conflict detection
+- **Use Cases**: Server migrations, backups, bulk management
+
+### Media Library Tab (Admin)
 The Media Library tab provides a comprehensive overview of all your media:
 
 - **Statistics**: See total media count, items with themes, and items without themes
@@ -128,6 +143,15 @@ The Media Library tab provides a comprehensive overview of all your media:
 - **Mini Audio Player**: Preview existing theme songs directly in the table
 - **YouTube URL Input**: Enter YouTube URLs for each item
 - **Bulk Save**: Save URLs for an entire library, then run the scheduled task to download
+
+### User Preferences (All Users)
+Access from: **Dashboard → Plugins → xThemeSong User Preferences**
+
+Each user can customize their theme song experience:
+- **Enable/Disable Theme Songs**: Turn theme songs on or off for your account
+- **Maximum Duration**: Limit playback to X seconds (0 = play full theme)
+- **Volume Control**: Adjust theme song volume (0-100%)
+- **Server-Side Storage**: Preferences sync across all your devices
 
 ### Deleting Theme Songs
 
@@ -164,9 +188,18 @@ dotnet publish -c Release -o publish
 
 ## 📝 Development Status
 
-**Current Version**: v1.1.0
+**Current Version**: v1.2.0
 
-### v1.1.0 Features (Latest)
+### v1.2.0 Features (Latest - Major Update!)
+- ✅ **Fixed Scheduled Task Error** - No more deserialization crashes
+- ✅ **Export/Import Theme Mappings** - JSON & CSV export, import with conflict resolution
+- ✅ **Role-Based Access Control** - 3 permission modes (Admins/Managers/Everyone)
+- ✅ **Per-User Theme Preferences** - Enable/disable, volume, duration control per user
+- ✅ **User Preferences Page** - Accessible to all users for customization
+- ✅ **Code Quality** - Reduced warnings from 5 to 1 (80% reduction)
+- ✅ **Security** - Permission-based API endpoint protection
+
+### v1.1.0 Features
 - ✅ **Tabbed Settings Page** - Clean organization with Settings and Media Library tabs
 - ✅ **Media Library Overview** - View all media with theme song status at a glance
 - ✅ **Inline Audio Players** - Preview theme songs directly in the library table
