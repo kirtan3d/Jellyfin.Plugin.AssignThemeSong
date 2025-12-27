@@ -1,12 +1,12 @@
 {
   "name": "xThemeSong",
   "guid": "97db7543-d64d-45e1-b2e7-62729b56371f",
-  "version": "1.2.2.0",
+  "version": "1.2.3.0",
   "targetAbi": "10.11.0.0",
   "overview": "Download theme songs from YouTube or upload custom MP3s for your media library",
   "description": "A plugin that automatically downloads theme songs from YouTube by user provided video ID/URL or allows uploading custom MP3 files. Features complete Web UI with drag-and-drop upload, audio player, export/import, role-based permissions, per-user preferences, and media library overview.",
   "owner": "Kirtan Patel",
   "category": "General",
   "imageUrl": "icon.png",
-  "changelog": "v1.2.2: Fixed user preferences API to accept userId parameter, added client-side permission checks for menu visibility, improved role-based access control."
+  "changelog": "v1.2.3: User preferences now accessible in sidebar under Plugin Settings - EnableInMainMenu and client-side sidebar injection added."
 }

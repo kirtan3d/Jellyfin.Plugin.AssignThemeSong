@@ -306,9 +306,10 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
             },
             new PluginPageInfo
             {
-                Name = "xThemeSong User Preferences",
+                Name = "xThemeSong Preferences",
                 EmbeddedResourcePath = string.Format(CultureInfo.InvariantCulture, "{0}.Configuration.userPreferences.html", GetType().Namespace),
-                DisplayName = "xThemeSong Preferences"
+                DisplayName = "xThemeSong Preferences",
+                EnableInMainMenu = true  // Shows in sidebar under pluginMenuOptions
             }
         ];
     }

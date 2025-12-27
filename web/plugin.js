@@ -29,6 +29,59 @@
     const processedActionSheets = new WeakSet();
     
     /**
+     * Adds the "xThemeSong Preferences" menu button to the sidebar under pluginMenuOptions.
+     * Based on Jellyfin Enhanced pattern from study.md
+     */
+    function addSidebarMenuLink() {
+        const addMenuButton = function(sidebar) {
+            let pluginSettingsSection = sidebar.querySelector('.pluginMenuOptions');
+
+            if (!pluginSettingsSection) {
+                pluginSettingsSection = document.createElement('div');
+                pluginSettingsSection.className = 'pluginMenuOptions';
+                pluginSettingsSection.innerHTML = '<h3 class="sidebarHeader">Plugin Settings</h3>';
+
+                const settingsSection = sidebar.querySelector('.navMenuOption[href*="settings"]')?.closest('.drawerSection');
+                if (settingsSection && settingsSection.nextSibling) {
+                    sidebar.insertBefore(pluginSettingsSection, settingsSection.nextSibling);
+                } else {
+                    sidebar.appendChild(pluginSettingsSection);
+                }
+            }
+
+            if (!pluginSettingsSection.querySelector('#xThemeSongPreferencesLink')) {
+                const prefsLink = document.createElement('a');
+                prefsLink.setAttribute('is', 'emby-linkbutton');
+                prefsLink.className = 'lnkMediaFolder navMenuOption emby-button';
+                prefsLink.href = '#/configurationpage?name=xThemeSong%20Preferences';
+                prefsLink.id = 'xThemeSongPreferencesLink';
+                prefsLink.innerHTML = `
+                    <span class="material-icons navMenuOptionIcon" aria-hidden="true">music_note</span>
+                    <span class="sectionName navMenuOptionText">xThemeSong Preferences</span>
+                `;
+
+                pluginSettingsSection.appendChild(prefsLink);
+                console.log('xThemeSong: Sidebar menu link added to pluginMenuOptions');
+            }
+        };
+
+        const observer = new MutationObserver(function() {
+            const sidebar = document.querySelector('.mainDrawer-scrollContainer');
+            if (sidebar && !sidebar.querySelector('#xThemeSongPreferencesLink')) {
+                addMenuButton(sidebar);
+            }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+        
+        // Try to add immediately if sidebar already exists
+        const sidebar = document.querySelector('.mainDrawer-scrollContainer');
+        if (sidebar) {
+            addMenuButton(sidebar);
+        }
+    }
+    
+    /**
      * Injects the "xThemeSong Preferences" link into the user preferences menu (mypreferencesmenu.html).
      * Adds it as the last item in the first vertical section (after Controls).
      */
@@ -83,8 +136,11 @@
     function initializePlugin() {
         console.log('xThemeSong: Initializing plugin...');
         
-        // Add link to user preferences menu
+        // Add link to user preferences menu (user menu dropdown)
         addUserPreferencesLink();
+        
+        // Add link to sidebar menu (pluginMenuOptions)
+        addSidebarMenuLink();
         
         // Check for existing action sheets first
         const existingActionSheets = document.querySelectorAll('.actionSheet');
