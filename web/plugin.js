@@ -53,7 +53,7 @@
                 const prefsLink = document.createElement('a');
                 prefsLink.setAttribute('is', 'emby-linkbutton');
                 prefsLink.className = 'lnkMediaFolder navMenuOption emby-button';
-                prefsLink.href = '#/configurationpage?name=xThemeSong%20Preferences';
+                prefsLink.href = '#/configurationpage?name=xThemeSong%20User%20Preferences'; // Match Plugin.cs page name
                 prefsLink.id = 'xThemeSongPreferencesLink';
                 prefsLink.innerHTML = `
                     <span class="material-icons navMenuOptionIcon" aria-hidden="true">music_note</span>

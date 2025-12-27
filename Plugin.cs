@@ -301,15 +301,15 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
         [
             new PluginPageInfo
             {
-                Name = Name,
+                Name = Name,  // "xThemeSong" - Admin config page
                 EmbeddedResourcePath = string.Format(CultureInfo.InvariantCulture, "{0}.Configuration.configPage.html", GetType().Namespace)
             },
             new PluginPageInfo
             {
-                Name = "xThemeSong Preferences",
+                Name = "xThemeSong User Preferences",  // Different name to avoid conflict
                 EmbeddedResourcePath = string.Format(CultureInfo.InvariantCulture, "{0}.Configuration.userPreferences.html", GetType().Namespace),
-                DisplayName = "xThemeSong Preferences",
-                EnableInMainMenu = true  // Shows in sidebar under pluginMenuOptions
+                DisplayName = "xThemeSong Preferences"
+                // NO EnableInMainMenu - will only be accessible via sidebar injection
             }
         ];
     }
