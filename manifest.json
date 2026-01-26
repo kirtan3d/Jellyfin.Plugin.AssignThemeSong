@@ -10,11 +10,11 @@
     "versions": [
       {
           "version": "1.2.5.0",
-          "checksum": "4c27d9cfbd710db4192d4bfabcade410",
-          "changelog": "v1.2.5: Fixed admin permission check, JSON casing, moved user prefs to non-admin route",
+          "checksum": "ef3f0d0764ad75428ae1fd0f8ef5881e",
+          "changelog": "v1.2.5: Fixed permission check with parseInt, JSON casing, non-admin route for user prefs",
           "targetAbi": "10.11.0.0",
           "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v1.2.5/xThemeSong_v1.2.5.zip",
-          "timestamp": "2026-01-26T11:58:00Z"
+          "timestamp": "2026-01-26T12:24:00Z"
       },
       {
           "version": "1.2.4.0",
