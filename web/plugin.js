@@ -53,7 +53,7 @@
                 const prefsLink = document.createElement('a');
                 prefsLink.setAttribute('is', 'emby-linkbutton');
                 prefsLink.className = 'lnkMediaFolder navMenuOption emby-button';
-                prefsLink.href = '#/configurationpage?name=xThemeSong%20User%20Preferences'; // Match Plugin.cs page name
+                prefsLink.href = '#/userpluginsettings.html?pageUrl=/xThemeSongUserSettings/preferences'; // New non-admin route
                 prefsLink.id = 'xThemeSongPreferencesLink';
                 prefsLink.innerHTML = `
                     <span class="material-icons navMenuOptionIcon" aria-hidden="true">music_note</span>
@@ -98,7 +98,7 @@
             prefsLink.id = 'xThemeSongUserPrefsLink';
             prefsLink.setAttribute('is', 'emby-linkbutton');
             prefsLink.setAttribute('data-ripple', 'false');
-            prefsLink.href = '#/configurationpage?name=xThemeSong%20User%20Preferences';
+            prefsLink.href = '#/userpluginsettings.html?pageUrl=/xThemeSongUserSettings/preferences';  // Non-admin route
             prefsLink.className = 'listItem-border emby-button';
             prefsLink.style.display = 'block';
             prefsLink.style.padding = '0';
@@ -230,12 +230,18 @@
         if (window.ApiClient) {
             // Get plugin configuration to check permission mode
             var pluginId = '97db7543-d64d-45e1-b2e7-62729b56371f';
-            window.ApiClient.getPluginConfiguration(pluginId).then(function(config) {
-                var permissionMode = config.PermissionMode || 1; // Default: LibraryManagers
+            
+            Promise.all([
+                window.ApiClient.getPluginConfiguration(pluginId),
+                window.ApiClient.getCurrentUser ? window.ApiClient.getCurrentUser() : Promise.resolve(null)
+            ]).then(function(results) {
+                var config = results[0];
+                var currentUser = results[1];
                 
-                // Check if user is admin
-                var currentUser = window.ApiClient.getCurrentUser ? window.ApiClient.getCurrentUser() : null;
+                var permissionMode = (config.PermissionMode !== undefined && config.PermissionMode !== null) ? config.PermissionMode : 1;
                 var isAdmin = currentUser && currentUser.Policy && currentUser.Policy.IsAdministrator;
+                
+                console.log('xThemeSong: Permission check - Mode:', permissionMode, 'IsAdmin:', isAdmin);
                 
                 // Determine if user has permission
                 var hasPermission = false;
@@ -255,6 +261,8 @@
                     return;
                 }
                 
+                console.log('xThemeSong: User has permission, checking item type');
+                
                 // User has permission, check item type
                 window.ApiClient.getItem(window.ApiClient.getCurrentUserId(), itemId).then(function(item) {
                     if (item && (item.Type === 'Movie' || item.Type === 'Series')) {
@@ -264,7 +272,7 @@
                     console.error('xThemeSong: Error getting item', err);
                 });
             }).catch(function(err) {
-                console.error('xThemeSong: Error getting plugin config', err);
+                console.error('xThemeSong: Error in permission check', err);
             });
         }
     }

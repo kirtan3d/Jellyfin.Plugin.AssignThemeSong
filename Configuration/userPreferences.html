@@ -73,10 +73,10 @@
                         if (response.ok) return response.json();
                         throw new Error('Failed to load preferences');
                     }).then(function(prefs) {
-                        document.querySelector('#EnableThemeSongs').checked = prefs.enableThemeSongs !== false;
-                        document.querySelector('#MaxDurationSeconds').value = prefs.maxDurationSeconds || 0;
+                        document.querySelector('#EnableThemeSongs').checked = prefs.EnableThemeSongs !== false;
+                        document.querySelector('#MaxDurationSeconds').value = prefs.MaxDurationSeconds || 0;
                         
-                        var volumePercent = Math.round((prefs.volume || 1.0) * 100);
+                        var volumePercent = Math.round((prefs.Volume || 1.0) * 100);
                         document.querySelector('#VolumePercent').value = volumePercent;
                         document.querySelector('#volumeDisplay').textContent = volumePercent + '%';
                         
@@ -101,9 +101,9 @@
                     var volumeFloat = volumePercent / 100.0;
 
                     var preferences = {
-                        enableThemeSongs: document.querySelector('#EnableThemeSongs').checked,
-                        maxDurationSeconds: parseInt(document.querySelector('#MaxDurationSeconds').value) || 0,
-                        volume: volumeFloat
+                        EnableThemeSongs: document.querySelector('#EnableThemeSongs').checked,
+                        MaxDurationSeconds: parseInt(document.querySelector('#MaxDurationSeconds').value) || 0,
+                        Volume: volumeFloat
                     };
 
                     var userId = ApiClient.getCurrentUserId();

@@ -18,7 +18,6 @@ namespace Jellyfin.Plugin.xThemeSong.Api
     /// </summary>
     [ApiController]
     [Authorize]
-    [Route("xThemeSong/preferences")]
     public class UserThemePreferencesController : ControllerBase
     {
         private readonly ILogger<UserThemePreferencesController> _logger;
@@ -39,6 +38,38 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         }
 
         /// <summary>
+        /// Serves the user preferences HTML page (accessible to all users)
+        /// </summary>
+        [HttpGet("xThemeSongUserSettings/preferences")]
+        [AllowAnonymous]  // Allow all authenticated users
+        public IActionResult GetPreferencesView()
+        {
+            try
+            {
+                // Read the embedded HTML resource
+                var assembly = GetType().Assembly;
+                var resourceName = "Jellyfin.Plugin.xThemeSong.Configuration.userPreferences.html";
+                
+                using var stream = assembly.GetManifestResourceStream(resourceName);
+                if (stream == null)
+                {
+                    _logger.LogError("Could not find embedded resource: {ResourceName}", resourceName);
+                    return NotFound("Preferences page not found");
+                }
+
+                using var reader = new StreamReader(stream);
+                var html = reader.ReadToEnd();
+                
+                return Content(html, "text/html");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error serving preferences view");
+                return StatusCode(500, "Failed to load preferences page");
+            }
+        }
+
+        /// <summary>
         /// Gets the preferences file path for a user
         /// </summary>
         private string GetPreferencesPath(Guid userId)
@@ -51,7 +82,7 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         /// <summary>
         /// Get user's theme song preferences
         /// </summary>
-        [HttpGet]
+        [HttpGet("xThemeSong/preferences")]
         [ProducesResponseType(typeof(UserThemePreferences), 200)]
         public ActionResult<UserThemePreferences> GetPreferences([FromQuery] string? userId = null)
         {
@@ -100,7 +131,7 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         /// <summary>
         /// Save user's theme song preferences
         /// </summary>
-        [HttpPost]
+        [HttpPost("xThemeSong/preferences")]
         public ActionResult SavePreferences([FromQuery] string? userId = null, [FromBody] UserThemePreferences? preferences = null)
         {
             try
