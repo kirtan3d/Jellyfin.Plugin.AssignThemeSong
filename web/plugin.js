@@ -238,10 +238,11 @@
                 var config = results[0];
                 var currentUser = results[1];
                 
-                var permissionMode = (config.PermissionMode !== undefined && config.PermissionMode !== null) ? config.PermissionMode : 1;
+                // Convert to number in case it's a string
+                var permissionMode = parseInt((config.PermissionMode !== undefined && config.PermissionMode !== null) ? config.PermissionMode : 1);
                 var isAdmin = currentUser && currentUser.Policy && currentUser.Policy.IsAdministrator;
                 
-                console.log('xThemeSong: Permission check - Mode:', permissionMode, 'IsAdmin:', isAdmin);
+                console.log('xThemeSong: Permission check - Mode:', permissionMode, '(type:', typeof permissionMode, '), IsAdmin:', isAdmin);
                 
                 // Determine if user has permission
                 var hasPermission = false;
@@ -254,7 +255,12 @@
                 } else if (permissionMode === 2) {
                     // Everyone
                     hasPermission = true;
+                } else {
+                    // Default: allow admins
+                    hasPermission = isAdmin;
                 }
+                
+                console.log('xThemeSong: HasPermission:', hasPermission);
                 
                 if (!hasPermission) {
                     console.log('xThemeSong: User does not have permission to manage themes');
