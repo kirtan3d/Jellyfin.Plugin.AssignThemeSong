@@ -364,6 +364,57 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     /// <inheritdoc />
     public override string Description => "Download theme songs from YouTube or upload custom MP3s for your media library";
 
+    /// <summary>
+    /// Executes when the plugin is being uninstalled
+    /// </summary>
+    public override void OnUninstalling()
+    {
+        base.OnUninstalling();
+
+        try
+        {
+            _logger?.LogInformation("xThemeSong: Uninstalling plugin. Cleaning up configurations...");
+
+            // 1. Remove from Plugin Pages configuration
+            var pluginPagesConfig = Path.Combine(_appPaths.PluginConfigurationsPath, "Jellyfin.Plugin.PluginPages", "config.json");
+            if (File.Exists(pluginPagesConfig))
+            {
+                var config = JObject.Parse(File.ReadAllText(pluginPagesConfig));
+                var pagesArray = config.Value<JArray>("pages");
+                if (pagesArray != null)
+                {
+                    string pluginNamespace = GetType().Namespace ?? "Jellyfin.Plugin.xThemeSong";
+                    var pluginPageConfig = pagesArray.FirstOrDefault(x => x.Value<string>("Id") == pluginNamespace);
+                    if (pluginPageConfig != null)
+                    {
+                        pagesArray.Remove(pluginPageConfig);
+                        File.WriteAllText(pluginPagesConfig, config.ToString(Formatting.Indented));
+                        _logger?.LogInformation("xThemeSong: Successfully removed from Plugin Pages configuration.");
+                    }
+                }
+            }
+
+            // 2. Remove direct script injection from index.html if it was embedded
+            var indexPath = Path.Combine(_appPaths.WebPath, "index.html");
+            if (File.Exists(indexPath))
+            {
+                var content = File.ReadAllText(indexPath);
+                string scriptReplacePattern = "<script plugin=\"xThemeSong\".*?></script>";
+                
+                if (Regex.IsMatch(content, scriptReplacePattern))
+                {
+                    content = Regex.Replace(content, scriptReplacePattern, string.Empty);
+                    File.WriteAllText(indexPath, content);
+                    _logger?.LogInformation("xThemeSong: Successfully removed direct script injection from index.html.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "xThemeSong: Failed to clean up configurations during uninstallation.");
+        }
+    }
+
     /// <inheritdoc />
     public IEnumerable<PluginPageInfo> GetPages()
     {
