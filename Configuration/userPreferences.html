@@ -78,7 +78,7 @@
                         var maxDuration = prefs.maxDurationSeconds !== undefined ? prefs.maxDurationSeconds : (prefs.MaxDurationSeconds || 0);
                         var volume = prefs.volume !== undefined ? prefs.volume : (prefs.Volume !== undefined ? prefs.Volume : 1.0);
 
-                        document.querySelector('#EnableThemeSongs').checked = enableThemeSongs !== false;
+                        document.querySelector('#EnableThemeSongs').checked = !!enableThemeSongs;
                         document.querySelector('#MaxDurationSeconds').value = maxDuration;
                         
                         var volumePercent = Math.round((volume || 1.0) * 100);

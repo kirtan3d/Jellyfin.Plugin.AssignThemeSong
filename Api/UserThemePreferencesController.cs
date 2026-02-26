@@ -136,20 +136,23 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         /// Save user's theme song preferences
         /// </summary>
         [HttpPost("xThemeSong/preferences")]
-        public ActionResult SavePreferences([FromQuery] string? userId = null, [FromBody] JsonElement? preferencesRaw = null)
+        public ActionResult SavePreferences([FromQuery] string? userId = null)
         {
             try
             {
-                if (preferencesRaw == null)
-                {
-                    return BadRequest("Preferences required");
-                }
-
                 UserThemePreferences? preferences = null;
                 try 
                 {
+                    using var reader = new StreamReader(Request.Body);
+                    var jsonString = reader.ReadToEndAsync().Result;
+                    
+                    if (string.IsNullOrEmpty(jsonString))
+                    {
+                        return BadRequest("Preferences body is empty");
+                    }
+
                     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                    preferences = JsonSerializer.Deserialize<UserThemePreferences>(preferencesRaw.Value.GetRawText(), options);
+                    preferences = JsonSerializer.Deserialize<UserThemePreferences>(jsonString, options);
                 }
                 catch (Exception ex)
                 {
@@ -159,7 +162,7 @@ namespace Jellyfin.Plugin.xThemeSong.Api
 
                 if (preferences == null)
                 {
-                    return BadRequest("Preferences required");
+                    return BadRequest("Preferences could not be parsed");
                 }
 
                 // Use provided userId or fallback to current user
