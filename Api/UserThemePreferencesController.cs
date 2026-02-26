@@ -110,7 +110,11 @@ namespace Jellyfin.Plugin.xThemeSong.Api
                 if (System.IO.File.Exists(prefsPath))
                 {
                     var json = System.IO.File.ReadAllText(prefsPath);
-                    prefs = JsonSerializer.Deserialize<UserThemePreferences>(json) ?? new UserThemePreferences();
+                    var decodeOptions = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+                    prefs = JsonSerializer.Deserialize<UserThemePreferences>(json, decodeOptions) ?? new UserThemePreferences();
                 }
                 else
                 {

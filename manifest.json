@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+          "version": "1.2.6.0",
+          "checksum": "e032deaff688d34e8c3d9ac14d1eb634",
+          "changelog": "v1.2.6: Updated YoutubeExplode. Fixed user preferences saving issue (deserialization case-sensitivity). Fixed general settings PermissionMode saving. Implemented proper jellyfin-plugin-pages integration for User Preferences access.",
+          "targetAbi": "10.11.0.0",
+          "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v1.2.6/xThemeSong_v1.2.6.zip",
+          "timestamp": "2026-02-26T12:35:00Z"
+      },
+      {
           "version": "1.2.5.0",
           "checksum": "ef3f0d0764ad75428ae1fd0f8ef5881e",
           "changelog": "v1.2.5: Fixed permission check with parseInt, JSON casing, non-admin route for user prefs",

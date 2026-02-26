@@ -58,9 +58,9 @@
                             <div class="selectContainer">
                                 <label class="selectLabel" for="PermissionMode">Who can manage theme songs?</label>
                                 <select id="PermissionMode" name="PermissionMode" is="emby-select">
-                                    <option value="0">Administrators Only</option>
-                                    <option value="1">Administrators & Library Managers</option>
-                                    <option value="2">Everyone (All Authenticated Users)</option>
+                                    <option value="AdminsOnly">Administrators Only</option>
+                                    <option value="LibraryManagers">Administrators & Library Managers</option>
+                                    <option value="Everyone">Everyone (All Authenticated Users)</option>
                                 </select>
                                 <div class="fieldDescription">
                                     Control who can assign, edit, or delete theme songs. Library Managers can manage themes in their assigned libraries.
@@ -319,7 +319,7 @@
                         document.querySelector('#OverwriteExistingFiles').checked = config.OverwriteExistingFiles || false;
                         document.querySelector('#AudioBitrate').value = config.AudioBitrate || 192;
                         document.querySelector('#FFmpegPath').value = config.FFmpegPath || '';
-                        document.querySelector('#PermissionMode').value = (config.PermissionMode !== undefined && config.PermissionMode !== null) ? config.PermissionMode : 1;
+                        document.querySelector('#PermissionMode').value = (config.PermissionMode !== undefined && config.PermissionMode !== null) ? config.PermissionMode : 'LibraryManagers';
                         Dashboard.hideLoadingMsg();
                     });
                 });
@@ -332,7 +332,7 @@
                         config.OverwriteExistingFiles = document.querySelector('#OverwriteExistingFiles').checked;
                         config.AudioBitrate = parseInt(document.querySelector('#AudioBitrate').value) || 192;
                         config.FFmpegPath = document.querySelector('#FFmpegPath').value.trim() || null;
-                        config.PermissionMode = parseInt(document.querySelector('#PermissionMode').value);
+                        config.PermissionMode = document.querySelector('#PermissionMode').value;
 
                         ApiClient.updatePluginConfiguration(pluginId, config).then(function(result) {
                             Dashboard.processPluginConfigurationUpdateResult(result);
