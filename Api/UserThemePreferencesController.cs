@@ -136,10 +136,27 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         /// Save user's theme song preferences
         /// </summary>
         [HttpPost("xThemeSong/preferences")]
-        public ActionResult SavePreferences([FromQuery] string? userId = null, [FromBody] UserThemePreferences? preferences = null)
+        public ActionResult SavePreferences([FromQuery] string? userId = null, [FromBody] JsonElement? preferencesRaw = null)
         {
             try
             {
+                if (preferencesRaw == null)
+                {
+                    return BadRequest("Preferences required");
+                }
+
+                UserThemePreferences? preferences = null;
+                try 
+                {
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    preferences = JsonSerializer.Deserialize<UserThemePreferences>(preferencesRaw.Value.GetRawText(), options);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to deserialize preferences");
+                    return BadRequest("Invalid preferences format");
+                }
+
                 if (preferences == null)
                 {
                     return BadRequest("Preferences required");

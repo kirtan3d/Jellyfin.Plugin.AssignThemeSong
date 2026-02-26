@@ -73,10 +73,15 @@
                         if (response.ok) return response.json();
                         throw new Error('Failed to load preferences');
                     }).then(function(prefs) {
-                        document.querySelector('#EnableThemeSongs').checked = prefs.EnableThemeSongs !== false;
-                        document.querySelector('#MaxDurationSeconds').value = prefs.MaxDurationSeconds || 0;
+                        // Handle both camelCase (API) and PascalCase just in case
+                        var enableThemeSongs = prefs.enableThemeSongs !== undefined ? prefs.enableThemeSongs : (prefs.EnableThemeSongs !== undefined ? prefs.EnableThemeSongs : true);
+                        var maxDuration = prefs.maxDurationSeconds !== undefined ? prefs.maxDurationSeconds : (prefs.MaxDurationSeconds || 0);
+                        var volume = prefs.volume !== undefined ? prefs.volume : (prefs.Volume !== undefined ? prefs.Volume : 1.0);
+
+                        document.querySelector('#EnableThemeSongs').checked = enableThemeSongs !== false;
+                        document.querySelector('#MaxDurationSeconds').value = maxDuration;
                         
-                        var volumePercent = Math.round((prefs.Volume || 1.0) * 100);
+                        var volumePercent = Math.round((volume || 1.0) * 100);
                         document.querySelector('#VolumePercent').value = volumePercent;
                         document.querySelector('#volumeDisplay').textContent = volumePercent + '%';
                         
@@ -101,9 +106,9 @@
                     var volumeFloat = volumePercent / 100.0;
 
                     var preferences = {
-                        EnableThemeSongs: document.querySelector('#EnableThemeSongs').checked,
-                        MaxDurationSeconds: parseInt(document.querySelector('#MaxDurationSeconds').value) || 0,
-                        Volume: volumeFloat
+                        enableThemeSongs: document.querySelector('#EnableThemeSongs').checked,
+                        maxDurationSeconds: parseInt(document.querySelector('#MaxDurationSeconds').value) || 0,
+                        volume: volumeFloat
                     };
 
                     var userId = ApiClient.getCurrentUserId();

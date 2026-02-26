@@ -133,9 +133,99 @@
         console.log('xThemeSong: User preferences menu observer installed');
     }
     
+    let userPreferences = { enableThemeSongs: true, maxDurationSeconds: 0, volume: 1.0 };
+    let themeSongAudioElement = null;
+    let themeSongWatchdogInterval = null;
+
+    /**
+     * Fetch user preferences from server
+     */
+    function fetchUserPreferences() {
+        if (!window.ApiClient) return;
+        
+        var userId = window.ApiClient.getCurrentUserId();
+        if (!userId) {
+            // Wait and try again if userId is not ready during startup
+            setTimeout(fetchUserPreferences, 2000);
+            return;
+        }
+
+        console.log('xThemeSong: Fetching user preferences...');
+        var url = window.ApiClient.getUrl('xThemeSong/preferences?userId=' + userId);
+        
+        fetch(url, {
+            headers: { 'X-Emby-Token': window.ApiClient.accessToken() }
+        }).then(response => {
+            if (response.ok) return response.json();
+            throw new Error('Failed');
+        }).then(prefs => {
+            userPreferences = {
+                enableThemeSongs: prefs.EnableThemeSongs !== false,
+                maxDurationSeconds: prefs.MaxDurationSeconds || 0,
+                volume: prefs.Volume !== undefined ? prefs.Volume : 1.0
+            };
+            console.log('xThemeSong: Loaded user preferences', userPreferences);
+        }).catch(err => {
+            console.warn('xThemeSong: Failed to load user preferences', err);
+        });
+    }
+
+    /**
+     * Intercept HTMLAudioElement to apply theme song preferences
+     */
+    function interceptThemeSongPlayback() {
+        console.log("xThemeSong: Intercepting Theme Song playback mechanics...");
+        const originalPlay = window.HTMLMediaElement.prototype.play;
+        
+        window.HTMLMediaElement.prototype.play = function() {
+            var url = this.src || this.currentSrc || "";
+            // Check if this audio/media element is playing a theme song (api path /ThemeMedia/)
+            if (url.indexOf('/ThemeMedia/') !== -1) {
+                console.log('xThemeSong: Theme song playback detected.', url);
+                themeSongAudioElement = this;
+
+                if (!userPreferences.enableThemeSongs) {
+                    console.log('xThemeSong: Theme songs disabled by user preference, blocking playback.');
+                    // Pause/Mute immediately just in case
+                    this.muted = true;
+                    this.pause();
+                    return Promise.resolve();
+                }
+
+                // Apply volume
+                this.volume = userPreferences.volume;
+                console.log('xThemeSong: Set theme song volume to', userPreferences.volume);
+
+                // Handle duration limitation
+                if (userPreferences.maxDurationSeconds > 0) {
+                    if (themeSongWatchdogInterval) clearTimeout(themeSongWatchdogInterval);
+                    
+                    themeSongWatchdogInterval = setTimeout(() => {
+                        console.log(`xThemeSong: Max duration (${userPreferences.maxDurationSeconds}s) reached. Stopping theme song.`);
+                        if (themeSongAudioElement && !themeSongAudioElement.paused) {
+                            themeSongAudioElement.pause();
+                        }
+                    }, userPreferences.maxDurationSeconds * 1000);
+
+                    // clear it if user stops it manually or it ends
+                    this.addEventListener('pause', () => clearTimeout(themeSongWatchdogInterval), { once: true });
+                    this.addEventListener('ended', () => clearTimeout(themeSongWatchdogInterval), { once: true });
+                }
+            }
+            
+            return originalPlay.apply(this, arguments);
+        };
+    }
+
     function initializePlugin() {
         console.log('xThemeSong: Initializing plugin...');
         
+        // Fetch preferences
+        fetchUserPreferences();
+
+        // Setup Player Interception
+        interceptThemeSongPlayback();
+
         // Add link to user preferences menu (user menu dropdown)
         addUserPreferencesLink();
         
