@@ -176,26 +176,23 @@
     }
 
     // ========================
-    // GET/SET JELLYFIN'S NATIVE THEME SONG SETTING (DisplayPreferences)
+    // GET/SET JELLYFIN'S NATIVE THEME SONG SETTING
+    // Jellyfin Web stores this in localStorage ONLY (NOT DisplayPreferences).
+    // Key: "{userId}-enableThemeSongs"  Value: "true" | "false"
+    // Source: jellyfin-web/src/scripts/settings/userSettings.js + appSettings.js
+    // userSettings.enableThemeSongs() uses enableOnServer=false → appSettings → localStorage
     // ========================
     function getJellyfinThemeSongEnabled(userId) {
-        if (!window.ApiClient) return Promise.resolve(true);
-        return window.ApiClient.getDisplayPreferences('usersettings', userId, 'emby')
-            .then(function(prefs) {
-                const val = prefs.CustomPrefs && prefs.CustomPrefs['enableThemeSong'];
-                // Jellyfin stores as string '1'/'0' or boolean
-                return val === undefined || val === null ? true : (val === '1' || val === true || val === 'true');
-            }).catch(() => true);
+        // Default is false (disabled) when key is absent in Jellyfin Web
+        const val = localStorage.getItem(userId + '-enableThemeSongs');
+        return Promise.resolve(val === 'true');
     }
 
     function setJellyfinThemeSongEnabled(userId, enabled) {
-        if (!window.ApiClient) return Promise.resolve();
-        return window.ApiClient.getDisplayPreferences('usersettings', userId, 'emby')
-            .then(function(prefs) {
-                if (!prefs.CustomPrefs) prefs.CustomPrefs = {};
-                prefs.CustomPrefs['enableThemeSong'] = enabled ? '1' : '0';
-                return window.ApiClient.updateDisplayPreferences('usersettings', prefs, userId, 'emby');
-            }).catch(err => console.warn('xThemeSong: Failed to update Jellyfin theme song setting', err));
+        // Write directly to the same localStorage key Jellyfin's themeMediaPlayer.js reads
+        localStorage.setItem(userId + '-enableThemeSongs', enabled.toString());
+        console.log('xThemeSong: Set Jellyfin native localStorage[' + userId + '-enableThemeSongs] = ' + enabled);
+        return Promise.resolve();
     }
 
     // ========================

@@ -1,12 +1,12 @@
 {
   "name": "xThemeSong",
   "guid": "97db7543-d64d-45e1-b2e7-62729b56371f",
-  "version": "1.2.8.0",
+  "version": "1.2.9.0",
   "targetAbi": "10.11.0.0",
   "overview": "Download theme songs from YouTube or upload custom MP3s for your media library",
   "description": "A plugin that automatically downloads theme songs from YouTube by user provided video ID/URL or allows uploading custom MP3 files. Features complete Web UI with drag-and-drop upload, audio player, export/import, role-based permissions, per-user preferences, and media library overview.",
   "owner": "Kirtan Patel",
   "category": "General",
   "imageUrl": "icon.png",
-  "changelog": "v1.2.8: Removed PluginPages prerequisite. Completely native dialog module bypasses routing blocks completely internally fixing user preference persistence flawlessly."
+  "changelog": "v1.2.9: Fixed enableThemeSongs sync — now correctly reads/writes Jellyfin native localStorage key ({userId}-enableThemeSongs) instead of DisplayPreferences, matching themeMediaPlayer.js source of truth exactly."
 }
