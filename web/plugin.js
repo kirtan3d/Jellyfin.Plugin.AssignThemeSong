@@ -150,17 +150,17 @@
         
         var userId = window.ApiClient.getCurrentUserId();
         if (!userId) {
-            return new Promise((resolve) => setTimeout(() => resolve(fetchUserPreferences()), 2000));
+            return new Promise(function(resolve) { setTimeout(function() { resolve(fetchUserPreferences()); }, 2000); });
         }
 
         var url = window.ApiClient.getUrl('xThemeSong/preferences?userId=' + userId);
         
         return fetch(url, {
             headers: { 'X-Emby-Token': window.ApiClient.accessToken() }
-        }).then(response => {
+        }).then(function(response) {
             if (response.ok) return response.json();
             throw new Error('Failed to fetch preferences');
-        }).then(prefs => {
+        }).then(function(prefs) {
             // Handle both camelCase and PascalCase
             userPreferences = {
                 enableThemeSongs: prefs.enableThemeSongs !== undefined ? prefs.enableThemeSongs : (prefs.EnableThemeSongs !== false),
@@ -168,8 +168,20 @@
                 volume: prefs.volume !== undefined ? prefs.volume : (prefs.Volume !== undefined ? prefs.Volume : 1.0)
             };
             console.log('xThemeSong: Loaded user preferences', userPreferences);
+
+            // -------------------------------------------------------
+            // SYNC to Jellyfin's native localStorage key on every load.
+            // Key: "{userId}-enableThemeSongs"  (same key themeMediaPlayer.js reads)
+            // Our server prefs are the source of truth for our plugin.
+            // Always overwrite on fetch so enable/disable is consistent
+            // across tabs and after page refresh.
+            // -------------------------------------------------------
+            var nativeKey = userId + '-enableThemeSongs';
+            localStorage.setItem(nativeKey, userPreferences.enableThemeSongs.toString());
+            console.log('xThemeSong: Synced Jellyfin localStorage[' + nativeKey + '] = ' + userPreferences.enableThemeSongs);
+
             return userPreferences;
-        }).catch(err => {
+        }).catch(function(err) {
             console.warn('xThemeSong: Failed to load user preferences', err);
             return userPreferences;
         });
@@ -197,45 +209,131 @@
 
     // ========================
     // INTERCEPT THEME SONG PLAYBACK FOR VOLUME + DURATION CONTROL
+    //
+    // BACKGROUND: Jellyfin serves theme songs at:
+    //   /Audio/{itemId}/universal?UserId=...&DeviceId=...&...
+    // The URL contains /Audio/ but does NOT contain "theme" or "/ThemeMedia/".
+    // We can't rely on URL pattern alone — we use a timing-based approach:
+    //   When the user navigates to a detail page (viewshow event with serverId+id),
+    //   mark an 8-second window. Any /Audio/ play within that window = theme song.
     // ========================
     function interceptThemeSongPlayback() {
-        console.log('xThemeSong: Setting up playback interceptor...');
-        const originalPlay = window.HTMLMediaElement.prototype.play;
-        
-        window.HTMLMediaElement.prototype.play = function() {
-            var url = this.src || this.currentSrc || '';
-            if (url.indexOf('/ThemeMedia/') !== -1 || url.indexOf('/Audio/') !== -1 && url.indexOf('theme') !== -1) {
-                console.log('xThemeSong: Theme song playback detected.', url);
-                themeSongAudioElement = this;
+        console.log('xThemeSong: Setting up playback interceptor (viewshow-timing approach)...');
 
-                // If theme songs disabled, block
-                if (!userPreferences.enableThemeSongs) {
-                    console.log('xThemeSong: Theme songs disabled by user preference, blocking playback.');
-                    this.muted = true;
-                    return Promise.resolve();
-                }
+        var themeSongWindowActive = false;
+        var themeSongWindowTimer = null;
 
-                // More precise check for /ThemeMedia/ which is how Jellyfin serves theme songs
-                if (url.indexOf('/ThemeMedia/') !== -1) {
-                    this.volume = userPreferences.volume;
-                    console.log('xThemeSong: Set theme song volume to', userPreferences.volume);
+        // Mirror themeMediaPlayer.js: it activates on viewshow with serverId+id params
+        document.addEventListener('viewshow', function(e) {
+            var params = (e.detail && e.detail.params) || {};
+            if (params.serverId && params.id) {
+                themeSongWindowActive = true;
+                if (themeSongWindowTimer) clearTimeout(themeSongWindowTimer);
+                themeSongWindowTimer = setTimeout(function() {
+                    themeSongWindowActive = false;
+                }, 8000); // 8-second window after detail-page navigation
+                console.log('xThemeSong: Detail page navigated, theme song window open (8s)');
+            }
+        });
 
-                    if (userPreferences.maxDurationSeconds > 0) {
-                        if (themeSongWatchdogInterval) clearTimeout(themeSongWatchdogInterval);
-                        themeSongWatchdogInterval = setTimeout(() => {
-                            if (themeSongAudioElement && !themeSongAudioElement.paused) {
-                                themeSongAudioElement.pause();
-                                console.log('xThemeSong: Max duration reached, stopped theme song');
-                            }
-                        }, userPreferences.maxDurationSeconds * 1000);
-                        this.addEventListener('pause', () => clearTimeout(themeSongWatchdogInterval), { once: true });
-                        this.addEventListener('ended', () => clearTimeout(themeSongWatchdogInterval), { once: true });
-                    }
+        function applyPreferencesToThemeSong(el, url) {
+            themeSongAudioElement = el;
+            // Consume the timing window so we don't accidentally apply to subsequent /Audio/
+            // requests (e.g. user manually starts music right after navigating to detail page)
+            themeSongWindowActive = false;
+            if (themeSongWindowTimer) { clearTimeout(themeSongWindowTimer); themeSongWindowTimer = null; }
+
+            if (!userPreferences.enableThemeSongs) {
+                // Disabled: mute at the element level. Don't block play() itself — that would
+                // leave Jellyfin's playback session in a broken state.
+                console.log('xThemeSong: Theme songs disabled — muting element.');
+                el.muted = true;
+                el.volume = 0;
+                return;
+            }
+
+            // Volume to apply (0–1 ratio, clamped)
+            var vol = Math.max(0, Math.min(1, userPreferences.volume));
+
+            // Helper that (re-)applies our target volume without recursion
+            var ownVolumeChange = false;
+            function forceVolume() {
+                if (el !== themeSongAudioElement) return;
+                if (!el.muted) {
+                    ownVolumeChange = true;
+                    el.volume = vol;
+                    // clear flag asynchronously so the volumechange event triggered
+                    // by our own set() is ignored by the listener below
+                    setTimeout(function() { ownVolumeChange = false; }, 50);
                 }
             }
-            
+
+            // Apply immediately
+            forceVolume();
+            console.log('xThemeSong: Applied volume', vol, 'to theme song:', url.substring(0, 80));
+
+            // Apply again after short delays.
+            // PR #6673 (jellyfin/jellyfin-web) confirmed that Jellyfin's shared media player
+            // may restore its saved global volume level shortly after play() resolves.
+            // Multiple retries ensure our value sticks.
+            setTimeout(forceVolume, 150);
+            setTimeout(forceVolume, 500);
+            setTimeout(forceVolume, 1200);
+
+            // Persistent volumechange guard — re-applies our volume if Jellyfin overrides.
+            // Uses ownVolumeChange flag to prevent infinite feedback loop.
+            el.addEventListener('volumechange', function onVolChange() {
+                if (ownVolumeChange) return; // Our own set() — ignore
+                if (el !== themeSongAudioElement) {
+                    el.removeEventListener('volumechange', onVolChange);
+                    return;
+                }
+                var target = Math.max(0, Math.min(1, userPreferences.volume));
+                if (Math.abs(el.volume - target) > 0.01 && !el.muted) {
+                    forceVolume(); // Uses ownVolumeChange flag internally
+                }
+            });
+
+            // Max duration watchdog
+            if (userPreferences.maxDurationSeconds > 0) {
+                if (themeSongWatchdogInterval) clearTimeout(themeSongWatchdogInterval);
+                themeSongWatchdogInterval = setTimeout(function() {
+                    if (themeSongAudioElement && !themeSongAudioElement.paused) {
+                        themeSongAudioElement.pause();
+                        console.log('xThemeSong: Max duration (' + userPreferences.maxDurationSeconds + 's) reached, paused theme song');
+                    }
+                }, userPreferences.maxDurationSeconds * 1000);
+                el.addEventListener('ended', function() { clearTimeout(themeSongWatchdogInterval); }, { once: true });
+                el.addEventListener('pause', function() { clearTimeout(themeSongWatchdogInterval); }, { once: true });
+            }
+        }
+
+        // Intercept HTMLMediaElement.play() — at this point this.src is the audio URL
+        var originalPlay = HTMLMediaElement.prototype.play;
+        HTMLMediaElement.prototype.play = function() {
+            var url = this.src || this.currentSrc || '';
+
+            // Detect theme song: /Audio/ endpoint called within 8s of detail-page navigation
+            if (themeSongWindowActive && url.indexOf('/Audio/') !== -1) {
+                console.log('xThemeSong: Theme song play() intercepted:', url.substring(0, 100));
+                applyPreferencesToThemeSong(this, url);
+            }
+
             return originalPlay.apply(this, arguments);
         };
+
+        // Secondary: capture 'playing' event — fires when audio actually starts.
+        // currentSrc is guaranteed set here, catches cases where src was set after play() call.
+        document.addEventListener('playing', function(e) {
+            if (!(e.target instanceof HTMLAudioElement)) return;
+            var el = e.target;
+            if (el === themeSongAudioElement) return; // already handled in play()
+            var url = el.currentSrc || el.src || '';
+            if (themeSongWindowActive && url.indexOf('/Audio/') !== -1) {
+                console.log('xThemeSong: Theme song playing event intercepted:', url.substring(0, 100));
+                applyPreferencesToThemeSong(el, url);
+            }
+        }, true);
     }
 
     // ========================
@@ -306,16 +404,11 @@
         volInput.value = Math.round(userPreferences.volume * 100);
         volDisplay.textContent = volInput.value + '%';
 
-        // Async: Load fresh preferences from server AND from Jellyfin native settings
-        Promise.all([
-            fetchUserPreferences(),
-            getJellyfinThemeSongEnabled(userId)
-        ]).then(function(results) {
-            const prefs = results[0];
-            const jellyfinEnabled = results[1];
-            
-            // Use Jellyfin's native setting as the source of truth for enableThemeSongs
-            enableCheckbox.checked = jellyfinEnabled;
+        // Async: Load fresh preferences from server.
+        // fetchUserPreferences() also syncs enableThemeSongs → localStorage on every call,
+        // so server prefs are always the consistent source of truth after this resolves.
+        fetchUserPreferences().then(function(prefs) {
+            enableCheckbox.checked = prefs.enableThemeSongs;
             maxDuration.value = prefs.maxDurationSeconds;
             volInput.value = Math.round(prefs.volume * 100);
             volDisplay.textContent = volInput.value + '%';

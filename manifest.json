@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
+          "version": "1.2.10.0",
+          "checksum": "92410c5c8d053f500adfa472a6f4d8a7",
+          "changelog": "v1.2.10: Fixed volume/duration never applying (theme songs served at /Audio/{id}/universal — now uses viewshow-timing detection). Fixed enable/disable checkbox inconsistency (server prefs always-sync to localStorage on load). Persistent volumechange guard with ownVolumeChange flag + setTimeout fallbacks. Studied jellyfin-web source + PR #6673.",
+          "targetAbi": "10.11.0.0",
+          "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v1.2.10/xThemeSong_v1.2.10.0.zip",
+          "timestamp": "2026-02-27T13:40:00Z"
+      },
+      {
           "version": "1.2.9.0",
           "checksum": "ba48bdc0786d2f6d417a107b920e2396",
           "changelog": "v1.2.9: Fixed enableThemeSongs sync — now correctly reads/writes Jellyfin native localStorage key ({userId}-enableThemeSongs) instead of DisplayPreferences, matching themeMediaPlayer.js source of truth exactly.",
