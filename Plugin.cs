@@ -63,79 +63,11 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
             {
                 _logger.LogInformation("xThemeSong: Successfully registered with File Transformation plugin");
             }
-
-            RegisterWithPluginPages();
         }
         catch (Exception ex)
         {
             // Log error but DON'T re-throw - allow plugin to load even if initialization fails
             _logger?.LogError(ex, "xThemeSong: Error in constructor: {Message}", ex.Message);
-        }
-    }
-
-    private void RegisterWithPluginPages()
-    {
-        try
-        {
-            _logger.LogInformation("xThemeSong: Attempting to register with Plugin Pages...");
-            string pluginPagesConfig = Path.Combine(_appPaths.PluginConfigurationsPath, "Jellyfin.Plugin.PluginPages", "config.json");
-            
-            JObject config = new JObject();
-            if (!File.Exists(pluginPagesConfig))
-            {
-                FileInfo info = new FileInfo(pluginPagesConfig);
-                info.Directory?.Create();
-            }
-            else
-            {
-                config = JObject.Parse(File.ReadAllText(pluginPagesConfig));
-            }
-
-            if (!config.ContainsKey("pages"))
-            {
-                config.Add("pages", new JArray());
-            }
-
-            var pagesArray = config.Value<JArray>("pages");
-            if (pagesArray == null) 
-            {
-                pagesArray = new JArray();
-                config["pages"] = pagesArray;
-            }
-
-            string pluginNamespace = GetType().Namespace ?? "Jellyfin.Plugin.xThemeSong";
-
-            JObject? pluginPageConfig = pagesArray.FirstOrDefault(x =>
-                x.Value<string>("Id") == pluginNamespace) as JObject;
-
-            if (pluginPageConfig != null && (pluginPageConfig.Value<int?>("Version") ?? 0) < PluginPageConfigVersion)
-            {
-                pagesArray.Remove(pluginPageConfig);
-                pluginPageConfig = null;
-            }
-
-            if (pluginPageConfig == null)
-            {
-                pagesArray.Add(new JObject
-                {
-                    { "Id", pluginNamespace },
-                    { "Url", "/xThemeSongUserSettings/preferences" },
-                    { "DisplayText", "xThemeSong Preferences" },
-                    { "Icon", "music_note" },
-                    { "Version", PluginPageConfigVersion }
-                });
-
-                File.WriteAllText(pluginPagesConfig, config.ToString(Formatting.Indented));
-                _logger.LogInformation("xThemeSong: Successfully registered with Plugin Pages.");
-            }
-            else
-            {
-                _logger.LogInformation("xThemeSong: Already registered with Plugin Pages.");
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "xThemeSong: Failed to register with Plugin Pages: {Message}", ex.Message);
         }
     }
 
@@ -375,26 +307,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
         {
             _logger?.LogInformation("xThemeSong: Uninstalling plugin. Cleaning up configurations...");
 
-            // 1. Remove from Plugin Pages configuration
-            var pluginPagesConfig = Path.Combine(_appPaths.PluginConfigurationsPath, "Jellyfin.Plugin.PluginPages", "config.json");
-            if (File.Exists(pluginPagesConfig))
-            {
-                var config = JObject.Parse(File.ReadAllText(pluginPagesConfig));
-                var pagesArray = config.Value<JArray>("pages");
-                if (pagesArray != null)
-                {
-                    string pluginNamespace = GetType().Namespace ?? "Jellyfin.Plugin.xThemeSong";
-                    var pluginPageConfig = pagesArray.FirstOrDefault(x => x.Value<string>("Id") == pluginNamespace);
-                    if (pluginPageConfig != null)
-                    {
-                        pagesArray.Remove(pluginPageConfig);
-                        File.WriteAllText(pluginPagesConfig, config.ToString(Formatting.Indented));
-                        _logger?.LogInformation("xThemeSong: Successfully removed from Plugin Pages configuration.");
-                    }
-                }
-            }
-
-            // 2. Remove direct script injection from index.html if it was embedded
+            // Remove direct script injection from index.html if it was embedded
             var indexPath = Path.Combine(_appPaths.WebPath, "index.html");
             if (File.Exists(indexPath))
             {
@@ -424,13 +337,6 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
             {
                 Name = Name,  // "xThemeSong" - Admin config page
                 EmbeddedResourcePath = string.Format(CultureInfo.InvariantCulture, "{0}.Configuration.configPage.html", GetType().Namespace)
-            },
-            new PluginPageInfo
-            {
-                Name = "xThemeSong User Preferences",  // Different name to avoid conflict
-                EmbeddedResourcePath = string.Format(CultureInfo.InvariantCulture, "{0}.Configuration.userPreferences.html", GetType().Namespace),
-                DisplayName = "xThemeSong Preferences"
-                // NO EnableInMainMenu - will only be accessible via sidebar injection
             }
         ];
     }
