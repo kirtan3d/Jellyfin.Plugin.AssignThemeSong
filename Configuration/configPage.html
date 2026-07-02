@@ -504,7 +504,7 @@
                     if (libraryData && libraryData.libraries) {
                         libraryData.libraries.forEach(function(library) {
                             var tab = document.createElement('button');
-                            tab.className = 'xthemesong-type-tab';
+                            tab.className = 'xthemesong-type-tab xthemesong-library-tab';
                             tab.setAttribute('data-library', library.libraryId);
                             tab.style.cssText = 'padding: 8px 16px; border: 1px solid #444; border-radius: 4px; background: #2a2a2a; color: #fff; cursor: pointer;';
                             tab.textContent = library.libraryName;
@@ -512,39 +512,75 @@
                         });
                     }
                     
-                    // Add click handlers for all type tabs
-                    var allTypeTabs = document.querySelectorAll('.xthemesong-type-tab');
-                    allTypeTabs.forEach(function(tab) {
+                    // Add click handlers for type tabs (All, Movies, TV Shows)
+                    var typeFilterTabs = document.querySelectorAll('.xthemesong-type-tab:not(.xthemesong-library-tab)');
+                    typeFilterTabs.forEach(function(tab) {
                         tab.addEventListener('click', function() {
-                            // Update active state
-                            allTypeTabs.forEach(function(t) {
+                            // Update active state for type tabs only
+                            typeFilterTabs.forEach(function(t) {
                                 t.classList.remove('active');
                                 t.style.background = '#2a2a2a';
                             });
+                            // Also deactivate library tabs
+                            document.querySelectorAll('.xthemesong-library-tab').forEach(function(t) {
+                                t.classList.remove('active');
+                                t.style.background = '#2a2a2a';
+                            });
+                            
                             this.classList.add('active');
                             this.style.background = '#00a4dc';
                             
-                            // Filter libraries
+                            // Filter by type
                             var typeFilter = this.getAttribute('data-type');
-                            var libraryFilter = this.getAttribute('data-library');
+                            
+                            var libraryGroups = document.querySelectorAll('.xthemesong-library-group');
+                            libraryGroups.forEach(function(group) {
+                                var groupType = group.getAttribute('data-library-type');
+                                
+                                var showGroup = (typeFilter === 'all') || (groupType === typeFilter);
+                                group.style.display = showGroup ? 'block' : 'none';
+                            });
+                            
+                            // Re-apply search/theme filters if they're active
+                            var filterSearch = document.getElementById('filterSearch');
+                            if (filterSearch && filterSearch.value.trim()) {
+                                setupLibraryFilters();
+                            }
+                        });
+                    });
+                    
+                    // Add click handlers for library-specific tabs
+                    var libraryTabs = document.querySelectorAll('.xthemesong-library-tab');
+                    libraryTabs.forEach(function(tab) {
+                        tab.addEventListener('click', function() {
+                            // Update active state for library tabs only
+                            libraryTabs.forEach(function(t) {
+                                t.classList.remove('active');
+                                t.style.background = '#2a2a2a';
+                            });
+                            // Also deactivate type tabs
+                            typeFilterTabs.forEach(function(t) {
+                                t.classList.remove('active');
+                                t.style.background = '#2a2a2a';
+                            });
+                            
+                            this.classList.add('active');
+                            this.style.background = '#00a4dc';
+                            
+                            // Filter by library ID
+                            var libraryId = this.getAttribute('data-library');
                             
                             var libraryGroups = document.querySelectorAll('.xthemesong-library-group');
                             libraryGroups.forEach(function(group) {
                                 var groupId = group.getAttribute('data-library-id');
-                                var groupType = group.getAttribute('data-library-type');
-                                
-                                var showGroup = false;
-                                
-                                if (typeFilter === 'all') {
-                                    showGroup = true;
-                                } else if (typeFilter && groupType === typeFilter) {
-                                    showGroup = true;
-                                } else if (libraryFilter && groupId === libraryFilter) {
-                                    showGroup = true;
-                                }
-                                
-                                group.style.display = showGroup ? 'block' : 'none';
+                                group.style.display = (groupId === libraryId) ? 'block' : 'none';
                             });
+                            
+                            // Re-apply search/theme filters if they're active
+                            var filterSearch = document.getElementById('filterSearch');
+                            if (filterSearch && filterSearch.value.trim()) {
+                                setupLibraryFilters();
+                            }
                         });
                     });
                 }
@@ -560,12 +596,17 @@
                         var searchTerm = filterSearch.value.toLowerCase().trim();
                         
                         document.querySelectorAll('.xthemesong-library-group').forEach(function(group) {
+                            // Skip if group is already hidden by type/library filter
+                            if (group.style.display === 'none') return;
+                            
                             var visibleRows = 0;
                             var rows = group.querySelectorAll('tbody tr');
                             
                             rows.forEach(function(row) {
                                 var hasTheme = row.querySelector('audio') !== null;
-                                var title = row.querySelector('td').textContent.toLowerCase();
+                                // Get title from second td (first td is poster)
+                                var titleCell = row.querySelectorAll('td')[1];
+                                var title = titleCell ? titleCell.textContent.toLowerCase() : '';
                                 
                                 var matchesTheme = (hasTheme && showWith) || (!hasTheme && showWithout);
                                 var matchesSearch = !searchTerm || title.indexOf(searchTerm) !== -1;
@@ -579,7 +620,9 @@
                             });
                             
                             // Hide entire group if no visible rows
-                            group.style.display = visibleRows > 0 ? '' : 'none';
+                            if (visibleRows === 0) {
+                                group.style.display = 'none';
+                            }
                         });
                     }
                     

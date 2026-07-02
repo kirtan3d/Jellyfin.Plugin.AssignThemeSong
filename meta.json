@@ -1,12 +1,12 @@
 {
   "name": "xThemeSong",
   "guid": "97db7543-d64d-45e1-b2e7-62729b56371f",
-  "version": "1.3.0.0",
+  "version": "1.3.1.0",
   "targetAbi": "10.11.0.0",
   "overview": "Download theme songs from YouTube or upload custom MP3s for your media library",
   "description": "A plugin that automatically downloads theme songs from YouTube by user provided video ID/URL or allows uploading custom MP3 files. Features complete Web UI with drag-and-drop upload, audio player, export/import, role-based permissions, per-user preferences, and media library overview.",
   "owner": "Kirtan Patel",
   "category": "General",
   "imageUrl": "icon.png",
-  "changelog": "v1.3.0: Major update - Added season/collection-level theme inheritance, media library filters (with/without theme, search), poster thumbnails in library view, library type tabs (Movies/TV Shows), and minimized logging for cleaner output."
+  "changelog": "v1.3.1: Fixed media library filter buttons (Movies/TV Shows) and search by title not working correctly. Fixed type matching between API (Series) and UI (TV Shows)."
 }
