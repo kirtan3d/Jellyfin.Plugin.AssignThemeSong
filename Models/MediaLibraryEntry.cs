@@ -50,6 +50,12 @@ namespace Jellyfin.Plugin.xThemeSong.Models
         /// </summary>
         [JsonPropertyName("path")]
         public string? Path { get; set; }
+
+        /// <summary>
+        /// Gets or sets the primary image URL for the item.
+        /// </summary>
+        [JsonPropertyName("imageUrl")]
+        public string? ImageUrl { get; set; }
     }
 
     /// <summary>

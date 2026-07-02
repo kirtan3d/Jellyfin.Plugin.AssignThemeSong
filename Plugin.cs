@@ -50,7 +50,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
         
         try
         {
-            _logger.LogInformation("xThemeSong: Plugin constructor started - WITH File Transformation registration");
+            _logger.LogDebug("xThemeSong: Plugin constructor started - WITH File Transformation registration");
             _logger.LogInformation($"xThemeSong v{Version} initialized");
 
             // Try File Transformation plugin first, fall back to direct injection

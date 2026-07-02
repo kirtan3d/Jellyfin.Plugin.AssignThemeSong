@@ -30,5 +30,23 @@ namespace Jellyfin.Plugin.xThemeSong.Models
 
         [JsonPropertyName("OriginalFileName")]
         public string? OriginalFileName { get; set; }
+
+        /// <summary>
+        /// Target type for theme assignment: Movie, Series, Season, or BoxSet
+        /// </summary>
+        [JsonPropertyName("TargetType")]
+        public string TargetType { get; set; } = "Movie";
+
+        /// <summary>
+        /// Parent ID for inheritance (Series ID for seasons, Collection ID for BoxSets)
+        /// </summary>
+        [JsonPropertyName("ParentId")]
+        public string? ParentId { get; set; }
+
+        /// <summary>
+        /// Whether this theme should be inherited by child items
+        /// </summary>
+        [JsonPropertyName("InheritFromParent")]
+        public bool InheritFromParent { get; set; } = true;
     }
 }

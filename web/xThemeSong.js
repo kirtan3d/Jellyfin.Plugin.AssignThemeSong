@@ -234,6 +234,29 @@
             justify-content: center;
             margin-top: 20px;
         }
+        .xthemesong-select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            background: #2a2a2a;
+            color: #fff;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .xthemesong-select:focus {
+            outline: none;
+            border-color: #00a4dc;
+        }
+        .xthemesong-inherited {
+            background: #1a2a1a;
+            border: 1px solid #2a4a2a;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+            color: #8f8;
+            font-size: 0.85em;
+        }
     `;
     document.head.appendChild(styleElement);
     
@@ -290,6 +313,25 @@
                         <audio id="xthemesongPlayer" class="xthemesong-player" controls></audio>
                         <div id="xthemesongMeta" class="xthemesong-existing-meta"></div>
                     </div>
+                </div>
+                
+                <div id="xthemesongInherited" class="xthemesong-section" style="display:none;">
+                    <div class="xthemesong-existing" style="background:#1a2a1a;border:1px solid #2a4a2a;">
+                        <h4 class="xthemesong-existing-title" style="color:#4caf50;">🔗 Inherited Theme Song</h4>
+                        <audio id="xthemesongInheritedPlayer" class="xthemesong-player" controls></audio>
+                        <div id="xthemesongInheritedMeta" class="xthemesong-existing-meta"></div>
+                    </div>
+                </div>
+                
+                <div class="xthemesong-section">
+                    <label class="xthemesong-label">Assign Theme To</label>
+                    <select id="xthemesongTargetType" class="xthemesong-input" style="cursor:pointer;">
+                        <option value="auto">Auto-detect (This Item)</option>
+                        <option value="Movie">This Movie</option>
+                        <option value="Series">This Series</option>
+                        <option value="Season">This Season</option>
+                        <option value="BoxSet">This Collection</option>
+                    </select>
                 </div>
                 
                 <div class="xthemesong-section">
@@ -408,6 +450,7 @@
         // Submit button
         dialog.querySelector('#xthemesongSubmit').addEventListener('click', function() {
             var youtubeUrl = dialog.querySelector('#xthemesongYouTube').value.trim();
+            var targetType = dialog.querySelector('#xthemesongTargetType').value;
             
             if (!youtubeUrl && !selectedFile) {
                 showMessage(dialog, 'error', 'Missing Input', 'Please enter a YouTube URL or upload an MP3 file.', overlay);
@@ -421,6 +464,7 @@
             var formData = new FormData();
             if (youtubeUrl) formData.append('YouTubeUrl', youtubeUrl);
             if (selectedFile) formData.append('UploadedFile', selectedFile);
+            if (targetType && targetType !== 'auto') formData.append('TargetType', targetType);
             
             // API call
             var apiUrl = ApiClient.getUrl('xThemeSong/' + itemId);
@@ -450,43 +494,68 @@
     }
     
     function loadExistingTheme(itemId, dialog) {
-        // Try to load existing theme.json from media folder
+        // Fetch both direct theme metadata and hierarchy info in parallel
         var themeJsonUrl = ApiClient.getUrl('xThemeSong/' + itemId + '/metadata');
+        var hierarchyUrl = ApiClient.getUrl('xThemeSong/' + itemId + '/hierarchy');
         
-        fetch(themeJsonUrl, {
+        var metaPromise = fetch(themeJsonUrl, {
             headers: { 'X-Emby-Token': ApiClient.accessToken() }
         }).then(function(response) {
             if (response.ok) return response.json();
             throw new Error('No theme');
-        }).then(function(metadata) {
+        }).catch(function() { return null; });
+        
+        var hierarchyPromise = fetch(hierarchyUrl, {
+            headers: { 'X-Emby-Token': ApiClient.accessToken() }
+        }).then(function(response) {
+            if (response.ok) return response.json();
+            throw new Error('No hierarchy');
+        }).catch(function() { return null; });
+        
+        Promise.all([metaPromise, hierarchyPromise]).then(function(results) {
+            var metadata = results[0];
+            var hierarchy = results[1];
+            
+            // Show direct theme if it exists
             if (metadata) {
                 var existingSection = dialog.querySelector('#xthemesongExisting');
                 var player = dialog.querySelector('#xthemesongPlayer');
                 var metaDiv = dialog.querySelector('#xthemesongMeta');
                 var deleteBtn = dialog.querySelector('#xthemesongDelete');
                 
-                // Get audio URL
                 var audioUrl = ApiClient.getUrl('xThemeSong/' + itemId + '/audio');
                 player.src = audioUrl + '?api_key=' + ApiClient.accessToken();
                 
-                // Show metadata
                 var metaText = [];
                 if (metadata.Title) metaText.push('Title: ' + metadata.Title);
                 if (metadata.Uploader) metaText.push('By: ' + metadata.Uploader);
                 if (metadata.DateAdded) metaText.push('Added: ' + new Date(metadata.DateAdded).toLocaleDateString());
+                if (metadata.TargetType && metadata.TargetType !== 'Movie') metaText.push('Target: ' + metadata.TargetType);
                 metaDiv.textContent = metaText.join(' • ');
                 
                 existingSection.style.display = 'block';
                 
-                // Setup delete button event
                 if (deleteBtn) {
                     deleteBtn.addEventListener('click', function() {
                         showDeleteConfirmation(itemId, dialog);
                     });
                 }
             }
-        }).catch(function() {
-            // No existing theme, that's fine
+            
+            // Show inherited theme if it exists and no direct theme
+            if (hierarchy && hierarchy.HasInheritedTheme && !metadata) {
+                var inheritedSection = dialog.querySelector('#xthemesongInherited');
+                var inheritedPlayer = dialog.querySelector('#xthemesongInheritedPlayer');
+                var inheritedMeta = dialog.querySelector('#xthemesongInheritedMeta');
+                
+                if (inheritedSection && inheritedPlayer && inheritedMeta) {
+                    // Use the inherited item's audio endpoint
+                    var inheritedAudioUrl = ApiClient.getUrl('xThemeSong/' + hierarchy.InheritedFromItemId + '/audio');
+                    inheritedPlayer.src = inheritedAudioUrl + '?api_key=' + ApiClient.accessToken();
+                    inheritedMeta.textContent = 'Inherited from: ' + hierarchy.InheritedFromItemName + ' (' + hierarchy.ItemType + ')';
+                    inheritedSection.style.display = 'block';
+                }
+            }
         });
     }
     

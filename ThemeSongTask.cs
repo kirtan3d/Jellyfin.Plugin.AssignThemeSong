@@ -59,11 +59,10 @@ namespace Jellyfin.Plugin.xThemeSong
 
         public async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("xThemeSong task started.");
+            _logger.LogDebug("xThemeSong task started.");
 
             var config = GetConfiguration();
-            _logger.LogInformation($"Overwrite Existing Files: {config.OverwriteExistingFiles}");
-            _logger.LogInformation($"Audio Bitrate: {config.AudioBitrate}");
+            _logger.LogDebug("Overwrite Existing Files: {Overwrite}, Audio Bitrate: {Bitrate}", config.OverwriteExistingFiles, config.AudioBitrate);
 
             // Get only Movies and Series from the library to avoid deserialization errors
             var mediaItems = _libraryManager.GetItemList(new InternalItemsQuery
@@ -80,7 +79,7 @@ namespace Jellyfin.Plugin.xThemeSong
                 if (cancellationToken.IsCancellationRequested)
                     break;
 
-                _logger.LogInformation($"Processing item: {item.Name}");
+                _logger.LogDebug("Processing item: {ItemName}", item.Name);
                 await ProcessMediaItem(item, config, cancellationToken);
 
                 processedItems++;
@@ -88,7 +87,7 @@ namespace Jellyfin.Plugin.xThemeSong
                 progress.Report(percentComplete);
             }
 
-            _logger.LogInformation("xThemeSong task finished.");
+            _logger.LogInformation("xThemeSong task finished. Processed {Count} items.", processedItems);
         }
 
         /// <summary>

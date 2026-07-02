@@ -153,23 +153,48 @@ namespace Jellyfin.Plugin.xThemeSong.Api
 
             try
             {
+                // Determine target type based on item type if not explicitly provided
+                var targetType = request.TargetType;
+                if (string.IsNullOrEmpty(targetType) || targetType == "Movie")
+                {
+                    targetType = item switch
+                    {
+                        Series => "Series",
+                        Season => "Season",
+                        Movie => "Movie",
+                        _ => "Movie"
+                    };
+                }
+                
+                // Determine parent ID for inheritance
+                var parentId = request.ParentId;
+                if (string.IsNullOrEmpty(parentId))
+                {
+                    if (item is Season season)
+                    {
+                        parentId = season.SeriesId.ToString("N");
+                    }
+                }
+
                 if (!string.IsNullOrEmpty(request.YouTubeUrl))
                 {
-                    _logger.LogInformation("Downloading theme from YouTube URL: {Url} for item {ItemName}", 
-                        request.YouTubeUrl, item.Name);
+                    _logger.LogInformation("Downloading theme from YouTube URL: {Url} for item {ItemName} ({TargetType})", 
+                        request.YouTubeUrl, item.Name, targetType);
                         
                     await _themeDownloadService.DownloadFromYouTube(
                         request.YouTubeUrl,
                         itemDirectory,
                         config.AudioBitrate,
-                        default);
+                        default,
+                        targetType,
+                        parentId);
                         
                     _logger.LogInformation("Successfully downloaded theme from YouTube for {ItemName}", item.Name);
                 }
                 else if (request.UploadedFile != null && request.UploadedFile.Length > 0)
                 {
-                    _logger.LogInformation("Processing uploaded file: {FileName} ({FileSize} bytes) for {ItemName}", 
-                        request.UploadedFile.FileName, request.UploadedFile.Length, item.Name);
+                    _logger.LogInformation("Processing uploaded file: {FileName} ({FileSize} bytes) for {ItemName} ({TargetType})", 
+                        request.UploadedFile.FileName, request.UploadedFile.Length, item.Name, targetType);
                         
                     var tempPath = Path.GetTempFileName();
                     try
@@ -184,7 +209,9 @@ namespace Jellyfin.Plugin.xThemeSong.Api
                             itemDirectory,
                             config.AudioBitrate,
                             request.UploadedFile.FileName,
-                            default);
+                            default,
+                            targetType,
+                            parentId);
                             
                         _logger.LogInformation("Successfully processed uploaded theme for {ItemName}", item.Name);
                     }
@@ -441,6 +468,17 @@ namespace Jellyfin.Plugin.xThemeSong.Api
                         }
                     }
 
+                    // Get image URL
+                    string? imageUrl = null;
+                    if (item.ImageInfos != null && item.ImageInfos.Any(i => i.Type == MediaBrowser.Model.Entities.ImageType.Primary))
+                    {
+                        imageUrl = Url.ActionLink(
+                            "GetImage",
+                            "Items",
+                            new { itemId = item.Id.ToString("N"), type = "Primary", maxWidth = 100 },
+                            Request.Scheme);
+                    }
+
                     var entry = new MediaLibraryEntry
                     {
                         ItemId = item.Id.ToString("N"),
@@ -449,7 +487,8 @@ namespace Jellyfin.Plugin.xThemeSong.Api
                         LibraryName = libraryName,
                         HasThemeSong = hasThemeSong,
                         YouTubeUrl = youtubeUrl,
-                        Path = itemDirectory
+                        Path = itemDirectory,
+                        ImageUrl = imageUrl
                     };
 
                     // Group by library
@@ -559,6 +598,103 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         }
 
         /// <summary>
+        /// Gets the theme hierarchy for an item, showing direct and inherited themes.
+        /// </summary>
+        [HttpGet("{itemId}/hierarchy")]
+        public ActionResult<ThemeHierarchyResponse> GetThemeHierarchy([FromRoute] string itemId)
+        {
+            var item = _libraryManager.GetItemById(itemId);
+            if (item == null)
+            {
+                return NotFound($"Item {itemId} not found");
+            }
+
+            var response = new ThemeHierarchyResponse
+            {
+                ItemId = itemId,
+                ItemName = item.Name,
+                ItemType = item switch
+                {
+                    Movie => "Movie",
+                    Series => "Series",
+                    Season => "Season",
+                    _ => item.GetType().Name
+                }
+            };
+
+            // Check for direct theme
+            var itemDirectory = GetThemeDirectory(item);
+            if (!string.IsNullOrEmpty(itemDirectory))
+            {
+                var audioPath = Path.Combine(itemDirectory, "theme.mp3");
+                if (System.IO.File.Exists(audioPath))
+                {
+                    response.HasDirectTheme = true;
+                    response.DirectThemePath = audioPath;
+                }
+            }
+
+            // Check for inherited theme
+            if (item is Season season)
+            {
+                var series = season.Series;
+                if (series != null)
+                {
+                    var seriesDirectory = GetThemeDirectory(series);
+                    if (!string.IsNullOrEmpty(seriesDirectory))
+                    {
+                        var seriesAudioPath = Path.Combine(seriesDirectory, "theme.mp3");
+                        if (System.IO.File.Exists(seriesAudioPath))
+                        {
+                            response.HasInheritedTheme = true;
+                            response.InheritedFromItemId = series.Id.ToString("N");
+                            response.InheritedFromItemName = series.Name;
+                            response.InheritedThemePath = seriesAudioPath;
+                        }
+                    }
+                }
+            }
+            else if (item is Movie)
+            {
+                // Check if movie is part of a box set by querying box sets
+                var boxSets = _libraryManager.GetItemList(new InternalItemsQuery
+                {
+                    IncludeItemTypes = new[] { BaseItemKind.BoxSet },
+                    Recursive = true
+                });
+                
+                foreach (var boxSet in boxSets)
+                {
+                    // Get items in this box set
+                    var boxSetItems = _libraryManager.GetItemList(new InternalItemsQuery
+                    {
+                        ParentId = boxSet.Id,
+                        IncludeItemTypes = new[] { BaseItemKind.Movie }
+                    });
+                    
+                    if (boxSetItems != null && boxSetItems.Any(c => c.Id == item.Id))
+                    {
+                        var boxSetDirectory = GetThemeDirectory(boxSet);
+                        if (!string.IsNullOrEmpty(boxSetDirectory))
+                        {
+                            var boxSetAudioPath = Path.Combine(boxSetDirectory, "theme.mp3");
+                            if (System.IO.File.Exists(boxSetAudioPath))
+                            {
+                                response.HasInheritedTheme = true;
+                                response.InheritedFromItemId = boxSet.Id.ToString("N");
+                                response.InheritedFromItemName = boxSet.Name;
+                                response.InheritedThemePath = boxSetAudioPath;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            return Ok(response);
+        }
+
+        /// <summary>
         /// Gets the library name for an item.
         /// </summary>
         private string GetLibraryName(BaseItem item)
@@ -602,5 +738,31 @@ namespace Jellyfin.Plugin.xThemeSong.Api
         public string? YouTubeUrl { get; set; }
         
         public IFormFile? UploadedFile { get; set; }
+        
+        /// <summary>
+        /// Target type for theme assignment: Movie, Series, Season, or BoxSet
+        /// </summary>
+        public string TargetType { get; set; } = "Movie";
+        
+        /// <summary>
+        /// Parent ID for inheritance (Series ID for seasons, Collection ID for BoxSets)
+        /// </summary>
+        public string? ParentId { get; set; }
+    }
+    
+    /// <summary>
+    /// Request model for theme hierarchy information
+    /// </summary>
+    public class ThemeHierarchyResponse
+    {
+        public string ItemId { get; set; } = string.Empty;
+        public string ItemName { get; set; } = string.Empty;
+        public string ItemType { get; set; } = string.Empty;
+        public bool HasDirectTheme { get; set; }
+        public string? DirectThemePath { get; set; }
+        public bool HasInheritedTheme { get; set; }
+        public string? InheritedFromItemId { get; set; }
+        public string? InheritedFromItemName { get; set; }
+        public string? InheritedThemePath { get; set; }
     }
 }

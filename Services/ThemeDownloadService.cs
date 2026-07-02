@@ -82,7 +82,23 @@ namespace Jellyfin.Plugin.xThemeSong.Services
             return ffmpegName;
         }
 
-        public async Task<ThemeMetadata> DownloadFromYouTube(string input, string outputDirectory, int bitrate, CancellationToken cancellationToken)
+        /// <summary>
+        /// Downloads a theme song from YouTube and saves it to the specified directory.
+        /// </summary>
+        /// <param name="input">YouTube video ID or URL</param>
+        /// <param name="outputDirectory">Directory to save the theme song</param>
+        /// <param name="bitrate">Audio bitrate in kbps</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <param name="targetType">Target type: Movie, Series, Season, or BoxSet</param>
+        /// <param name="parentId">Parent ID for inheritance (Series ID for seasons, Collection ID for BoxSets)</param>
+        /// <returns>Theme metadata</returns>
+        public async Task<ThemeMetadata> DownloadFromYouTube(
+            string input, 
+            string outputDirectory, 
+            int bitrate, 
+            CancellationToken cancellationToken,
+            string targetType = "Movie",
+            string? parentId = null)
         {
             try
             {
@@ -101,7 +117,7 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                     }
                 }
 
-                _logger.LogInformation("Downloading audio from YouTube video: {VideoId}", videoId);
+                _logger.LogInformation("Downloading audio from YouTube video: {VideoId} for {TargetType}", videoId, targetType);
 
                 // Get video details
                 var video = await _youtube.Videos.GetAsync(videoId, cancellationToken);
@@ -116,7 +132,7 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                 try
                 {
                     // Download the audio
-                    _logger.LogInformation("Downloading audio stream to temp file: {TempFile}", tempFile);
+                    _logger.LogDebug("Downloading audio stream to temp file: {TempFile}", tempFile);
                     await _youtube.Videos.Streams.DownloadAsync(audioStreamInfo, tempFile, null, cancellationToken);
 
                     // Get FFmpeg path
@@ -125,7 +141,7 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                     // Output path for the theme song
                     var outputPath = Path.Combine(outputDirectory, "theme.mp3");
 
-                    _logger.LogInformation("Converting to MP3 using FFmpeg: {FfmpegPath}", ffmpegPath);
+                    _logger.LogDebug("Converting to MP3 using FFmpeg: {FfmpegPath}", ffmpegPath);
 
                     // Convert to MP3 using FFmpeg with specified bitrate
                     var process = new System.Diagnostics.Process
@@ -153,9 +169,9 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                         throw new Exception($"FFmpeg conversion failed: {errorOutput}");
                     }
 
-                    _logger.LogInformation("Successfully converted to MP3: {OutputPath}", outputPath);
+                    _logger.LogDebug("Successfully converted to MP3: {OutputPath}", outputPath);
 
-                    // Create metadata
+                    // Create metadata with target type and parent ID
                     var metadata = new ThemeMetadata
                     {
                         YouTubeId = videoId,
@@ -164,7 +180,10 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                         Uploader = video.Author.ChannelTitle,
                         DateAdded = DateTime.UtcNow,
                         DateModified = DateTime.UtcNow,
-                        IsUserUploaded = false
+                        IsUserUploaded = false,
+                        TargetType = targetType,
+                        ParentId = parentId,
+                        InheritFromParent = true
                     };
 
                     // Save metadata
@@ -174,7 +193,7 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                         WriteIndented = true 
                     }), cancellationToken);
 
-                    _logger.LogInformation("Theme song downloaded successfully for video: {Title}", video.Title);
+                    _logger.LogInformation("Theme song downloaded successfully for video: {Title} ({TargetType})", video.Title, targetType);
                     return metadata;
                 }
                 finally
@@ -200,7 +219,25 @@ namespace Jellyfin.Plugin.xThemeSong.Services
             }
         }
 
-        public async Task<ThemeMetadata> SaveUploadedTheme(string sourcePath, string outputDirectory, int bitrate, string originalFileName, CancellationToken cancellationToken)
+        /// <summary>
+        /// Saves an uploaded theme song to the specified directory.
+        /// </summary>
+        /// <param name="sourcePath">Path to the uploaded file</param>
+        /// <param name="outputDirectory">Directory to save the theme song</param>
+        /// <param name="bitrate">Audio bitrate in kbps</param>
+        /// <param name="originalFileName">Original filename</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <param name="targetType">Target type: Movie, Series, Season, or BoxSet</param>
+        /// <param name="parentId">Parent ID for inheritance</param>
+        /// <returns>Theme metadata</returns>
+        public async Task<ThemeMetadata> SaveUploadedTheme(
+            string sourcePath, 
+            string outputDirectory, 
+            int bitrate, 
+            string originalFileName, 
+            CancellationToken cancellationToken,
+            string targetType = "Movie",
+            string? parentId = null)
         {
             try
             {
@@ -237,15 +274,18 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                     throw new Exception($"FFmpeg conversion failed: {errorOutput}");
                 }
 
-                _logger.LogInformation("Successfully converted uploaded file to MP3: {OutputPath}", outputPath);
+                _logger.LogDebug("Successfully converted uploaded file to MP3: {OutputPath}", outputPath);
 
-                // Create metadata
+                // Create metadata with target type and parent ID
                 var metadata = new ThemeMetadata
                 {
                     IsUserUploaded = true,
                     OriginalFileName = originalFileName,
                     DateAdded = DateTime.UtcNow,
-                    DateModified = DateTime.UtcNow
+                    DateModified = DateTime.UtcNow,
+                    TargetType = targetType,
+                    ParentId = parentId,
+                    InheritFromParent = true
                 };
 
                 // Save metadata
@@ -255,6 +295,7 @@ namespace Jellyfin.Plugin.xThemeSong.Services
                     WriteIndented = true 
                 }), cancellationToken);
 
+                _logger.LogInformation("Uploaded theme song saved successfully ({TargetType})", targetType);
                 return metadata;
             }
             catch (Exception ex)
