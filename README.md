@@ -189,9 +189,23 @@ dotnet publish -c Release -o publish
 
 ## 📝 Development Status
 
-**Current Version**: v1.2.0
+**Current Version**: v1.3.2
 
-### v1.2.0 Features (Latest - Major Update!)
+### v1.3.2 Features (Latest - Bug Fix Release)
+- ✅ **Fixed Media Library Filter Buttons** - Movies/Series filters now work correctly
+- ✅ **Fixed Search by Title** - Search functionality now works with poster column
+- ✅ **Fixed Poster Images** - Poster thumbnails now display correctly using Jellyfin's image API
+- ✅ **Fixed Type Matching** - API response type (Series) matches UI display (Series)
+
+### v1.3.0 Features (Major Update)
+- ✅ **Season/Collection-Level Theme Inheritance** - Assign themes at Series, Season, or BoxSet level
+- ✅ **Media Library Filters** - Filter by theme status (with/without) and search by title
+- ✅ **Poster Thumbnails** - Display movie/show artwork in library overview
+- ✅ **Library Type Tabs** - Quick filter by Movies/Series or specific library
+- ✅ **Minimized Logging** - Reduced verbose logging for cleaner output
+- ✅ **Theme Hierarchy API** - New endpoint to check theme inheritance
+
+### v1.2.0 Features
 - ✅ **Fixed Scheduled Task Error** - No more deserialization crashes
 - ✅ **Export/Import Theme Mappings** - JSON & CSV export, import with conflict resolution
 - ✅ **Role-Based Access Control** - 3 permission modes (Admins/Managers/Everyone)

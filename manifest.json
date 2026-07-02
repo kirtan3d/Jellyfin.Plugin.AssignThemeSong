@@ -9,7 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png",
     "versions": [
       {
-          "version": "1.3.1.0",
+        "version": "1.3.2.0",
+        "checksum": "354BAA53FD117EFB14AACEA91715E041",
+        "changelog": "Fixed media library filter buttons (Movies/Series), search by title, and poster images not displaying. Changed button label from 'TV Shows' to 'Series' to match API response type.",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://github.com/kirtan3d/Jellyfin.Plugin.AssignThemeSong/releases/download/v1.3.2/xThemeSong_v1.3.2.zip"
+      },
+      {
+        "version": "1.3.1.0",
           "checksum": "464f827f609226937a334a9ce72847f6",
           "changelog": "v1.3.1: Fixed media library filter buttons (Movies/TV Shows) and search by title not working correctly. Fixed type matching between API (Series) and UI (TV Shows).",
           "targetAbi": "10.11.0.0",

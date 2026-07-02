@@ -468,15 +468,13 @@ namespace Jellyfin.Plugin.xThemeSong.Api
                         }
                     }
 
-                    // Get image URL
+                    // Get image URL - use Jellyfin's built-in image API endpoint
                     string? imageUrl = null;
                     if (item.ImageInfos != null && item.ImageInfos.Any(i => i.Type == MediaBrowser.Model.Entities.ImageType.Primary))
                     {
-                        imageUrl = Url.ActionLink(
-                            "GetImage",
-                            "Items",
-                            new { itemId = item.Id.ToString("N"), type = "Primary", maxWidth = 100 },
-                            Request.Scheme);
+                        // Construct the URL manually since we can't use Url.ActionLink for Jellyfin's Items controller
+                        var baseUrl = $"{Request.Scheme}://{Request.Host}";
+                        imageUrl = $"{baseUrl}/Items/{item.Id.ToString("N")}/Images/Primary?maxWidth=100&quality=90";
                     }
 
                     var entry = new MediaLibraryEntry
