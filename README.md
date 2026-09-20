@@ -6,7 +6,7 @@ A Jellyfin 12 plugin that allows you to download theme songs from YouTube or upl
 <img alt="Logo" src="https://raw.githubusercontent.com/ccook45/Jellyfin.Plugin.AssignThemeSong/main/images/icon.png" style="width:50%;" />
 </p>
 
-> **Project lineage:** xThemeSong is a continuation/fork of the original Jellyfin Plugin AssignThemeSong project by **Kirtan Patel (@kirtan3d)**. The original project established the core theme-song workflow, Web UI, scheduled downloads, media management, export/import, permissions, and per-user preferences. This fork preserves that history while adding Jellyfin 12 support and subsequent maintenance and feature work. Please see the version history below for the original project's changes as well as the changes made in this fork.
+> **Project:** xThemeSong (Jellyfin Plugin AssignThemeSong) — jointly maintained by **Kirtan Patel (@kirtan3d)** and **ccook45 (@ccook45)**. Kirtan created the original project (core theme-song workflow, Web UI, scheduled downloads, media management, export/import, permissions, per-user preferences); ccook45 added Jellyfin 12 support, YouTube auto-search with managed yt-dlp, and drives ongoing maintenance. See the version history below.
 
 ## ✨ Features
 
@@ -375,18 +375,18 @@ The project currently uses **YoutubeExplode 6.6.2** for YouTube access.
 - ✅ Added a Jellyfin 12 build/release workflow
 - ✅ Established the xThemeSong Jellyfin 12 release/manifest packaging
 
-### v1.3.2 — Original project by Kirtan Patel
+### v1.3.2 (original project)
 - ✅ **Fixed Media Library Filter Buttons** - Movies/Series filters now work correctly
 - ✅ **Fixed Search by Title** - Search functionality works correctly with the poster column
 - ✅ **Fixed Poster Images** - Poster thumbnails display correctly using Jellyfin's image API
 - ✅ **Fixed Type Matching** - API response type (Series) matches the UI display (Series)
 
-### v1.3.1 — Original project by Kirtan Patel
+### v1.3.1 (original project)
 - ✅ Fixed Media Library filter buttons for Movies/TV Shows
 - ✅ Fixed search by title
 - ✅ Fixed type matching between the API response (`Series`) and the UI (`TV Shows`)
 
-### v1.3.0 — Original project by Kirtan Patel
+### v1.3.0 (original project)
 - ✅ **Season/Collection-Level Theme Inheritance** - Assign themes at Series, Season, or BoxSet level
 - ✅ **Media Library Filters** - Filter by theme status and search by title
 - ✅ **Poster Thumbnails** - Display movie/show artwork in the library overview
@@ -394,7 +394,7 @@ The project currently uses **YoutubeExplode 6.6.2** for YouTube access.
 - ✅ **Minimized Logging** - Reduced verbose logging for cleaner output
 - ✅ **Theme Hierarchy API** - Endpoint for checking theme inheritance
 
-### v1.2.0 — Original project by Kirtan Patel
+### v1.2.0 (original project)
 - ✅ **Fixed Scheduled Task Error** - Removed deserialization crashes
 - ✅ **Export/Import Theme Mappings** - JSON & CSV export, import with conflict resolution
 - ✅ **Role-Based Access Control** - Admins/Managers/Everyone permission modes
@@ -403,7 +403,7 @@ The project currently uses **YoutubeExplode 6.6.2** for YouTube access.
 - ✅ **Code Quality** - Reduced warnings from 5 to 1
 - ✅ **Security** - Permission-based API endpoint protection
 
-### v1.1.0 — Original project by Kirtan Patel
+### v1.1.0 (original project)
 - ✅ **Tabbed Settings Page** - Settings and Media Library tabs
 - ✅ **Media Library Overview** - View media with theme-song status
 - ✅ **Inline Audio Players** - Preview theme songs in the library table
@@ -411,7 +411,7 @@ The project currently uses **YoutubeExplode 6.6.2** for YouTube access.
 - ✅ **Statistics Dashboard** - Total media, with themes, and without themes counts
 - ✅ **Improved Table Styling** - Better visual hierarchy and responsive layout
 
-### v1.0.x — Original project by Kirtan Patel
+### v1.0.x (original project)
 - ✅ Plugin loads successfully in Jellyfin
 - ✅ **Web UI integration** - Three-dot menu item for "Assign Theme Song"
 - ✅ **Modern Modal Dialog** with dark theme
@@ -427,6 +427,10 @@ The project currently uses **YoutubeExplode 6.6.2** for YouTube access.
 - ✅ **Custom FFmpeg Path** configuration
 - ✅ **Cross-Platform FFmpeg Detection** - Windows, Mac, Linux, Docker
 - ✅ File Transformation Plugin Integration
+
+## 👥 Maintainers & Contributors
+- **Kirtan Patel (@kirtan3d)** — original creator: theme-song workflow, Web UI, scheduled downloads, media management, export/import, permissions, per-user preferences
+- **ccook45 (@ccook45)** — co-maintainer: Jellyfin 12 support & migration, YouTube auto-search, managed yt-dlp, search/pagination improvements, documentation & release automation
 
 ## 🤝 Contributing
 
